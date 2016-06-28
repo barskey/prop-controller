@@ -1,0 +1,13 @@
+.workspace
+{
+	width: 100%;
+	height: calc(100vh - 8em);
+    border: solid;
+    border-width: thin;
+    border-color: gray;
+}
+.draggable
+{
+	width: 11.25em;
+	float: left;
+}
