@@ -86,7 +86,7 @@ body {
 .dashboard {
   height: calc(100vh - 90px);
 }
-.draggable
+.draggable-panel
 {
 	width: 11.25em;
 	float: left;

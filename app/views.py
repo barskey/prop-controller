@@ -2,5 +2,7 @@ from app import app
 from flask import render_template
 
 @app.route('/')
-def index():
-    return render_template('dashboard.html', title='Dashboard')
+@app.route('/dashboard')
+def dashboard():
+    projectname = "Halloween 2016"
+    return render_template('dashboard.html', title='Dashboard', projectname=projectname)
