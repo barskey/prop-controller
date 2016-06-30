@@ -34,6 +34,12 @@
             <li><a href="dashboard">Dashboard</a></li>
             <li><a href="#">Controllers</a></li>
             <li><a href="#">Layout</a></li>
+            <li>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-user"></span><span class="caret"></span></a>
+              <ul class="dropdown-menu" id="actions-menu">
+                <li><a href="#">Sign Out</a></li>
+              </ul><!-- /#actions-menu -->
+            </li>
           </ul>
         </div>
       </div>
@@ -48,10 +54,6 @@
     <script src="static/js/jquery-ui.min.js"></script>
     <script src="static/js/jquery-ui-touch-punch.min.js"></script>
 
-    <div class="container-fluid">
-      <div class="row">
-        {% block content %}{% endblock %}
-      </div>
-    </div>
+    {% block content %}{% endblock %}
   </body>
 </html>

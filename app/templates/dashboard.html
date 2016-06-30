@@ -4,47 +4,87 @@
 {% block content %}
         <!-- Custom styles for this template -->
         <link href="static/css/dashboard.css" rel="stylesheet">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="list-group-item list-group-item-default">Triggers<span class="glyphicon glyphicon-plus pull-right"></span></li>
-            <li class="list-group-item list-group-item-warning draggable-trigger">Trigger 1</li>
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li class="list-group-item list-group-item-default">Actions<span class="glyphicon glyphicon-plus pull-right"></span></li>
-            <li class="list-group-item list-group-item-success draggable-action">Action 1<span class="glyphicon glyphicon-plus-sign pull-right"></span><span class="glyphicon glyphicon-plus-sign pull-right"></span></li>
-            <li class="list-group-item list-group-item-success draggable-action">Action 2</li>
-          </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <div class="container-fluid dashboard">
-            <div class="panel panel-black draggable-panel" id="test1">
-			  <div class="panel-heading">
-				<h3 class="panel-title">Driveway Motion</h3>
-			  </div>
-			    <div class="panel panel-trigger">
-				  <div class="panel-heading">
-					<h3 class="panel-title">Triggers</h3>
-				  </div>
-					<ul class="list-group droppable-trigger">
-						<li class="list-group-item list-group-item-warning">Trigger 1</li>
-					</ul>
-				</div>
-			    <div class="panel panel-action">
-				  <div class="panel-heading">
-					<h3 class="panel-title">Actions</h3>
-				  </div>
-					<ul class="list-group">
-						<li class="list-group-item list-group-item-success">Action 1</li>
-						<li class="list-group-item list-group-item-success">Action 2</li>
-					</ul>
-				</div>
-				<div class="panel-footer">
-				  <span class="label label-success">A</span>
-				  <span class="label label-success">B</span>
-				  <span class="label label-primary">B</span>
-				  <button type="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-cog"></span></button>
-				</div>
-          </div>
-        </div>
-		<script src="static/js/dashboard.js" type="text/javascript"></script>
+
+        <!-- Second navbar for this page -->
+        <nav class="navbar navbar-default">
+          <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="navbar-collapse-1">
+              <ul class="nav navbar-nav">
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle bg-warning" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="trigger-menu">
+                    <li><a href="#">Trigger 1</a></li>
+                    <li><a href="#">Trigger 2</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Add new...</a></li>
+                  </ul><!-- /#trigger-menu -->
+                </li><!-- /.dropdown -->
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle bg-success" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="actions-menu">
+                    <li><a href="#">Action 1</a></li>
+                    <li><a href="#">Action 2</a></li>
+                    <li><a href="#">Action 3</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#">Add new...</a></li>
+                  </ul><!-- /#actions-menu -->
+                </li><!-- /.dropdown -->
+              </ul><!-- /.navbar-nav -->
+              <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Events <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#">Driveway Motion</a></li>
+                  <li><a href="#">Event 2</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">Add new...</a></li>
+                </ul><!-- /.dropdown-menu -->
+              </ul><!-- .navbar-right -->
+            </div><!-- /.navbar-collapse -->
+          </div><!-- /.container-fluid -->
+        </nav><!-- /.navbar-default -->
+
+        <!-- Main body content for this page -->
+        <div class="container-fluid dashboard">
+          <div class="panel panel-black draggable-panel" id="test1">
+            <div class="panel-heading">
+              <h3 class="panel-title">Driveway Motion</h3>
+            </div><!-- /.panel-heading -->
+            <div class="panel panel-trigger">
+              <div class="panel-heading">
+                <h3 class="panel-title">Triggers<span class="glyphicon glyphicon-plus pull-right"></span></h3>
+              </div><!-- /.panel-heading -->
+              <ul class="list-group sortable">
+                <li class="list-group-item list-group-item-warning"><span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;Trigger 1</li>
+              </ul><!-- /.list-group -->
+            </div><!-- /.panel-trigger -->
+            <div class="panel panel-action">
+              <div class="panel-heading">
+                <h3 class="panel-title">Actions<span class="glyphicon glyphicon-plus pull-right"></span></h3>
+              </div><!-- /.panel-heading -->
+              <ul class="list-group sortable">
+                <li class="list-group-item list-group-item-success"><span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;Action 1</li>
+                <li class="list-group-item list-group-item-success"><span class="glyphicon glyphicon-menu-hamburger"></span>&nbsp;Action 2</li>
+              </ul><!-- /.list-group -->
+            </div><!-- /.panel-action -->
+            <div class="panel-footer">
+              <span class="label label-success">A</span>
+              <span class="label label-success">B</span>
+              <span class="label label-primary">B</span>
+              <span class="glyphicon glyphicon-cog pull-right"></span>
+            </div><!-- /.panel-footer -->
+          </div><!-- /.panel-black -->
+        </div><!-- /.dashboard -->
+        <script src="static/js/dashboard.js" type="text/javascript"></script>
 {% endblock %}
