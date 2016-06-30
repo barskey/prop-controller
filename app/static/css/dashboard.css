@@ -47,3 +47,6 @@ body {
 .panel-black {
   background-color: #ccc;
 }
+.popover {
+  width: 200px;
+}
