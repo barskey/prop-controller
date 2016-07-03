@@ -22,7 +22,7 @@
             <div class="collapse navbar-collapse" id="navbar-collapse-1">
               <ul class="nav navbar-nav">
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle bg-warning" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
                   <ul class="dropdown-menu" id="trigger-menu">
                     <li><a href="#">Trigger 1</a></li>
                     <li><a href="#">Trigger 2</a></li>
@@ -31,7 +31,7 @@
                   </ul><!-- /#trigger-menu -->
                 </li><!-- /.dropdown -->
                 <li class="dropdown">
-                  <a href="#" class="dropdown-toggle bg-success" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
                   <ul class="dropdown-menu" id="actions-menu">
                     <li><a href="#">Action 1</a></li>
                     <li><a href="#">Action 2</a></li>
@@ -48,7 +48,7 @@
                   <li><a href="#">Driveway Motion</a></li>
                   <li><a href="#">Event 2</a></li>
                   <li role="separator" class="divider"></li>
-                  <li><a href="#">Add new...</a></li>
+                  <li><a href="#" id="new-event" onclick="createEvent()">Add new...</a></li>
                 </ul><!-- /.dropdown-menu -->
               </ul><!-- .navbar-right -->
             </div><!-- /.navbar-collapse -->
@@ -57,32 +57,32 @@
 
         <!-- Main body content for this page -->
         <div class="container-fluid dashboard">
-          <div class="panel panel-black draggable-panel" id="test1">
+          <div class="panel panel-black draggable-panel" id="event-1">
             <div class="panel-heading">
               <h3 class="panel-title">Driveway Motion</h3>
             </div><!-- /.panel-heading -->
             <div class="panel panel-trigger">
               <div class="panel-heading">
-                <h3 class="panel-title">Triggers<span class="glyphicon glyphicon-plus pull-right"></span></h3>
+                <h3 class="panel-title">Triggers<span class="glyphicon glyphicon-plus pull-right add-trigger"></span></h3>
               </div><!-- /.panel-heading -->
               <ul class="list-group sortable">
-                <li class="list-group-item list-group-item-warning"><span class="glyphicon glyphicon-menu-hamburger"></span> Trigger 1</li>
+                <li class="list-group-item list-group-item-warning" id="trigger-1"><span class="glyphicon glyphicon-menu-hamburger"></span> Trigger 1</li>
               </ul><!-- /.list-group -->
             </div><!-- /.panel-trigger -->
             <div class="panel panel-action">
               <div class="panel-heading">
-                <h3 class="panel-title">Actions<span class="glyphicon glyphicon-plus pull-right"></span></h3>
+                <h3 class="panel-title">Actions<span class="glyphicon glyphicon-plus pull-right add-action"></span></h3>
               </div><!-- /.panel-heading -->
               <ul class="list-group sortable">
-                <li class="list-group-item list-group-item-success"><span class="glyphicon glyphicon-menu-hamburger"></span> Action 1</li>
-                <li class="list-group-item list-group-item-success"><span class="glyphicon glyphicon-menu-hamburger"></span> Action 2</li>
+                <li class="list-group-item list-group-item-success" id="action-1"><span class="glyphicon glyphicon-menu-hamburger"></span> Action 1</li>
+                <li class="list-group-item list-group-item-success" id="action-2"><span class="glyphicon glyphicon-menu-hamburger"></span> Action 2</li>
               </ul><!-- /.list-group -->
             </div><!-- /.panel-action -->
             <div class="panel-footer">
               <span class="label label-success">A</span>
               <span class="label label-success">B</span>
               <span class="label label-primary">B</span>
-              <span class="glyphicon glyphicon-cog pull-right" data-toggle="popover" title="Outputs" data-content="Controller 1<div class='btn-group' role='group'><button type='button' class='btn btn-warning'>A</button><button type='button' class='btn btn-warning'>B</button><button type='button' class='btn btn-warning'>C</button><button type='button' class='btn btn-warning'>D</button></div>" data-html="true" data-placement="right" data-container="#test1"></span>
+              <span class="glyphicon glyphicon-cog pull-right" data-toggle="popover"></span>
             </div><!-- /.panel-footer -->
           </div><!-- /.panel-black -->
         </div><!-- /.dashboard -->
