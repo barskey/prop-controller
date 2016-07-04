@@ -23,30 +23,39 @@
               <ul class="nav navbar-nav">
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="trigger-menu">
-                    <li><a href="#">Trigger 1</a></li>
-                    <li><a href="#">Trigger 2</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">Add new...</a></li>
+                  <ul class="dropdown-menu list-group" id="trigger-menu">
+                    {% for t in triggers %}
+                    <a class="list-group-item list-group-item-warning" id="{{ t.triggerid }}">{{ t.triggername }}</a>
+                    {% endfor %}
+                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
                   </ul><!-- /#trigger-menu -->
                 </li><!-- /.dropdown -->
                 <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
                   <ul class="dropdown-menu" id="actions-menu">
-                    <li><a href="#">Action 1</a></li>
-                    <li><a href="#">Action 2</a></li>
-                    <li><a href="#">Action 3</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">Add new...</a></li>
+                    {% for a in actions %}
+                    <a href="#" class="list-group-item list-group-item-success" id="{{ a.actionid }}">{{ a.actionname }}</a>
+                    {% endfor %}
+                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
                   </ul><!-- /#actions-menu -->
+                </li><!-- /.dropdown -->
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sounds <span class="caret"></span></a>
+                  <ul class="dropdown-menu" id="sounds-menu">
+                    {% for s in sounds %}
+                    <a href="#" class="list-group-item list-group-item-info" id="{{ s.soundid }}">{{ s.soundname }}</a>
+                    {% endfor %}
+                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
+                  </ul><!-- /#sounds-menu -->
                 </li><!-- /.dropdown -->
               </ul><!-- /.navbar-nav -->
               <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Events <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#">Driveway Motion</a></li>
-                  <li><a href="#">Event 2</a></li>
+                  {% for e in events %}
+                  <li><a href="#">{{ e.eventname }}</a></li>
+                  {% endfor %}
                   <li role="separator" class="divider"></li>
                   <li><a href="#" id="new-event" onclick="createEvent()">Add new...</a></li>
                 </ul><!-- /.dropdown-menu -->
@@ -57,32 +66,194 @@
 
         <!-- Main body content for this page -->
         <div class="container-fluid dashboard">
+          <!-- Modals -->
+          <div class="modal fade" id="addTriggerModal" tabindex="-1" role="dialog" labeledby"triggerModalLabel">
+            <div class="modal-dialog modal-sm" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="triggerModalLabel">Add a Trigger to this Event...</h4>
+                </div><!-- /.modal-header -->
+                <div class="modal-body">
+                  <div class="text-info"><em><small>Multiple Triggers will be seen as an "OR" (any of the triggers will start the Actions).</small></em></div>
+                  <form class="form-inline" id="triggerModalForm" action="testpost" method="POST">
+                    <div class="form-group pad-6">
+                      <label for="triggerEventnameSelect">Add to Event: </label>
+                      <select class="form-control" id="triggerEventnameSelect" name="triggerEventnameSelect">
+                        {% for e in events %}
+                        <option value="event-{{ e.eventid }}">{{ e.eventname }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group pad-6">
+                      <label for="triggerType">Trigger Type:</label>
+                      <select class="form-control" id="triggerType" name="triggerType">
+                        {% for t in triggers %}
+                        <option value="{{ t.triggerid }}">{{ t.triggername }}</option>
+                        {% endfor %}
+                      </select>
+                    </div><!-- /.form-group -->
+                    <div class="form-group triggerForm pad-6" id="Motion">
+                      <label for="resetTime">Time to reset:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="resetTime" name="resetTime" value="30000" size=4 />
+                        <div class="input-group-addon">ms</div>
+                      </div>
+                    </div><!-- /#motion -->
+                    <div class="form-group triggerForm pad-6 hidden" id="Pushbutton">
+                      <label for="defaultStateOn">Default button state: </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="defaultState" id="defaultStateOn" value="ON"> On
+                      </label>
+                      <label class="radio-inline">
+                        <input type="radio" name="defaultState" id="defaultStateOff" value="OFF" checked="checked"> Off
+                      </label>
+                    </div><!-- /#pushbutton -->
+                    <div class="form-group triggerForm pad-6 hidden" id="Switch">
+                      <span class="text-muted">No parameters to configure.</span>
+                    </div><!-- /#pushbutton -->
+                    <div class="form-group triggerForm pad-6 hidden" id="Event">
+                      <label for="eventTrigger">Use as trigger:</label>
+                      <select class="form-control" id="eventTrigger" name="eventTrigger">
+                        {% for e in events %}
+                        <option value="{{ e.eventid }}">{{ e.eventname }}</option>
+                        {% endfor %}
+                      </select>
+                    </div><!-- /#event -->
+
+                    <button type="submit" class="btn btn-primary">Add</button>
+
+                  </form>
+                </div><!-- /.modal-body -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="triggerModalAddButton" data-loading-text="Adding...">Add</button>
+                </div><!-- ./modal-footer -->
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal #addTriggerModal -->
+          <div class="modal fade" id="addActionModal" tabindex="-1" role="dialog" labeledby"actionModalLabel">
+            <div class="modal-dialog modal-sm" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="actionModalLabel">Add an Action</h4>
+                </div><!-- /.modal-header -->
+                <div class="modal-body">
+                  <div class="text-info"><em><small>Actions on this Event will start sequentially.</small></em></div>
+                  <form class="form-inline">
+                    <div class="form-group pad-6">
+                      <label for="actionEventnameSelect">Add to Event: </label>
+                      <select class="form-control" id="actionEventnameSelect">
+                        {% for e in events %}
+                        <option value="event-{{ e.eventid }}">{{ e.eventname }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group pad-6">
+                      <label for="actionType">Action Type:</label>
+                      <select class="form-control" id="actionType">
+                        {% for a in actions %}
+                        <option>{{ a.actionname }}</option>
+                        {% endfor %}
+                      </select>
+                    </div><!-- /.form-group -->
+                    <div class="form-group actionForm pad-6" id="TurnOn">
+                      <label for="delayStart">Delay before On:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="delayOn" name="delayOn" value="3000" size=4 />
+                        <div class="input-group-addon">ms</div>
+                      </div><!-- /.input-group -->
+                    </div><!-- /#turnOn -->
+                    <div class="form-group actionForm pad-6 hidden" id="TurnOff">
+                      <label for="delayStart">Delay before Off:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="delayOff" name="delayOff" value="3000" size=4 />
+                        <div class="input-group-addon">ms</div>
+                      </div><!-- /.input-group -->
+                    </div><!-- /#turnOff -->
+                    <div class="form-group actionForm pad-6 hidden" id="Toggle">
+                      <span class="text-muted">No parameters to configure.</span>
+                    </div><!-- /#toggle -->
+                    <div class="form-group actionForm pad-6 hidden" id="Blink">
+                      <label for="cycleTime">Cycle time:</label>
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="cycleTime" name="cycleTime" value="1000" size=4 />
+                        <div class="input-group-addon">ms</div>
+                      </div><!-- /.input-group -->
+                    </div><!-- /#toggle -->
+                    <div class="form-group actionForm pad-6 hidden" id="PlaySound">
+                      <label for="sound">Sound to use:</label>
+                      <select class="form-control" id="sound">
+                        {% for s in sounds %}
+                        <option>{{ s.soundname }}</option>
+                        {% endfor %}
+                      </select>
+                    </div><!-- /#event -->
+                  </form>
+                </div><!-- /.modal-body -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                  <button type="button" class="btn btn-primary" id="actionModalAddButton">Add</button>
+                </div><!-- ./modal-footer -->
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal #addActionModal -->
+          <!-- End Modals -->
           <div class="panel panel-black draggable-panel" id="event-1">
             <div class="panel-heading">
               <h3 class="panel-title">Driveway Motion</h3>
             </div><!-- /.panel-heading -->
             <div class="panel panel-trigger">
               <div class="panel-heading">
-                <h3 class="panel-title">Triggers<span class="glyphicon glyphicon-plus pull-right add-trigger"></span></h3>
+                <h3 class="panel-title">Triggers
+                  <div class="add-trigger pull-right" data-toggle="tooltip" data-placement="right" title="Add a Trigger to this Event..." data-eventid="event-1" data-container="body">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </div>
+                </h3>
               </div><!-- /.panel-heading -->
-              <ul class="list-group sortable">
-                <li class="list-group-item list-group-item-warning" id="trigger-1"><span class="glyphicon glyphicon-menu-hamburger"></span> Trigger 1</li>
+              <ul class="list-group sortable trigger-list">
+                <li class="list-group-item list-group-item-warning" id="trigger-1">
+                  <span class="glyphicon glyphicon-menu-hamburger"></span>
+                  <span>&nbsp;Motion&nbsp;</span>
+                  <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Reset after: 3000ms <br />(click to edit)" data-container="body" data-html="true">
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                  </div>
+                </li>
               </ul><!-- /.list-group -->
             </div><!-- /.panel-trigger -->
             <div class="panel panel-action">
               <div class="panel-heading">
-                <h3 class="panel-title">Actions<span class="glyphicon glyphicon-plus pull-right add-action"></span></h3>
+                <h3 class="panel-title">Actions
+                  <div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="event-1" data-container="body">
+                    <span class="glyphicon glyphicon-plus"></span>
+                  </div>
+                </h3>
               </div><!-- /.panel-heading -->
-              <ul class="list-group sortable">
-                <li class="list-group-item list-group-item-success" id="action-1"><span class="glyphicon glyphicon-menu-hamburger"></span> Action 1</li>
-                <li class="list-group-item list-group-item-success" id="action-2"><span class="glyphicon glyphicon-menu-hamburger"></span> Action 2</li>
+              <ul class="list-group sortable action-list">
+                <li class="list-group-item list-group-item-success" id="action-1">
+                  <span class="glyphicon glyphicon-menu-hamburger"></span>
+                  <span>&nbsp;Turn On&nbsp;</span>
+                  <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Delay before 1000ms<br />(click to edit)" data-container="body" data-html="true">
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                  </div>
+                </li>
+                <li class="list-group-item list-group-item-success" id="action-2">
+                  <span class="glyphicon glyphicon-menu-hamburger"></span>
+                  <span>&nbsp;Turn Off&nbsp;</span>
+                  <div class="pull-right" data-toggle="tooltip" data-placement="right" title="Delay before: 3000ms <br />(click to edit)" data-container="body" data-html="true">
+                    <span class="glyphicon glyphicon-info-sign"></span>
+                  </div>
+                </li>
               </ul><!-- /.list-group -->
             </div><!-- /.panel-action -->
             <div class="panel-footer">
               <span class="label label-success">A</span>
               <span class="label label-success">B</span>
               <span class="label label-primary">B</span>
-              <span class="glyphicon glyphicon-cog pull-right" data-toggle="popover"></span>
+              <div class="pull-right" data-toggle="tooltip" title="Configure Outputs for this Event...">
+                <span class="glyphicon glyphicon-cog" data-toggle="popover"></span>
+              </div>
             </div><!-- /.panel-footer -->
           </div><!-- /.panel-black -->
         </div><!-- /.dashboard -->
