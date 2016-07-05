@@ -2,6 +2,19 @@ from app import app
 from flask import render_template, request, jsonify
 
 #Dummy data for testing
+projectname = "Halloween 2016"
+colors = [
+	{'colorid': '1', 'colorname': 'red', 'colorhex': '#FF0000'},
+	{'colorid': '2', 'colorname': 'orange', 'colorhex': '#FF9900'},
+	{'colorid': '3', 'colorname': 'yellow', 'colorhex': '#FFF00'},
+	{'colorid': '4', 'colorname': 'green', 'colorhex': '#009900'},
+	{'colorid': '5', 'colorname': 'blue', 'colorhex': '#0066FF'},
+	{'colorid': '6', 'colorname': 'purple', 'colorhex': '#6600FF'},
+	{'colorid': '7', 'colorname': 'lime', 'colorhex': '#00FF00'},
+	{'colorid': '8', 'colorname': 'aqua', 'colorhex': '#00FFFF'},
+	{'colorid': '9', 'colorname': 'magenta', 'colorhex': '#FF00FF'},
+	{'colorid': '10', 'colorname': 'black', 'colorhex': '#000000'}
+]
 triggers = [
     {'triggerid': '1', 'triggername': 'Motion'},
     {'triggerid': '2', 'triggername': 'Pushbutton'},
@@ -22,9 +35,9 @@ sounds = [
     {'soundid': '4', 'soundname': 'Ghost'}
 ]
 events = [
-    {'eventid': '1', 'eventname': 'Driveway Motion', 'triggers':[
+    {'eventid': '1', 'eventname': 'Driveway Motion', 'triggers': [
         {'triggerid': '1', 'triggername': 'Motion', 'triggerparam': '30000', 'tiptitle':'Reset after: 30000ms<br />(click to edit)'}
-    ], 'actions':[
+    ], 'actions': [
         {'actionid': '1', 'actionparam': '1000'},
         {'actionid': '2', 'actionparam': '3000'}
     ]},
@@ -34,12 +47,20 @@ events = [
         {'actionid': '4', 'actionparam': '2000'}
     ]}
 ]
+cntrlrs = [
+	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '0', 'input1': '', 'input2': '', 'outputA': '', 'outputB': '', 'outputC': '', 'outputD': '',  'sounds': [
+		{'soundid': '1', 'soundname': 'Scream'},
+		{'soundid': '2', 'soundname': 'Zombie'},
+		{'soundid': '3', 'soundname': 'Evil Laugh'},
+		{'soundid': '4', 'soundname': 'Ghost'}
+	]}
+]
 
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
-    projectname = "Halloween 2016"
-    return render_template('dashboard.html', title='Dashboard', projectname=projectname, triggers=triggers, actions=actions, sounds=sounds, events=events)
+    project = projectname
+    return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggers, actions=actions, sounds=sounds, events=events)
 
 @app.route('/add_trigger_to_event', methods=['POST'])
 def add_trigger_to_event():
@@ -67,6 +88,18 @@ def add_trigger_to_event():
         if e['eventid'] == eventid:
             e['triggers'].append({'triggerid': triggerid, 'triggername': triggername, 'triggerparam': param, 'tiptitle': tiptitle})
             return jsonify(triggers = e['triggers'])
+
+@app.route('/controllers')
+def controllers():
+    project = projectname
+    return render_template('controllers.html', title='Controllers', projectname=project, triggers=triggers, actions=actions, sounds=sounds, controllers=cntrlrs, colors=colors)
+
+@app.route('/add_controller', methods=['POST'])
+def add_controller():
+	cid = request.form['cntid']
+	cname = request.form['cntname']
+	cntrlrs.append({'controllerid': cid, 'controllername': cname, 'controllercolor': '', 'input1': '', 'input2': '', 'outputA': '', 'outputB': '', 'outputC': '', 'outputD': '',  'sounds': []})
+	return jsonify(clist = cntrlrs)
 
 @app.route('/testpost', methods=['POST'])
 def testpost():

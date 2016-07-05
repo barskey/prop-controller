@@ -36,8 +36,8 @@ body {
 
 .draggable-panel
 {
-	width: 12.5em;
-	float: left;
+  width: 12.5em;
+  float: left;
 }
 
 .panel-trigger {

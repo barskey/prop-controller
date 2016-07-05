@@ -1,4 +1,5 @@
 $( '[data-toggle="tooltip"]' ).tooltip();
+$( "#dashboard" ).addClass( "active" );
 function createEvent(event) {
   event.preventDefault();
   $( ".dashboard" ).append("div");
@@ -11,8 +12,6 @@ $( '[data-toggle="popover"]' ).popover({
   container: "#event-1"
 });
 $( ".draggable-panel" ).draggable({ grid: [10, 10 ], containment: "parent" });
-$( ".sortable" ).sortable();
-$( ".sortable" ).disableSelection();
 $( ".add-trigger" ).click(function() {
   $( "#addTriggerModal" ).modal("toggle", $(this));
 });
