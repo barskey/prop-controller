@@ -46,7 +46,7 @@ body {
   --cc7-bg: #c6ecd4;
   --cc8-head: #24A8AC;
   --cc8-bg: #bff0f2;
-  --cc9-head: #e6e600;
+  --cc9-head: #cccc00;
   --cc9-bg: #ffffcc;
   --cc10-head: #fa8072;
   --cc10-bg: #fdd3ce;
@@ -59,7 +59,7 @@ body {
 
 .draggable-controller
 {
-  width: 14em;
+  width: 12em;
   float: left;
 }
 

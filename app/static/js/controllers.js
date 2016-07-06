@@ -10,45 +10,45 @@ var colorid = 1;
 function connectController(cid) {
   var $template = $( ".template" );
   var controllerid = "controller-" + cid;
-  var cc = "cc-" + cid
+  var cc = "cc-" + colorid;
   if ( $( "#" + controllerid ).length ) { //check if this controller is already added
     $( "#" + controllerid ).animateCss( "tada" );
   } else {
-	$( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
-	//clone the template and update the elements with controller specific data
-	var $newController = $template.clone().removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
-	$newController.addClass( "draggable-controller" ).addClass( cc );
-	$newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-oldcc": cc} );
-	$newController.find( ".controller-name" ).text( controllerid );
-	$newController.find( ".label" ).addClass( cc );
+    $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
+    //clone the template and update the elements with controller specific data
+    var $newController = $template.clone().removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
+    $newController.addClass( "draggable-controller" ).addClass( cc );
+    $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-oldcc": cc} );
+    $newController.find( ".controller-name" ).text( controllerid );
+    $newController.find( ".label" ).addClass( cc );
 
-	//Use AJAX to uppdate the list of controllers. Returns new list.
-  $.ajax({
-  	url: "/add_controller",
-  	data: {cntid: cid, cntname: controllerid},
-  	type: "POST",
-  	dataType: "json",
-  	success: function( response ) {
-  	  //update navbar list and modal select
-  	  var $cntlist = $( ".controller-list" );
-  	  $cntlist.empty();
-  	  var $cntselect = $( "#controllerSelect" );
-  	  $cntselect.empty();
-  	  $.each( response.clist, function( index, value ) {
-    		$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
-    		$cntselect.append( $( "<option>" ).attr( "value", "controller-" + value.controllerid ).text( value.controllername ) );
-  	  });
-  	},
-  	  error: function( error ) {
-  	  console.log(error);
-  	}
-  });
+    //Use AJAX to uppdate the list of controllers. Returns new list.
+    $.ajax({
+      url: "/add_controller",
+      data: {cntid: cid, cntname: controllerid, cntcolor: cc},
+      type: "POST",
+      dataType: "json",
+      success: function( response ) {
+        //update navbar list and modal select
+        var $cntlist = $( ".controller-list" );
+        $cntlist.empty();
+        var $cntselect = $( "#controllerSelect" );
+        $cntselect.empty();
+        $.each( response.clist, function( index, value ) {
+          $cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
+          $cntselect.append( $( "<option>" ).attr( "value", "controller-" + value.controllerid ).text( value.controllername ) );
+        });
+      },
+        error: function( error ) {
+        console.log(error);
+      }
+    });
 
-  $( ".dashboard" ).append($newController);
-	$( $newController ).draggable({ grid: [10, 10 ], containment: "parent" });
-	$( $newController ).animateCss( "rubberBand" );
-	if ( colorid++ > 10 ) {
-	  colorid = 1;
+    $( ".dashboard" ).append($newController);
+    $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" });
+    $( $newController ).animateCss( "rubberBand" );
+    if ( colorid++ > 10 ) {
+      colorid = 1;
     }
   }
 };
@@ -61,9 +61,9 @@ $( "#configControllerModal" ).on( "show.bs.modal", function (event) {
     controllerid: cid.substr(cid.length - 1)
   }, function(data) {
     $.each( data.controller, function ( index, value ) {
-      $modal.find( "#oldcc" ).val(value.controllercolor);
+      $modal.find( "#oldcc" ).val("cc-" + value.controllercolor);
       $modal.find( "#name" ).val(value.controllername);
-      $modal.find( "#color" ).val(value.controllercolor);
+      $modal.find( "#color" ).val("cc-" + value.controllercolor);
       $modal.find( "#input1" ).val(value.input1);
       $modal.find( "#input2" ).val(value.input2);
       $modal.find( "#outputA" ).val(value.outputA);
@@ -74,7 +74,7 @@ $( "#configControllerModal" ).on( "show.bs.modal", function (event) {
   });
 });
 $( "#configControllerModalSaveButton" ).click(function() {
-  var $btn = $( this ).button("Saving...");
+  var $btn = $( this ).button("saving");
   var cid = $( "#controllerSelect option:selected" ).val();
   var oldcc = $( "#oldcc" ).val();
   $.ajax({
@@ -85,13 +85,21 @@ $( "#configControllerModalSaveButton" ).click(function() {
     success: function( response ) {
       $.each( response.cn, function( index, value) {
         var $controller = $( "#controller-" + value.controllerid );
-        var cc = value.controllercolor;
+        var cc = "cc-" + value.controllercolor;
         $controller.removeClass( oldcc ).addClass( cc );
         $controller.find( "." + oldcc ).removeClass( oldcc ).addClass( cc );
       	$controller.find( "." + oldcc + "-heading" ).removeClass( oldcc + "-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( "data-oldcc", cc );
       	$controller.find( ".controller-name" ).text( value.controllername );
+        var a = ( value.outputA == "disabled" ? "fa-ban" : "fa-toggle-" + value.outputA.toLowerCase() );
+        $controller.find( ".outputA" ).removeClass( "fa-toggle-on fa-toggle-off" ).addClass( a );
+        var b = ( value.outputB == "disabled" ? "fa-ban" : "fa-toggle-" + value.outputB.toLowerCase() );
+        $controller.find( ".outputB" ).removeClass( "fa-toggle-on fa-toggle-off" ).addClass( b );
+        var c = ( value.outputC == "disabled" ? "fa-ban" : "fa-toggle-" + value.outputC.toLowerCase() );
+        $controller.find( ".outputC" ).removeClass( "fa-toggle-on fa-toggle-off" ).addClass( c );
+        var d = ( value.outputD == "disabled" ? "fa-ban" : "fa-toggle-" + value.outputD.toLowerCase() );
+        $controller.find( ".outputD" ).removeClass( "fa-toggle-on fa-toggle-off" ).addClass( d );
         $controller.animateCss( "rubberBand" );
-  //      $( '[data-toggle="tooltip"]' ).tooltip();
+        //$( '[data-toggle="tooltip"]' ).tooltip();
       });
       $( "#configControllerModal" ).modal("toggle");
       $btn.button("reset");

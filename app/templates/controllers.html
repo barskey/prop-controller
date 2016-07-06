@@ -99,20 +99,20 @@
               <div class="col-xs-5 text-right">
                 <h4 class="modal-title" id="configControllerModalLabel">Configure Controller:</h4>
               </div>
-              <div class="col-xs-3">
+              <div class="col-xs-4">
                 <select class="form-control" id="controllerSelect" name="controllerSelect">
                   {% for c in controllers %}
                   <option value="controller-{{ c.controllerid }}">{{ c.controllername }}</option>
                   {% endfor %}
                 </select>
-              </div><!-- /.col -->
+              </div><!-- /.col-xs-4 -->
           </div><!-- /.modal-header -->
           <div class="modal-body">
             <div class="form-group">
               <label for="name" class="col-xs-2 control-label">Name:</label>
               <div class="col-xs-4">
                 <input type="text" class="form-control" id="name" name="name" />
-              </div><!-- /.col -->
+              </div><!-- /.col-xs-4 -->
               <label for="color" class="col-xs-2 control-label">Color: </label>
           	  <div class="col-xs-3">
                 <select class="form-control" id="color" name="color">
@@ -120,7 +120,7 @@
                   <option value="cc-{{ c.colorid }}">{{ c.colorname }}</option>
                   {% endfor %}
                 </select>
-          	  </div><!-- /.col -->
+          	  </div><!-- /.col-xs-3 -->
             </div><!-- /.form-group -->
             <hr>
             <div class="form-group">
@@ -131,7 +131,7 @@
             			<option value="ON">Normally ON</option>
             			<option value="disabled">Disabled</option>
           		  </select>
-          	  </div>
+          	  </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
             <div class="form-group">
               <label for="input1" class="col-xs-2 control-label">Input 1:</label>
@@ -143,7 +143,7 @@
             			{% endfor %}
             			<option value="disabled">Disabled</option>
           		  </select>
-          	  </div>
+          	  </div><!-- /.col-xs-4 -->
               <label for="outputB" class="col-xs-2 control-label">Output B:</label>
           	  <div class="col-xs-4">
           		  <select class="form-control output-list" id="outputB" name="outputB">
@@ -151,7 +151,7 @@
             			<option value="ON">Normally ON</option>
             			<option value="disabled">Disabled</option>
           		  </select>
-          	  </div>
+          	  </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
             <div class="form-group">
               <label for="input2" class="col-xs-2 control-label">Input 2:</label>
@@ -163,7 +163,7 @@
             			{% endfor %}
             			<option value="disabled">Disabled</option>
           		  </select>
-          	  </div>
+          	  </div><!-- /.col-xs-4 -->
               <label for="outputC" class="col-xs-2 control-label">Output C:</label>
           	  <div class="col-xs-4">
           		  <select class="form-control output-list" id="outputC" name="outputC">
@@ -171,7 +171,7 @@
             			<option value="ON">Normally ON</option>
             			<option value="disabled">Disabled</option>
           		  </select>
-          	  </div>
+          	  </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
             <div class="form-group">
               <label for="outputD" class="col-xs-2 col-xs-offset-6 control-label">Output D:</label>
@@ -181,15 +181,15 @@
                   <option value="ON">Normally ON</option>
                   <option value="disabled">Disabled</option>
                 </select>
-              </div>
+              </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
           </div><!-- /.modal-body -->
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="configControllerModalSaveButton">Save</button>
+            <button type="button" class="btn btn-primary" id="configControllerModalSaveButton" data-saving-text="Saving...">Save</button>
           </div><!-- ./modal-footer -->
         </div><!-- /.modal-content -->
-      </form>
+      </form><!-- /.form #updateControllerForm -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal #configControllerModal -->
   <!-- End Modals -->
@@ -199,43 +199,51 @@
     </div><!-- /.panel-heading -->
     <ul class="list-group">
       <li class="list-group-item borderless">
-        <div class="pull-right">Output-<span class="label">A</span></div>
+        <div class="pull-left"><i class="fa fa-arrow-left"></i> Inputs</div>
+        <div class="pull-right">Outputs <i class="fa fa-arrow-right"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left"><span class="label">1</span>-Input</div>
-        <div class="pull-right">Output-<span class="label">B</span></div>
+        <div class="pull-right"><i class="fa fa-toggle-off fa-fw outputA"></i>&nbsp;<span class="label">A</span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left"><span class="label">2</span>-Input</div>
-        <div class="pull-right">Output-<span class="label">C</span></div>
+        <div class="pull-left"><span class="label">1</span></div>
+        <div class="pull-right"><i class="fa fa-toggle-off fa-fw outputB"></i>&nbsp;<span class="label">B</span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right">Output-<span class="label">D</span></div>
+        <div class="pull-left"><span class="label">2</span></div>
+        <div class="pull-right"><i class="fa fa-toggle-off fa-fw outputC"></i>&nbsp;<span class="label">C</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-right"><i class="fa fa-toggle-off fa-fw outputD"></i>&nbsp;<span class="label">D</span></div>
       </li>
     </ul><!-- list-group -->
   </div><!-- /.panel .template -->
   {% for c in controllers %}
-  <div class="panel draggable-controller cc-{{ c.controllerid }}" id="controller-{{ c.controllerid }}">
-    <div class="panel-heading cc-{{ c.controllerid }}-heading">
-      <h3 class="panel-title"><span class="controller-name">{{ c.controllername }}</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="controller-{{ c.controllerid }}" data-oldcc="cc-{{ c.controllerid }}"><span class="glyphicon glyphicon-cog"></span></div></h3>
+  <div class="panel draggable-controller cc-{{ c.controllercolor }}" id="controller-{{ c.controllerid }}">
+    <div class="panel-heading cc-{{ c.controllercolor }}-heading">
+      <h3 class="panel-title"><span class="controller-name">{{ c.controllername }}</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="controller-{{ c.controllerid }}" data-oldcc="cc-{{ c.controllercolor }}"><span class="glyphicon glyphicon-cog"></span></div></h3>
     </div><!-- /.panel-heading -->
     <ul class="list-group">
       <li class="list-group-item borderless">
-        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">A</span></div>
+        <div class="pull-left"><i class="fa fa-arrow-left"></i> Inputs</div>
+        <div class="pull-right">Outputs <i class="fa fa-arrow-right"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left"><span class="label cc-{{ c.controllerid }}">1</span>-Input</div>
-        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">B</span></div>
+        <div class="pull-right"><i class="fa fa-{% if c.outputA == 'disabled' %}ban{% else %}toggle-{{ c.outputA|lower }}{% endif %} fa-fw outputA"></i>&nbsp;<span class="label cc-{{ c.controllercolor }}">A</span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left"><span class="label cc-{{ c.controllerid }}">2</span>-Input</div>
-        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">C</span></div>
+        <div class="pull-left"><span class="label cc-{{ c.controllercolor }}">1</span></div>
+        <div class="pull-right"><i class="fa fa-{% if c.outputB == 'disabled' %}ban{% else %}toggle-{{ c.outputB|lower }}{% endif %} fa-fw outputB"></i>&nbsp;<span class="label cc-{{ c.controllercolor }}">B</span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">D</span></div>
+        <div class="pull-left"><span class="label cc-{{ c.controllercolor }}">2</span></div>
+        <div class="pull-right"><i class="fa fa-{% if c.outputC == 'disabled' %}ban{% else %}toggle-{{ c.outputC|lower }}{% endif %} fa-fw outputC"></i>&nbsp;<span class="label cc-{{ c.controllercolor }}">C</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-right"><i class="fa fa-{% if c.outputD == 'disabled' %}ban{% else %}toggle-{{ c.outputD|lower }}{% endif %} fa-fw outputD"></i>&nbsp;<span class="label cc-{{ c.controllercolor }}">D</span></div>
       </li>
     </ul>
-  </div><!-- /.panel .controller-{{ c.controllerid }} -->
+  </div><!-- /.panel #controller-{{ c.controllerid }} -->
   {% endfor %}
 </div><!-- /.dashboard -->
 <script>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
