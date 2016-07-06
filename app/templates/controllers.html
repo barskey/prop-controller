@@ -2,234 +2,242 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <!-- Custom styles for this template -->
-        <link href="static/css/controllers.css" rel="stylesheet">
+<!-- Custom styles for this template -->
+<link href="static/css/controllers.css" rel="stylesheet">
 
-        <!-- Second navbar for this page -->
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            </div>
+<!-- Second navbar for this page -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-              <ul class="nav navbar-nav">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
-                  <ul class="dropdown-menu list-group" id="trigger-menu">
-                    {% for t in triggers %}
-                    <a class="list-group-item list-group-item-warning" id="{{ t.triggerid }}">{{ t.triggername }}</a>
-                    {% endfor %}
-                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
-                  </ul><!-- /#trigger-menu -->
-                </li><!-- /.dropdown -->
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="actions-menu">
-                    {% for a in actions %}
-                    <a href="#" class="list-group-item list-group-item-success" id="{{ a.actionid }}">{{ a.actionname }}</a>
-                    {% endfor %}
-                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
-                  </ul><!-- /#actions-menu -->
-                </li><!-- /.dropdown -->
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sounds <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="sounds-menu">
-                    {% for s in sounds %}
-                    <a href="#" class="list-group-item list-group-item-info" id="{{ s.soundid }}">{{ s.soundname }}</a>
-                    {% endfor %}
-                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
-                  </ul><!-- /#sounds-menu -->
-                </li><!-- /.dropdown -->
-              </ul><!-- /.navbar-nav -->
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Controllers <span class="caret"></span></a>
-                <ul class="dropdown-menu controller-list">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
+          <ul class="dropdown-menu list-group" id="trigger-menu">
+            {% for t in triggers %}
+            <a class="list-group-item list-group-item-warning" id="{{ t.triggerid }}">{{ t.triggername }}</a>
+            {% endfor %}
+            <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
+          </ul><!-- /#trigger-menu -->
+        </li><!-- /.dropdown -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
+          <ul class="dropdown-menu" id="actions-menu">
+            {% for a in actions %}
+            <a href="#" class="list-group-item list-group-item-success" id="{{ a.actionid }}">{{ a.actionname }}</a>
+            {% endfor %}
+            <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
+          </ul><!-- /#actions-menu -->
+        </li><!-- /.dropdown -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sounds <span class="caret"></span></a>
+          <ul class="dropdown-menu" id="sounds-menu">
+            {% for s in sounds %}
+            <a href="#" class="list-group-item list-group-item-info" id="{{ s.soundid }}">{{ s.soundname }}</a>
+            {% endfor %}
+            <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
+          </ul><!-- /#sounds-menu -->
+        </li><!-- /.dropdown -->
+      </ul><!-- /.navbar-nav -->
+      <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Controllers <span class="caret"></span></a>
+      <ul class="dropdown-menu controller-list">
+      {% for c in controllers %}
+      <li><a href="#">{{ c.controllername }}</a></li>
+      {% endfor %}
+      </ul><!-- /.dropdown-menu -->
+        <li>
+          <div class="btn-group">
+        	<button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
+        	  <span class="glyphicon glyphicon-plus"></span><span class="caret"></span>
+        	</button>
+        	<ul class="dropdown-menu">
+        	  <li class="debug-add"><a href="#" onclick="connectController(1)">controller-1</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(2)">controller-2</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(3)">controller-3</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(4)">controller-4</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(5)">controller-5</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(6)">controller-6</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(7)">controller-7</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(8)">controller-8</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(9)">controller-9</a></li>
+        	  <li class="debug-add"><a href="#" onclick="connectController(10)">controller-10</a></li>
+        	</ul>
+          </div>
+        </li>
+        </ul><!-- .navbar-right -->
+      </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav><!-- /.navbar-default -->
+
+<!-- Main body content for this page -->
+<div class="jumbotron hidden" style="height: 90%">
+  <div class="container">
+    <h3 class="text-muted">Connect a Controller</h3>
+    <p class="text-muted">Press the button on a controller to automatically connect it to this project to begin configuring...</p>
+  </div>
+</div>
+<div class="container-fluid dashboard">
+  <!-- Modals -->
+  <div class="modal fade" id="configControllerModal" tabindex="-1" role="dialog" labeledby="configControllerModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form class="form-horizontal" id="updateControllerForm" action="update_controller" method="POST">
+          <input type="hidden" name="oldcc" id="oldcc" value="" />
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <div class="col-xs-5 text-right">
+                <h4 class="modal-title" id="configControllerModalLabel">Configure Controller:</h4>
+              </div>
+              <div class="col-xs-3">
+                <select class="form-control" id="controllerSelect" name="controllerSelect">
                   {% for c in controllers %}
-                  <li><a href="#">{{ c.controllername }}</a></li>
+                  <option value="controller-{{ c.controllerid }}">{{ c.controllername }}</option>
                   {% endfor %}
-                </ul><!-- /.dropdown-menu -->
-				<li>
-				  <div class="btn-group">
-					<button type="button" class="btn btn-default navbar-btn dropdown-toggle" data-toggle="dropdown">
-					  <span class="glyphicon glyphicon-plus"></span><span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu">
-					  <li class="debug-add"><a href="#" onclick="connectController(1)">controller-1</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(2)">controller-2</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(3)">controller-3</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(4)">controller-4</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(5)">controller-5</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(6)">controller-6</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(7)">controller-7</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(8)">controller-8</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(9)">controller-9</a></li>
-					  <li class="debug-add"><a href="#" onclick="connectController(10)">controller-10</a></li>
-					</ul>
-				  </div>
-				</li>
-              </ul><!-- .navbar-right -->
-            </div><!-- /.navbar-collapse -->
-          </div><!-- /.container-fluid -->
-        </nav><!-- /.navbar-default -->
-
-        <!-- Main body content for this page -->
-		<div class="jumbotron hidden" style="height: 90%">
-		  <div class="container">
-		    <h3 class="text-muted">Connect a Controller</h3>
-			<p class="text-muted">Press the button on a controller to automatically connect it to this project to begin configuring...</p>
-		  </div>
-		</div>
-        <div class="container-fluid dashboard">
-          <!-- Modals -->
-          <div class="modal fade" id="configControllerModal" tabindex="-1" role="dialog" labeledby="configControllerModalLabel">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="configControllerModalLabel">Configure Controller</h4>
-                </div><!-- /.modal-header -->
-                <div class="modal-body">
-                  <form class="form-horizontal" id="updateControllerForm">
-                    <div class="form-group pad-6">
-                      <label for="controllerSelect" class="col-xs-2 col-xs-offset-1 control-label">Configure: </label>
-					  <div class="col-xs-3">
-						  <select class="form-control" id="controllerSelect" name="controllerSelect">
-							{% for c in controllers %}
-							<option value="controller-{{ c.controllerid }}">{{ c.controllername }}</option>
-							{% endfor %}
-						  </select>
-					  </div>
-                      <label for="color" class="col-xs-2 control-label">Color: </label>
-					  <div class="col-xs-3">
-                      <select class="form-control" id="color" name="color">
-                        {% for c in colors %}
-                        <option value="{{ c.colorhex }}">{{ c.colorname }}</option>
-                        {% endfor %}
-                      </select>
-					  </div>
-                    </div>
-                    <div class="form-group">
-                      <label for="outputA" class="col-xs-2 col-xs-offset-6 control-label">Output A:</label>
-					  <div class="col-xs-4">
-						  <select class="form-control output-list" id="outputA" name="outputA">
-							<option value="OFF" checked="checked">Normally OFF</option>
-							<option value="ON">Normally ON</option>
-							<option value="disabled">Disabled</option>
-						  </select>
-					  </div>
-                    </div><!-- /.form-group -->
-                    <div class="form-group">
-                      <label for="input1" class="col-xs-2 control-label">Input 1:</label>
-					  <div class="col-xs-4">
-						  <select class="form-control trigger-list" id="input1" name="input1">
-							<option value="">Not configured</option>
-							{% for t in triggers %}
-							<option value="{{ t.triggerid }}">{{ t.triggername }}</option>
-							{% endfor %}
-							<option value="disabled">Disabled</option>
-						  </select>
-					  </div>
-                      <label for="outputB" class="col-xs-2 control-label">Output B:</label>
-					  <div class="col-xs-4">
-						  <select class="form-control output-list" id="outputB" name="outputB">
-							<option value="OFF" checked="checked">Normally OFF</option>
-							<option value="ON">Normally ON</option>
-							<option value="disabled">Disabled</option>
-						  </select>
-					  </div>
-                    </div><!-- /.form-group -->
-                    <div class="form-group">
-                      <label for="input2" class="col-xs-2 control-label">Input 2:</label>
-					  <div class="col-xs-4">
-						  <select class="form-control trigger-list" id="input2" name="input2">
-							<option value="">Not configured</option>
-							{% for t in triggers %}
-							<option value="{{ t.triggerid }}">{{ t.triggername }}</option>
-							{% endfor %}
-							<option value="disabled">Disabled</option>
-						  </select>
-					  </div>
-                      <label for="outputC" class="col-xs-2 control-label">Output C:</label>
-					  <div class="col-xs-4">
-						  <select class="form-control output-list" id="outputC" name="outputC">
-							<option value="OFF" checked="checked">Normally OFF</option>
-							<option value="ON">Normally ON</option>
-							<option value="disabled">Disabled</option>
-						  </select>
-					  </div>
-                    </div><!-- /.form-group -->
-                    <div class="form-group">
-                      <label for="outputD" class="col-xs-2 col-xs-offset-6 control-label">Output D:</label>
-					  <div class="col-xs-4">
-						  <select class="form-control output-list" id="outputD" name="outputD">
-							<option value="OFF" checked="checked">Normally OFF</option>
-							<option value="ON">Normally ON</option>
-							<option value="disabled">Disabled</option>
-						  </select>
-					  </div>
-                    </div><!-- /.form-group -->
-                  </form>
-                </div><!-- /.modal-body -->
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary" id="configControllerModalAddButton">Add</button>
-                </div><!-- ./modal-footer -->
-              </div><!-- /.modal-content -->
-            </div><!-- /.modal-dialog -->
-          </div><!-- /.modal #configControllerModal -->
-          <!-- End Modals -->
-          <div class="panel template hidden" id="template-controller">
-            <div class="panel-heading">
-              <h3 class="panel-title"><span class="controller-name">Controller 1</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="template-controller"><span class="glyphicon glyphicon-cog"></span></div></h3>
-            </div><!-- /.panel-heading -->
-			<ul class="list-group">
-				<li class="list-group-item borderless">
-				  <div class="pull-right">Output-<span class="label">A</span></div>
-				</li>
-				<li class="list-group-item borderless">
-				  <div class="pull-left"><span class="label">1</span>-Input</div>
-				  <div class="pull-right">Output-<span class="label">B</span></div>
-				</li>
-				<li class="list-group-item borderless">
-				  <div class="pull-left"><span class="label">2</span>-Input</div>
-				  <div class="pull-right">Output-<span class="label">C</span></div>
-				</li>
-				<li class="list-group-item borderless">
-				  <div class="pull-right">Output-<span class="label">D</span></div>
-				</li>
-			</ul>
-          </div><!-- /.panel .template -->
-		  {% for c in controllers %}
-		  <div class="panel draggable-controller controller-{{ c.controllerid }}" id="controller-{{ c.controllerid }}">
-            <div class="panel-heading controller-{{ c.controllerid }}-heading">
-              <h3 class="panel-title"><span class="controller-name">{{ c.controllername }}</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="controller-{{ c.controllerid }}"><span class="glyphicon glyphicon-cog"></span></div></h3>
-            </div><!-- /.panel-heading -->
-			<ul class="list-group">
-				<li class="list-group-item borderless">
-				  <div class="pull-right">Output-<span class="label controller-{{ c.controllerid }}">A</span></div>
-				</li>
-				<li class="list-group-item borderless">
-				  <div class="pull-left"><span class="label controller-{{ c.controllerid }}">1</span>-Input</div>
-				  <div class="pull-right">Output-<span class="label controller-{{ c.controllerid }}">B</span></div>
-				</li>
-				<li class="list-group-item borderless">
-				  <div class="pull-left"><span class="label controller-{{ c.controllerid }}">2</span>-Input</div>
-				  <div class="pull-right">Output-<span class="label controller-{{ c.controllerid }}">C</span></div>
-				</li>
-				<li class="list-group-item borderless">
-				  <div class="pull-right">Output-<span class="label controller-{{ c.controllerid }}">D</span></div>
-				</li>
-			</ul>
-          </div><!-- /.panel .template -->
-		  {% endfor %}
-        </div><!-- /.dashboard -->
-        <script src="static/js/controllers.js" type="text/javascript"></script>
+                </select>
+              </div><!-- /.col -->
+          </div><!-- /.modal-header -->
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="name" class="col-xs-2 control-label">Name:</label>
+              <div class="col-xs-4">
+                <input type="text" class="form-control" id="name" name="name" />
+              </div><!-- /.col -->
+              <label for="color" class="col-xs-2 control-label">Color: </label>
+          	  <div class="col-xs-3">
+                <select class="form-control" id="color" name="color">
+                  {% for c in colors %}
+                  <option value="cc-{{ c.colorid }}">{{ c.colorname }}</option>
+                  {% endfor %}
+                </select>
+          	  </div><!-- /.col -->
+            </div><!-- /.form-group -->
+            <hr>
+            <div class="form-group">
+              <label for="outputA" class="col-xs-2 col-xs-offset-6 control-label">Output A:</label>
+          	  <div class="col-xs-4">
+          		  <select class="form-control output-list" id="outputA" name="outputA">
+            			<option value="OFF" checked="checked">Normally OFF</option>
+            			<option value="ON">Normally ON</option>
+            			<option value="disabled">Disabled</option>
+          		  </select>
+          	  </div>
+            </div><!-- /.form-group -->
+            <div class="form-group">
+              <label for="input1" class="col-xs-2 control-label">Input 1:</label>
+          	  <div class="col-xs-4">
+          		  <select class="form-control trigger-list" id="input1" name="input1">
+            			<option value="">Not configured</option>
+            			{% for t in triggers %}
+            			<option value="{{ t.triggerid }}">{{ t.triggername }}</option>
+            			{% endfor %}
+            			<option value="disabled">Disabled</option>
+          		  </select>
+          	  </div>
+              <label for="outputB" class="col-xs-2 control-label">Output B:</label>
+          	  <div class="col-xs-4">
+          		  <select class="form-control output-list" id="outputB" name="outputB">
+            			<option value="OFF" checked="checked">Normally OFF</option>
+            			<option value="ON">Normally ON</option>
+            			<option value="disabled">Disabled</option>
+          		  </select>
+          	  </div>
+            </div><!-- /.form-group -->
+            <div class="form-group">
+              <label for="input2" class="col-xs-2 control-label">Input 2:</label>
+          	  <div class="col-xs-4">
+          		  <select class="form-control trigger-list" id="input2" name="input2">
+            			<option value="">Not configured</option>
+            			{% for t in triggers %}
+            			<option value="{{ t.triggerid }}">{{ t.triggername }}</option>
+            			{% endfor %}
+            			<option value="disabled">Disabled</option>
+          		  </select>
+          	  </div>
+              <label for="outputC" class="col-xs-2 control-label">Output C:</label>
+          	  <div class="col-xs-4">
+          		  <select class="form-control output-list" id="outputC" name="outputC">
+            			<option value="OFF" checked="checked">Normally OFF</option>
+            			<option value="ON">Normally ON</option>
+            			<option value="disabled">Disabled</option>
+          		  </select>
+          	  </div>
+            </div><!-- /.form-group -->
+            <div class="form-group">
+              <label for="outputD" class="col-xs-2 col-xs-offset-6 control-label">Output D:</label>
+              <div class="col-xs-4">
+                <select class="form-control output-list" id="outputD" name="outputD">
+                  <option value="OFF" checked="checked">Normally OFF</option>
+                  <option value="ON">Normally ON</option>
+                  <option value="disabled">Disabled</option>
+                </select>
+              </div>
+            </div><!-- /.form-group -->
+          </div><!-- /.modal-body -->
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="configControllerModalSaveButton">Save</button>
+          </div><!-- ./modal-footer -->
+        </div><!-- /.modal-content -->
+      </form>
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal #configControllerModal -->
+  <!-- End Modals -->
+  <div class="panel template hidden" id="template-controller">
+    <div class="panel-heading">
+      <h3 class="panel-title"><span class="controller-name">Controller 1</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="template-controller" data-oldcc="template-oldcc"><span class="glyphicon glyphicon-cog"></span></div></h3>
+    </div><!-- /.panel-heading -->
+    <ul class="list-group">
+      <li class="list-group-item borderless">
+        <div class="pull-right">Output-<span class="label">A</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-left"><span class="label">1</span>-Input</div>
+        <div class="pull-right">Output-<span class="label">B</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-left"><span class="label">2</span>-Input</div>
+        <div class="pull-right">Output-<span class="label">C</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-right">Output-<span class="label">D</span></div>
+      </li>
+    </ul><!-- list-group -->
+  </div><!-- /.panel .template -->
+  {% for c in controllers %}
+  <div class="panel draggable-controller cc-{{ c.controllerid }}" id="controller-{{ c.controllerid }}">
+    <div class="panel-heading cc-{{ c.controllerid }}-heading">
+      <h3 class="panel-title"><span class="controller-name">{{ c.controllername }}</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="controller-{{ c.controllerid }}" data-oldcc="cc-{{ c.controllerid }}"><span class="glyphicon glyphicon-cog"></span></div></h3>
+    </div><!-- /.panel-heading -->
+    <ul class="list-group">
+      <li class="list-group-item borderless">
+        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">A</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-left"><span class="label cc-{{ c.controllerid }}">1</span>-Input</div>
+        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">B</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-left"><span class="label cc-{{ c.controllerid }}">2</span>-Input</div>
+        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">C</span></div>
+      </li>
+      <li class="list-group-item borderless">
+        <div class="pull-right">Output-<span class="label cc-{{ c.controllerid }}">D</span></div>
+      </li>
+    </ul>
+  </div><!-- /.panel .controller-{{ c.controllerid }} -->
+  {% endfor %}
+</div><!-- /.dashboard -->
+<script>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+<script src="static/js/controllers.js" type="text/javascript"></script>
 {% endblock %}

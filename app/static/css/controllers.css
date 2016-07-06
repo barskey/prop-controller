@@ -30,28 +30,28 @@ body {
  */
 
  :root {
-  --c1-head: #4298B5;
-  --c1-bg: #c7e2eb;
-  --c2-head: #273a3f;
-  --c2-bg: #c0d3d8;
-  --c3-head: #92B06A;
-  --c3-bg: #dae5cd;
-  --c4-head: #6600cc;
-  --c4-bg: #e5ccff;
-  --c5-head: #DD5F32;
-  --c5-bg: #f4ccbd;
-  --c6-head: #FFA200;
-  --c6-bg: #ffe3b3;
-  --c7-head: #00A03E;
-  --c7-bg: #c6ecd4;
-  --c8-head: #24A8AC;
-  --c8-bg: #bff0f2;
-  --c9-head: #0087CB;
-  --c9-bg: #99ddff;
-  --c10-head: #982395;
-  --c10-bg: #f1c1ef;
+  --cc1-head: #4298B5;
+  --cc1-bg: #c7e2eb;
+  --cc2-head: #273a3f;
+  --cc2-bg: #c0d3d8;
+  --cc3-head: #92B06A;
+  --cc3-bg: #dae5cd;
+  --cc4-head: #9900ff;
+  --cc4-bg: #e0b3ff;
+  --cc5-head: #DD5F32;
+  --cc5-bg: #f4ccbd;
+  --cc6-head: #FFA200;
+  --cc6-bg: #ffe3b3;
+  --cc7-head: #00A03E;
+  --cc7-bg: #c6ecd4;
+  --cc8-head: #24A8AC;
+  --cc8-bg: #bff0f2;
+  --cc9-head: #e6e600;
+  --cc9-bg: #ffffcc;
+  --cc10-head: #fa8072;
+  --cc10-bg: #fdd3ce;
  }
- 
+
 .dashboard {
   height: calc(100vh - 100px);
   padding: 15px;
@@ -63,160 +63,160 @@ body {
   float: left;
 }
 
-.controller-1 {
-  border-color: var(--c1-head);
-  background-color: var(--c1-bg);
+.cc-1 {
+  border-color: var(--cc1-head);
+  background-color: var(--cc1-bg);
 }
 
-.controller-1 > .controller-1-heading {
+.cc-1 > .cc-1-heading {
   color: #fff;
-  background-color: var(--c1-head);
-  border-color: var(--c1-head);
+  background-color: var(--cc1-head);
+  border-color: var(--cc1-head);
 }
 
-.controller-1 > ul > li > div > span.label {
-  background-color: var(--c1-head);
+.cc-1 > ul > li > div > span.label {
+  background-color: var(--cc1-head);
 }
 
-.controller-2 {
-  border-color: var(--c2-head);
-  background-color: var(--c2-bg);
+.cc-2 {
+  border-color: var(--cc2-head);
+  background-color: var(--cc2-bg);
 }
 
-.controller-2 > .controller-2-heading {
+.cc-2 > .cc-2-heading {
   color: #fff;
-  background-color: var(--c2-head);
-  border-color: var(--c2-head);
+  background-color: var(--cc2-head);
+  border-color: var(--cc2-head);
 }
 
-.controller-2 > ul > li > div > span.label {
-  background-color: var(--c2-head);
+.cc-2 > ul > li > div > span.label {
+  background-color: var(--cc2-head);
 }
 
-.controller-3 {
-  border-color: var(--c3-head);
-  background-color: var(--c3-bg);
+.cc-3 {
+  border-color: var(--cc3-head);
+  background-color: var(--cc3-bg);
 }
 
-.controller-3 > .controller-3-heading {
+.cc-3 > .cc-3-heading {
   color: #000;
-  background-color: var(--c3-head);
-  border-color: var(--c3-head);
+  background-color: var(--cc3-head);
+  border-color: var(--cc3-head);
 }
 
-.controller-3 > ul > li > div > span.label {
+.cc-3 > ul > li > div > span.label {
   color: #000;
-  background-color: var(--c3-head);
+  background-color: var(--cc3-head);
 }
 
-.controller-4 {
-  border-color: var(--c4-head);
-  background-color: var(--c4-bg);
+.cc-4 {
+  border-color: var(--cc4-head);
+  background-color: var(--cc4-bg);
 }
 
-.controller-4 > .controller-4-heading {
+.cc-4 > .cc-4-heading {
   color: #fff;
-  background-color: var(--c4-head);
-  border-color: var(--c4-head);
+  background-color: var(--cc4-head);
+  border-color: var(--cc4-head);
 }
 
-.controller-4 > ul > li > div > span.label {
-  background-color: var(--c4-head);
+.cc-4 > ul > li > div > span.label {
+  background-color: var(--cc4-head);
 }
 
-.controller-5 {
-  border-color: var(--c5-head);
-  background-color: var(--c5-bg);
+.cc-5 {
+  border-color: var(--cc5-head);
+  background-color: var(--cc5-bg);
 }
 
-.controller-5 > .controller-5-heading {
+.cc-5 > .cc-5-heading {
   color: #fff;
-  background-color: var(--c5-head);
-  border-color: var(--c5-head);
+  background-color: var(--cc5-head);
+  border-color: var(--cc5-head);
 }
 
-.controller-5 > ul > li > div > span.label {
-  background-color: var(--c5-head);
+.cc-5 > ul > li > div > span.label {
+  background-color: var(--cc5-head);
 }
 
-.controller-6 {
-  border-color: var(--c6-head);
-  background-color: var(--c6-bg);
+.cc-6 {
+  border-color: var(--cc6-head);
+  background-color: var(--cc6-bg);
 }
 
-.controller-6 > .controller-6-heading {
+.cc-6 > .cc-6-heading {
   color: #fff;
-  background-color: var(--c6-head);
-  border-color: var(--c6-head);
+  background-color: var(--cc6-head);
+  border-color: var(--cc6-head);
 }
 
-.controller-6 > ul > li > div > span.label {
-  background-color: var(--c6-head);
+.cc-6 > ul > li > div > span.label {
+  background-color: var(--cc6-head);
 }
 
-.controller-7 {
-  border-color: var(--c7-head);
-  background-color: var(--c7-bg);
+.cc-7 {
+  border-color: var(--cc7-head);
+  background-color: var(--cc7-bg);
 }
 
-.controller-7 > .controller-7-heading {
+.cc-7 > .cc-7-heading {
   color: #fff;
-  background-color: var(--c7-head);
-  border-color: var(--c7-head);
+  background-color: var(--cc7-head);
+  border-color: var(--cc7-head);
 }
 
-.controller-7 > ul > li > div > span.label {
-  background-color: var(--c7-head);
+.cc-7 > ul > li > div > span.label {
+  background-color: var(--cc7-head);
 }
 
-.controller-8 {
-  border-color: var(--c8-head);
-  background-color: var(--c8-bg);
+.cc-8 {
+  border-color: var(--cc8-head);
+  background-color: var(--cc8-bg);
 }
 
-.controller-8 > .controller-8-heading {
+.cc-8 > .cc-8-heading {
   color: #fff;
-  background-color: var(--c8-head);
-  border-color: var(--c8-head);
+  background-color: var(--cc8-head);
+  border-color: var(--cc8-head);
 }
 
-.controller-8 > ul > li > div > span.label {
-  background-color: var(--c8-head);
+.cc-8 > ul > li > div > span.label {
+  background-color: var(--cc8-head);
 }
 
-.controller-9 {
-  border-color: var(--c9-head);
-  background-color: var(--c9-bg);
+.cc-9 {
+  border-color: var(--cc9-head);
+  background-color: var(--cc9-bg);
 }
 
-.controller-9 > .controller-9-heading {
+.cc-9 > .cc-9-heading {
   color: #fff;
-  background-color: var(--c9-head);
-  border-color: var(--c9-head);
+  background-color: var(--cc9-head);
+  border-color: var(--cc9-head);
 }
 
-.controller-9 > ul > li > div > span.label {
-  background-color: var(--c9-head);
+.cc-9 > ul > li > div > span.label {
+  background-color: var(--cc9-head);
 }
 
-.controller-10 {
-  border-color: var(--c10-head);
-  background-color: var(--c10-bg);
+.cc-10 {
+  border-color: var(--cc10-head);
+  background-color: var(--cc10-bg);
 }
 
-.controller-10 > .controller-10-heading {
+.cc-10 > .cc-10-heading {
   color: #fff;
-  background-color: var(--c10-head);
-  border-color: var(--c10-head);
+  background-color: var(--cc10-head);
+  border-color: var(--cc10-head);
 }
 
-.controller-10 > ul > li > div > span.label {
-  background-color: var(--c10-head);
+.cc-10 > ul > li > div > span.label {
+  background-color: var(--cc10-head);
 }
 
 li.borderless {
   border-top: 0 none;
-  border-bottom: 0 none; 
+  border-bottom: 0 none;
   padding: 5px 15px;
   background-color: transparent;
   height: 35px;

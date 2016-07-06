@@ -1,19 +1,19 @@
 from app import app
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, json
 
 #Dummy data for testing
 projectname = "Halloween 2016"
 colors = [
-	{'colorid': '1', 'colorname': 'red', 'colorhex': '#FF0000'},
-	{'colorid': '2', 'colorname': 'orange', 'colorhex': '#FF9900'},
-	{'colorid': '3', 'colorname': 'yellow', 'colorhex': '#FFF00'},
-	{'colorid': '4', 'colorname': 'green', 'colorhex': '#009900'},
-	{'colorid': '5', 'colorname': 'blue', 'colorhex': '#0066FF'},
-	{'colorid': '6', 'colorname': 'purple', 'colorhex': '#6600FF'},
-	{'colorid': '7', 'colorname': 'lime', 'colorhex': '#00FF00'},
-	{'colorid': '8', 'colorname': 'aqua', 'colorhex': '#00FFFF'},
-	{'colorid': '9', 'colorname': 'magenta', 'colorhex': '#FF00FF'},
-	{'colorid': '10', 'colorname': 'black', 'colorhex': '#000000'}
+	{'colorid': '5', 'colorname': 'red', 'colorhex': '#DD5F32'},
+	{'colorid': '6', 'colorname': 'orange', 'colorhex': '#FFA200'},
+	{'colorid': '9', 'colorname': 'yellow', 'colorhex': '#e6e600'},
+	{'colorid': '7', 'colorname': 'green', 'colorhex': '#00A03E'},
+	{'colorid': '1', 'colorname': 'blue', 'colorhex': '#4298B5'},
+	{'colorid': '4', 'colorname': 'purple', 'colorhex': '#9900ff'},
+	{'colorid': '3', 'colorname': 'olive', 'colorhex': '#92B06A'},
+	{'colorid': '8', 'colorname': 'teal', 'colorhex': '#24A8AC'},
+	{'colorid': '2', 'colorname': 'black', 'colorhex': '#273a3f'},
+	{'colorid': '10', 'colorname': 'salmon', 'colorhex': '#fa8072'}
 ]
 triggers = [
     {'triggerid': '1', 'triggername': 'Motion'},
@@ -48,7 +48,7 @@ events = [
     ]}
 ]
 cntrlrs = [
-	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '0', 'input1': '', 'input2': '', 'outputA': '', 'outputB': '', 'outputC': '', 'outputD': '',  'sounds': [
+	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': 'cc-1', 'input1': '', 'input2': '', 'outputA': 'OFF', 'outputB': 'OFF', 'outputC': 'OFF', 'outputD': 'OFF',  'sounds': [
 		{'soundid': '1', 'soundname': 'Scream'},
 		{'soundid': '2', 'soundname': 'Zombie'},
 		{'soundid': '3', 'soundname': 'Evil Laugh'},
@@ -100,6 +100,32 @@ def add_controller():
 	cname = request.form['cntname']
 	cntrlrs.append({'controllerid': cid, 'controllername': cname, 'controllercolor': '', 'input1': '', 'input2': '', 'outputA': '', 'outputB': '', 'outputC': '', 'outputD': '',  'sounds': []})
 	return jsonify(clist = cntrlrs)
+
+@app.route('/update_controller', methods=['POST'])
+def update_controller():
+	a, cid = request.form['controllerSelect'].split("-")
+	test = []
+	for c in cntrlrs:
+		if c['controllerid'] == cid:
+			c['controllername'] = request.form['name']
+			c['controllercolor'] = request.form['color']
+			c['input1'] = request.form['input1']
+			c['input2'] = request.form['input2']
+			c['outputA'] = request.form['outputA']
+			c['outputB'] = request.form['outputB']
+			c['outputC'] = request.form['outputC']
+			c['outputD'] = request.form['outputD']
+			test.append(c)
+	return jsonify(cn = test)
+
+@app.route('/_get_controller')
+def get_controller():
+	cid = request.args.get('controllerid')
+	test = []
+	for c in cntrlrs:
+		if c['controllerid'] == cid:
+			test.append(c)
+	return jsonify(controller = test)
 
 @app.route('/testpost', methods=['POST'])
 def testpost():
