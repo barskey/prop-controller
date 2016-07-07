@@ -59,8 +59,12 @@ body {
 
 .draggable-controller
 {
-  width: 12em;
+  width: 12.5em;
   float: left;
+}
+
+span[class*='cc-'].unassigned {
+  background-color: gray !important;
 }
 
 .cc-1 {
@@ -121,7 +125,7 @@ body {
 }
 
 .cc-4 > ul > li > div > span.label {
-  background-color: var(--cc4-head);
+  background-color: var(--cc4-head); !important
 }
 
 .cc-5 {

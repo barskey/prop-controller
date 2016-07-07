@@ -50,7 +50,7 @@ events = [
 	]}
 ]
 cntrlrs = [
-	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': '', 'input2': '', 'outputA': 'ON', 'outputB': 'OFF', 'outputC': 'OFF', 'outputD': 'OFF',  'sounds': [
+	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': '', 'input1trigger': '1', 'input2': '', 'input2trigger': '', 'outputa': 'ON', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '2', 'outputc': 'OFF', 'outputcaction': '3', 'outputd': 'OFF',  'outputdaction': '', 'sounds': [
 		{'soundid': '1', 'soundname': 'Scream'},
 		{'soundid': '2', 'soundname': 'Zombie'},
 		{'soundid': '3', 'soundname': 'Evil Laugh'},
@@ -101,7 +101,7 @@ def add_controller():
 	cid = request.form['cntid']
 	cname = request.form['cntname']
 	a, cc = request.form['cntcolor'].split('-')
-	cntrlrs.append({'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input2': '', 'outputA': 'OFF', 'outputB': 'OFF', 'outputC': 'OFF', 'outputD': 'OFF',  'sounds': []})
+	cntrlrs.append({'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input1trigger': '', 'input2': '', 'input2trigger': '', 'outputa': 'OFF', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '', 'outputc': 'OFF', 'outputcaction': '', 'outputd': 'OFF',  'outputdaction': '', 'sounds': []})
 	return jsonify(clist = cntrlrs)
 
 @app.route('/update_controller', methods=['POST'])
@@ -114,10 +114,10 @@ def update_controller():
 			a, c['controllercolor'] = request.form['color'].split('-')
 			c['input1'] = request.form['input1']
 			c['input2'] = request.form['input2']
-			c['outputA'] = request.form['outputA']
-			c['outputB'] = request.form['outputB']
-			c['outputC'] = request.form['outputC']
-			c['outputD'] = request.form['outputD']
+			c['outputa'] = request.form['outputa']
+			c['outputb'] = request.form['outputb']
+			c['outputc'] = request.form['outputc']
+			c['outputd'] = request.form['outputd']
 			test.append(c)
 	return jsonify(cn = test)
 

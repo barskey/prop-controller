@@ -1,5 +1,5 @@
-$( '[data-toggle="tooltip"]' ).tooltip();
 $( "#dashboard" ).addClass( "active" );
+$( '[data-toggle="tooltip"]' ).tooltip();
 function createEvent(event) {
   event.preventDefault();
   $( ".dashboard" ).append("div");
