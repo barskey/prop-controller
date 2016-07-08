@@ -98,11 +98,13 @@ def controllers():
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
-	cid = request.form['cntid']
-	cname = request.form['cntname']
-	a, cc = request.form['cntcolor'].split('-')
-	cntrlrs.append({'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input1trigger': '', 'input2': '', 'input2trigger': '', 'outputa': 'OFF', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '', 'outputc': 'OFF', 'outputcaction': '', 'outputd': 'OFF',  'outputdaction': '', 'sounds': []})
-	return jsonify(clist = cntrlrs)
+	cid = request.form['cidform']
+	cname = request.form['name']
+	b, cc = request.form['color'].split('-')
+	newcontroller = {'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input1trigger': '', 'input2': '', 'input2trigger': '', 'outputa': 'OFF', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '', 'outputc': 'OFF', 'outputcaction': '', 'outputd': 'OFF',  'outputdaction': '', 'sounds': []}
+	cntrlrs.append(newcontroller)
+	r = {'status':'OK', 'clist': cntrlrs, 'controller': newcontroller}
+	return jsonify(data = r)
 
 @app.route('/update_controller', methods=['POST'])
 def update_controller():

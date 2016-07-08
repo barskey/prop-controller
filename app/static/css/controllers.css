@@ -78,7 +78,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc1-head);
 }
 
-.cc-1 > ul > li > div > span.label {
+.cc-1.label {
   background-color: var(--cc1-head);
 }
 
