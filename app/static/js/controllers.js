@@ -17,19 +17,19 @@ function connectController(cid) {
   } else {
     $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
     //clone the template and update the elements with controller specific data
-    var $newController = $template.clone().removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
+    var $newController = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
     $newController.addClass( "draggable-controller" ).addClass( cc );
     $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-oldcc": cc} );
     $newController.find( ".controller-name" ).text( controllerid );
     $newController.find( ".label" ).addClass( cc );
-	$newController.find( "#toggle-outputa-templateid" ).id( "toggle-outputa-" + cid );
-	$newController.find( "#toggle-outputb-templateid" ).id( "toggle-outputb-" + cid );
-	$newController.find( "#toggle-outputc-templateid" ).id( "toggle-outputc-" + cid );
-	$newController.find( "#toggle-outputd-templateid" ).id( "toggle-outputd-" + cid );
-	$newController.find( "#assign-outputa-templateid" ).id( "assign-outputa-" + cid );
-	$newController.find( "#assign-outputb-templateid" ).id( "assign-outputb-" + cid );
-	$newController.find( "#assign-outputc-templateid" ).id( "assign-outputc-" + cid );
-	$newController.find( "#assign-outputd-templateid" ).id( "assign-outputd-" + cid );
+    $newController.find( "#toggle-outputa-templateid" ).attr( "id", "toggle-outputa-" + cid );
+    $newController.find( "#toggle-outputb-templateid" ).attr( "id", "toggle-outputb-" + cid );
+    $newController.find( "#toggle-outputc-templateid" ).attr( "id", "toggle-outputc-" + cid );
+    $newController.find( "#toggle-outputd-templateid" ).attr( "id", "toggle-outputd-" + cid );
+    $newController.find( "#assign-outputa-templateid" ).attr( "id", "assign-outputa-" + cid );
+    $newController.find( "#assign-outputb-templateid" ).attr( "id", "assign-outputb-" + cid );
+    $newController.find( "#assign-outputc-templateid" ).attr( "id", "assign-outputc-" + cid );
+    $newController.find( "#assign-outputd-templateid" ).attr( "id", "assign-outputd-" + cid );
 
     //Use AJAX to uppdate the list of controllers. Returns new list.
     $.ajax({
@@ -55,7 +55,7 @@ function connectController(cid) {
 
     $( ".dashboard" ).append($newController); //add it to dashboard
     $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" }); //make it draggable
-	$( '[data-toggle="tooltip"]' ).tooltip(); //re-create tooltips
+    $( '[data-toggle="tooltip"]' ).tooltip(); //re-create tooltips
     $( $newController ).animateCss( "rubberBand" ); //animate its appearance
     if ( colorid++ > 10 ) { //increment color for next new controller
       colorid = 1;
@@ -88,41 +88,52 @@ $( "span[id^='toggle-output']" ).click(function() {
   var oldvalue = "";
   var title = "";
   var newvalue = "";
-  //alert ( $(this).attr("id") );
+  var newclass = "";
+
   var id = $( this ).attr("id");
-  var arr = id.split("-");
-  var $toggle = $( "#" + id + " > i" );
-  //use JSON to get current value of toggle
-  /*
-  $.getJSON( $SCRIPT_ROOT + "/_get_outputs", {
-    controllerid: arr[2]
-  }, function(data) {
-    $.each( data.outputs, function ( index, value ) {
-	  if (outputs.index == arr[1]) {
-		oldvalue = outputs.value;
-	  }
-    });
-  });
-  */
-  oldvalue = "OFF";
+  var $i = $( this ).find( "i" );
+  var arr = id.split("-"); //arr[0]='toggle', arr[1]='outputa/b/c/d', arr[2]=controller id
+  var oldvalue = $i.attr( "data-setting" );
+  //get current setting so we know what to switch to
   switch (oldvalue) {
     case "OFF":
 	  title = "Default ON<br>(click to toggle)";
 	  newvalue = "ON";
+    newclass = "fa-toggle-on";
 	  break;
 	case "ON":
 	  title = "DISABLED<br>(click to toggle)";
-	  nevalue = "DISABLED";
+	  newvalue = "DISABLED";
+    newclass = "fa-ban";
 	  break;
-	case "default":
+	case "DISABLED":
 	  title = "Default OFF<br>(click to toggle)";
 	  newvalue = "OFF";
+    newclass = "fa-toggle-off";
 	  break;
   }
-  $toggle.tooltip("hide")
+  //use AJAX to update setting in db. Returns OK.
+  $.ajax({
+    url: "/_update_toggle",
+    data: {cntid:arr[2],output:arr[1],val:newvalue},
+    type: "POST",
+    dataType: "json",
+    success: function( data ) {
+      console.log(data.response);
+    },
+      error: function( error ) {
+      console.log(error);
+    }
+  });
+  //update the title on the tooltip
+  $i.tooltip("hide")
     .attr("data-original-title", title)
-	.tooltip("fixTitle")
-	.tooltip("show");
+    .tooltip("fixTitle")
+    .tooltip("show");
+  //Change the image
+  $i.removeClass( "fa-toggle-on fa-toggle-off fa-ban" ).addClass( newclass );
+  //change data-setting to new value
+  $i.attr("data-setting", newvalue );
 });
 // Click to assign output
 $( "span[id^='assign-output']" ).click(function() {

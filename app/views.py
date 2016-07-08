@@ -130,6 +130,16 @@ def get_controller():
 			test.append(c)
 	return jsonify(controller = test)
 
+@app.route('/_update_toggle', methods=['POST'])
+def update_toggle():
+	cid = request.form['cntid']
+	output = request.form['output']
+	for c in cntrlrs:
+		if c['controllerid'] == cid:
+			c[output] = request.form['val']
+			return jsonify(response = 'OK')
+	return jsonify(response = 'FAIL')
+
 @app.route('/testpost', methods=['POST'])
 def testpost():
 	items = request.form

@@ -129,7 +129,7 @@
           		  <select class="form-control output-list" id="outputa" name="outputa">
             			<option value="OFF" checked="checked">Normally OFF</option>
             			<option value="ON">Normally ON</option>
-            			<option value="disabled">Disabled</option>
+            			<option value="DISABLED">Disabled</option>
           		  </select>
           	  </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
@@ -141,7 +141,7 @@
             			{% for t in triggers %}
             			<option value="{{ t.triggerid }}">{{ t.triggername }}</option>
             			{% endfor %}
-            			<option value="disabled">Disabled</option>
+            			<option value="DISABLED">Disabled</option>
           		  </select>
           	  </div><!-- /.col-xs-4 -->
               <label for="outputb" class="col-xs-2 control-label">Output B:</label>
@@ -149,7 +149,7 @@
           		  <select class="form-control output-list" id="outputb" name="outputb">
             			<option value="OFF" checked="checked">Normally OFF</option>
             			<option value="ON">Normally ON</option>
-            			<option value="disabled">Disabled</option>
+            			<option value="DISABLED">Disabled</option>
           		  </select>
           	  </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
@@ -161,7 +161,7 @@
             			{% for t in triggers %}
             			<option value="{{ t.triggerid }}">{{ t.triggername }}</option>
             			{% endfor %}
-            			<option value="disabled">Disabled</option>
+            			<option value="DISABLED">Disabled</option>
           		  </select>
           	  </div><!-- /.col-xs-4 -->
               <label for="outputc" class="col-xs-2 control-label">Output C:</label>
@@ -169,7 +169,7 @@
           		  <select class="form-control output-list" id="outputc" name="outputc">
             			<option value="OFF" checked="checked">Normally OFF</option>
             			<option value="ON">Normally ON</option>
-            			<option value="disabled">Disabled</option>
+            			<option value="DISABLED">Disabled</option>
           		  </select>
           	  </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
@@ -179,7 +179,7 @@
                 <select class="form-control output-list" id="outputd" name="outputd">
                   <option value="OFF" checked="checked">Normally OFF</option>
                   <option value="ON">Normally ON</option>
-                  <option value="disabled">Disabled</option>
+                  <option value="DISABLED">Disabled</option>
                 </select>
               </div><!-- /.col-xs-4 -->
             </div><!-- /.form-group -->
@@ -203,18 +203,18 @@
         <div class="pull-right">Outputs <i class="fa fa-arrow-right"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputa-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputa" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputa-templateid" data-toggle="popover">A</span></span></div>
+        <div class="pull-right"><span id="toggle-outputa-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputa" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true" data-setting="setting"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputa-templateid" data-toggle="popover">A</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left"><span class="label unassigned">1</span></div>
-        <div class="pull-right"><span id="toggle-outputb-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputb" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputb-templateid" data-toggle="popover">B</span></span></div>
+        <div class="pull-right"><span id="toggle-outputb-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputb" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true" data-setting="setting"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputb-templateid" data-toggle="popover">B</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left"><span class="label unassigned">2</span></div>
-        <div class="pull-right"><span id="toggle-outputc-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputc" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputc-templateid" data-toggle="popover">C</span></span></div>
+        <div class="pull-right"><span id="toggle-outputc-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputc" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true" data-setting="setting"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputc-templateid" data-toggle="popover">C</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputd-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputd" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputd-templateid" data-toggle="popover">D</span></span></div>
+        <div class="pull-right"><span id="toggle-outputd-templateid" data-toggle="popover"><i class="fa fa-toggle-off fa-fw outputd" data-toggle="tooltip" data-placement="top" title="Default OFF<br>(click to toggle)" data-container="body" data-html="true" data-setting="setting"></i></span>&nbsp;<span class="label unassigned" data-toggle="tooltip" data-placement="right" title="(click to assign)" data-container="body" data-html="true"><span id="assign-outputd-templateid" data-toggle="popover">D</span></span></div>
       </li>
     </ul><!-- list-group -->
   </div><!-- /.panel .template -->
@@ -229,18 +229,18 @@
         <div class="pull-right">Outputs <i class="fa fa-arrow-right"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputa-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputa == 'disabled' %}ban{% else %}toggle-{{ c.outputa|lower }}{% endif %} fa-fw outputa" data-toggle="tooltip" data-placement="top" data-title="{% if c.outputa == 'disabled' %}DISABLED{% else %}Default {{ c.outputa }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputaaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputaaction %}Assigned to action {{ c.outputaaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputa-{{ c.controllerid }}" data-toggle="popover">A</span></span></div>
+        <div class="pull-right"><span id="toggle-outputa-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputa == 'DISABLED' %}ban{% else %}toggle-{{ c.outputa|lower }}{% endif %} fa-fw outputa" data-toggle="tooltip" data-placement="top" data-title="{% if c.outputa == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputa }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true" data-setting="{{ c.outputa }}"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputaaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputaaction %}Assigned to action {{ c.outputaaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputa-{{ c.controllerid }}" data-toggle="popover">A</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left"><span class="label cc-{{ c.controllercolor }}">1</span></div>
-        <div class="pull-right"><span id="toggle-outputb-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputb == 'disabled' %}ban{% else %}toggle-{{ c.outputb|lower }}{% endif %} fa-fw outputb" data-toggle="tooltip" data-placement="top" title="{% if c.outputb == 'disabled' %}DISABLED{% else %}Default {{ c.outputb }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputbaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputbaction %}Assigned to action {{ c.outputbaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputb-{{ c.controllerid }}" data-toggle="popover">B</span></span></div>
+        <div class="pull-right"><span id="toggle-outputb-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputb == 'DISABLED' %}ban{% else %}toggle-{{ c.outputb|lower }}{% endif %} fa-fw outputb" data-toggle="tooltip" data-placement="top" title="{% if c.outputb == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputb }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true" data-setting="{{ c.outputb }}"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputbaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputbaction %}Assigned to action {{ c.outputbaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputb-{{ c.controllerid }}" data-toggle="popover">B</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left"><span class="label cc-{{ c.controllercolor }}">2</span></div>
-        <div class="pull-right"><span id="toggle-outputc-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputc == 'disabled' %}ban{% else %}toggle-{{ c.outputc|lower }}{% endif %} fa-fw outputc" data-toggle="tooltip" data-placement="top" title="{% if c.outputc == 'disabled' %}DISABLED{% else %}Default {{ c.outputc }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputcaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputcaction %}Assigned to action {{ c.outputcaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputc-{{ c.controllerid }}" data-toggle="popover">C</span></span></div>
+        <div class="pull-right"><span id="toggle-outputc-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputc == 'DISABLED' %}ban{% else %}toggle-{{ c.outputc|lower }}{% endif %} fa-fw outputc" data-toggle="tooltip" data-placement="top" title="{% if c.outputc == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputc }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true" data-setting="{{ c.outputc }}"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputcaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputcaction %}Assigned to action {{ c.outputcaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputc-{{ c.controllerid }}" data-toggle="popover">C</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputd-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputd == 'disabled' %}ban{% else %}toggle-{{ c.outputd|lower }}{% endif %} fa-fw outputd" data-toggle="tooltip" data-placement="top" title="{% if c.outputd == 'disabled' %}DISABLED{% else %}Default {{ c.outputd }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputdaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputdaction %}Assigned to action {{ c.outputdaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputd-{{ c.controllerid }}" data-toggle="popover">D</span></span></div>
+        <div class="pull-right"><span id="toggle-outputd-{{ c.controllerid }}" data-toggle="popover"><i class="fa fa-{% if c.outputd == 'DISABLED' %}ban{% else %}toggle-{{ c.outputd|lower }}{% endif %} fa-fw outputd" data-toggle="tooltip" data-placement="top" title="{% if c.outputd == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputd }}{% endif %}<br>(click to toggle)" data-container="body" data-html="true" data-setting="{{ c.outputd }}"></i></span>&nbsp;<span class="label cc-{{ c.controllercolor }}{% if c.outputdaction == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="right" title="{% if c.outputdaction %}Assigned to action {{ c.outputdaction }}.<br>{% endif %}(click to assign)" data-container="body" data-html="true"><span id="assign-outputd-{{ c.controllerid }}" data-toggle="popover">D</span></span></div>
       </li>
     </ul>
   </div><!-- /.panel #controller-{{ c.controllerid }} -->
