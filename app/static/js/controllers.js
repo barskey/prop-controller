@@ -8,6 +8,8 @@ if ( $( ".draggable-controller" ).length ) {
   $( ".jumbotron" ).removeClass( "hidden" );
 }
 var colorid = 1;
+// Function to add new controller to db and to dashboard
+// Clones template object and updates settings
 function connectController(cid) {
   var $template = $( ".template" );
   var controllerid = "controller-" + cid;
@@ -82,7 +84,9 @@ $( "#configControllerModal" ).on( "show.bs.modal", function (event) {
       $modal.find( "#outputd" ).val(value.outputd);
     });
   });
-});// Click to toggle between Default Off/Default On/Disabled
+});
+//------------------------- Click Handlers --------------------------//
+// Click to toggle between Default Off/Default On/Disabled
 $( "span[id^='toggle-output']" ).click(function() {
   // toggle: OFF / ON / DISABLED
   var oldvalue = "";
@@ -94,12 +98,13 @@ $( "span[id^='toggle-output']" ).click(function() {
   var $i = $( this ).find( "i" );
   var arr = id.split("-"); //arr[0]='toggle', arr[1]='outputa/b/c/d', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
+  //console.log(oldvalue); //debug
   //get current setting so we know what to switch to
   switch (oldvalue) {
     case "OFF":
 	  title = "Default ON<br>(click to toggle)";
 	  newvalue = "ON";
-    newclass = "fa-toggle-on";
+      newclass = "fa-toggle-on";
 	  break;
 	case "ON":
 	  title = "DISABLED<br>(click to toggle)";
@@ -109,7 +114,7 @@ $( "span[id^='toggle-output']" ).click(function() {
 	case "DISABLED":
 	  title = "Default OFF<br>(click to toggle)";
 	  newvalue = "OFF";
-    newclass = "fa-toggle-off";
+      newclass = "fa-toggle-off";
 	  break;
   }
   //use AJAX to update setting in db. Returns OK.
@@ -125,19 +130,18 @@ $( "span[id^='toggle-output']" ).click(function() {
       console.log(error);
     }
   });
+  //console.log(title); //debug
   //update the title on the tooltip
   $i.tooltip("hide")
     .attr("data-original-title", title)
     .tooltip("fixTitle")
     .tooltip("show");
-  //Change the image
-  $i.removeClass( "fa-toggle-on fa-toggle-off fa-ban" ).addClass( newclass );
-  //change data-setting to new value
-  $i.attr("data-setting", newvalue );
+  $i.removeClass( "fa-toggle-on fa-toggle-off fa-ban" ).addClass( newclass ); //Change the image
+  $i.attr("data-setting", newvalue ); //change data-setting to new value
 });
 // Click to assign output
 $( "span[id^='assign-output']" ).click(function() {
-  alert ("Assign output clicked.");
+  console.log ("Assign output clicked."); //debug
 });
 $( "#configControllerModalSaveButton" ).click(function() {
   var $btn = $( this ).button("saving");
@@ -175,3 +179,4 @@ $( "#configControllerModalSaveButton" ).click(function() {
     }
   });
 });
+//--------------------- End Click Handlers --------------------------//
