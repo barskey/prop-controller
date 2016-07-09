@@ -44,18 +44,27 @@ function connectController(c) {
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
     $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid );
-    $newController.find( "." + port ).tooltip({
+    //Create toggle tooltips
+    $newController.find( "[id^='toggle-output']" ).tooltip({
       placement: "top",
       title: "Default OFF<br>(Click to toggle)",
       container: "body",
       html: true
-    }); //re-create toggle tooltips
-    $newController.find( ".label" ).tooltip({
+    });
+    //Create assign-output tooltips
+    $newController.find( ".label.output" ).tooltip({
       placement: "right",
       title: "(Click to assign)",
       container: "body",
       html: true
-    }); //re-create assign tooltips
+    });
+    //Create assign-trigger tooltips
+    $newController.find( ".label.input" ).tooltip({
+      placement: "left",
+      title: "(Click to assign)",
+      container: "body",
+      html: true
+    });
   } // end for loop
 
   $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
@@ -112,7 +121,7 @@ $( "span[id^='toggle-output']" ).click(function() {
   });
   //console.log(title); //debug
   //update the title on the tooltip
-  $i.tooltip("hide")
+  $( this ).tooltip("hide")
     .attr("data-original-title", title)
     .tooltip("fixTitle")
     .tooltip("show");
