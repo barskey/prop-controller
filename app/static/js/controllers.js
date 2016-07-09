@@ -8,15 +8,21 @@ if ( $( ".draggable-controller" ).length ) {
 }
 var outputs = ['a', 'b', 'c', 'd']; //For looping through the outputs
 
+// Get a random integer between `min` and `max`.
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 //Function to check if a controller is already added.
 // Identify if it is, or show modal if it isn't.
-function checkController(cid) {
+function checkController() {
+  var cid = getRandomInt(1001, 1010);
   var controllerid = "controller-" + cid;
   if ( $( "#" + controllerid ).length ) { //check if this controller is already added
     $( "#" + controllerid ).animateCss( "tada" );
   } else {
     $( "#cid" ).text( cid );
-	$( "#cidform" ).val( cid );
+	  $( "#cidform" ).val( cid );
     $( "#connectControllerModal" ).modal("toggle");
   }
 }
@@ -26,40 +32,36 @@ function connectController(c) {
   var $template = $( ".template" );
   var controllerid = "controller-" + c.controllerid;
   var cc = "cc-" + c.controllercolor;
-  var cname = c.controllername;
-  console.log(controllerid);
-  if ( $( "#" + controllerid ).length ) { //check if this controller is already added
-    $( "#" + controllerid ).animateCss( "tada" );
-  } else {
-    $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
-    //clone the template and update the elements with controller specific data
-    var $newController = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
-    $newController.addClass( "draggable-controller" ).addClass( cc );
-    $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( "data-cid", controllerid );
-    $newController.find( ".controller-name" ).text( cname );
-    $newController.find( ".label" ).addClass( cc );
-    for (i=0; i<outputs.length; i++) { // loops through a,b,c,d
-	  var port = "output" + outputs[i];
-      $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + cid );
-      $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + cid );
-      $newController.find( "." + port ).tooltip({
-        placement: "top",
-        title: "Default OFF<br>(Click to toggle)",
-        container: "body",
-        html: true
-      }); //re-create toggle tooltips
-      $newController.find( ".label" ).tooltip({
-        placement: "right",
-        title: "(Click to assign)",
-        container: "body",
-        html: true
-      }); //re-create assign tooltips
-	}
+  //console.log(controllerid); //debug
+  //clone the template and update the elements with controller specific data
+  var $newController = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
+  $newController.addClass( "draggable-controller" ).addClass( cc );
+  $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( "data-cid", controllerid );
+  $newController.find( ".controller-name" ).text( c.controllername );
+  $newController.find( ".label" ).addClass( cc );
+  for (i=0; i<outputs.length; i++) { // loops through a,b,c,d
+    var port = "output" + outputs[i];
+    //console.log(port); //debug
+    $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
+    $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid );
+    $newController.find( "." + port ).tooltip({
+      placement: "top",
+      title: "Default OFF<br>(Click to toggle)",
+      container: "body",
+      html: true
+    }); //re-create toggle tooltips
+    $newController.find( ".label" ).tooltip({
+      placement: "right",
+      title: "(Click to assign)",
+      container: "body",
+      html: true
+    }); //re-create assign tooltips
+  } // end for loop
 
-    $( ".dashboard" ).append($newController); //add it to dashboard
-    $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" }); //make it draggable
-    $( $newController ).animateCss( "rubberBand" ); //animate its appearance
-  }
+  $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
+  $( ".dashboard" ).append($newController); //add it to dashboard
+  $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" }); //make it draggable
+  $( $newController ).animateCss( "rubberBand" ); //animate its appearance
 };
 //------------------------- Click Handlers --------------------------//
 // Click to toggle between Default Off/Default On/Disabled
@@ -71,6 +73,7 @@ $( "span[id^='toggle-output']" ).click(function() {
   var newclass = "";
 
   var id = $( this ).attr("id");
+  //console.log(id); //debug
   var $i = $( this ).find( "i" );
   var arr = id.split("-"); //arr[0]='toggle', arr[1]='outputa/b/c/d', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
@@ -80,7 +83,7 @@ $( "span[id^='toggle-output']" ).click(function() {
     case "OFF":
 	  title = "Default ON<br>(click to toggle)";
 	  newvalue = "ON";
-      newclass = "fa-toggle-on";
+    newclass = "fa-toggle-on";
 	  break;
 	case "ON":
 	  title = "DISABLED<br>(click to toggle)";
@@ -90,9 +93,10 @@ $( "span[id^='toggle-output']" ).click(function() {
 	case "DISABLED":
 	  title = "Default OFF<br>(click to toggle)";
 	  newvalue = "OFF";
-      newclass = "fa-toggle-off";
+    newclass = "fa-toggle-off";
 	  break;
   }
+  //console.log(arr); //debug
   //use AJAX to update setting in db. Returns OK.
   $.ajax({
     url: "/_update_toggle",
@@ -100,7 +104,7 @@ $( "span[id^='toggle-output']" ).click(function() {
     type: "POST",
     dataType: "json",
     success: function( data ) {
-      console.log(data.response);
+      console.log(data.response); //debug
     },
       error: function( error ) {
       console.log(error);
@@ -122,9 +126,6 @@ $( "span[id^='assign-output']" ).click(function() {
 // Click to connect controller (add to db and add to dashboard)
 $( "#connectControllerModalAddButton" ).click(function() {
 	var $btn = $( this ).button("adding");
-	var cid = $( "#cid" ).text();
-	var ccolor = $( "#color option:selected" ).val();
-	var cname = $( "#cna")
 	//Use AJAX to add the controller to the db. Returns new controller.
 	$.ajax({
 		url: "/add_controller",
@@ -132,7 +133,7 @@ $( "#connectControllerModalAddButton" ).click(function() {
 		type: "POST",
 		dataType: "json",
 		success: function( response ) {
-			console.log(response.data); //debug
+			//console.log(response.data); //debug
 			if (response.data.status == "OK") {
 				//update navbar controller list
 				var $cntlist = $( ".controller-list" );

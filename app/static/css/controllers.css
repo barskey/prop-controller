@@ -103,13 +103,12 @@ span[class*='cc-'].unassigned {
 }
 
 .cc-3 > .cc-3-heading {
-  color: #000;
+  color: #fff;
   background-color: var(--cc3-head);
   border-color: var(--cc3-head);
 }
 
 .cc-3 > ul > li > div > span.label {
-  color: #000;
   background-color: var(--cc3-head);
 }
 
@@ -125,7 +124,7 @@ span[class*='cc-'].unassigned {
 }
 
 .cc-4 > ul > li > div > span.label {
-  background-color: var(--cc4-head); !important
+  background-color: var(--cc4-head);
 }
 
 .cc-5 {
