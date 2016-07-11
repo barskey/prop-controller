@@ -72,6 +72,13 @@ function connectController(c) {
   $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" }); //make it draggable
   $( $newController ).animateCss( "rubberBand" ); //animate its appearance
 };
+//------------------------- Change Handlers -------------------------//
+$( "#triggerType" ).change(function() {
+  $( ".triggerForm" ).addClass("hidden");
+  var trigger = $( this ).find( ":selected" ).text();
+  $( "#" + trigger.replace(/\s/g, '') ).removeClass("hidden");
+});
+
 //------------------------- Click Handlers --------------------------//
 // Click to toggle between Default Off/Default On/Disabled
 $( "span[id^='toggle-output']" ).click(function() {
@@ -128,11 +135,25 @@ $( "span[id^='toggle-output']" ).click(function() {
   $i.removeClass( "fa-toggle-on fa-toggle-off fa-ban" ).addClass( newclass ); //Change the image
   $i.attr("data-setting", newvalue ); //change data-setting to new value
 });
+
 // Click to assign output
 $( "span[id^='assign-output']" ).click(function() {
   console.log ("Assign output clicked."); //debug
 });
-// Click to connect controller (add to db and add to dashboard)
+
+// Click to assign trigger
+$( ".label.input" ).click(function() {
+  var controllerid = $( this ).parents().eq(3).attr( "id" ).substr(11);
+  var controllername = $( this ).parents().eq(3).find( ".controller-name" ).html();
+  var triggernum = $( this ).html();
+  //console.log(controllerid); //debug
+  $( "#addTriggerCID" ).val( controllerid );
+  $( "#modalControllerName" ).text( controllername );
+  $( "#triggernum" ).val( triggernum );
+  $( "#addTriggerModal" ).modal( "toggle" );
+});
+
+// Click Add modal button to connect controller (add to db and add to dashboard)
 $( "#connectControllerModalAddButton" ).click(function() {
 	var $btn = $( this ).button("adding");
 	//Use AJAX to add the controller to the db. Returns new controller.
@@ -156,6 +177,35 @@ $( "#connectControllerModalAddButton" ).click(function() {
 			//} else if (response.r.status == "NAME") {
 			//	//do something about duplicate name here
 			//	break; //use while if is empty
+			}
+		},
+			error: function( error ) {
+			console.log(error);
+		}
+	});
+});
+
+// Click Add modal button to assign trigger (add to db and update controller on dashboard)
+$( "#addTriggerModalAddButton" ).click(function() {
+	var $btn = $( this ).button("adding");
+	//Use AJAX to add the trigger to the db. Returns list of Triggers.
+	$.ajax({
+		url: "/add_trigger",
+		data: $( "#addTriggerForm" ).serialize(),
+		type: "POST",
+		dataType: "json",
+		success: function( response ) {
+			//console.log(response.data); //debug
+			if (response.data.status == "OK") {
+				//update navbar Trigger list
+				var $triggerlist = $( "#trigger-menu" );
+				$triggerlist.empty();
+				$.each( response.data.tlist, function( index, value ) {
+					$triggerlist.append( $( "<a>" ).addClass( "list-group-item" ).attr( {"id": "trigger-" + value.triggerid, "href": "#"} ).text( value.triggername ) );
+				});
+
+				$( "#addTriggerModal" ).modal("toggle");
+				$btn.button("reset");
 			}
 		},
 			error: function( error ) {

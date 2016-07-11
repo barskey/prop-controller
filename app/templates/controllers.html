@@ -24,9 +24,8 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
           <ul class="dropdown-menu list-group" id="trigger-menu">
             {% for t in triggers %}
-            <a class="list-group-item list-group-item-warning" id="{{ t.triggerid }}">{{ t.triggername }}</a>
+            <a class="list-group-item" id="trigger-{{ t.triggerid }}">{{ t.triggername }}</a>
             {% endfor %}
-            <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
           </ul><!-- /#trigger-menu -->
         </li><!-- /.dropdown -->
         <li class="dropdown">
@@ -78,7 +77,7 @@
   <div class="modal fade" id="connectControllerModal" tabindex="-1" role="dialog" labeledby="connectControllerModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <form class="form-horizontal" id="connectControllerForm" action="connect_controller" method="POST">
+        <form class="form-horizontal" id="connectControllerForm">
           <input type="hidden" name="cidform" id="cidform" value="" />
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -91,7 +90,7 @@
             <div class="form-group">
               <label for="name" class="col-xs-3 control-label">Name:</label>
               <div class="col-xs-5">
-                <input type="text" class="form-control" id="name" name="name" placeholder="e.g. Sidewalk Lights" />
+                <input type="text" class="form-control" id="name" name="name" value="My Controller" />
               </div><!-- /.col -->
             </div><!-- /.form-group -->
             <div class="form-group">
@@ -113,23 +112,94 @@
       </form><!-- /.form #connectControllerForm -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal #connectControllerModal -->
-  <div class="modal fade" id="createTriggerModal" tabindex="-1" role="dialog" labeledby="createTriggerModalLabel">
+  <div class="modal fade" id="addTriggerModal" tabindex="-1" role="dialog" labeledby="addTriggerModalLabel">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <form class="form-inline" id="createTriggerForm">
+        <form class="form-horizontal" id="addTriggerForm">
+          <input type="hidden" name="controllerid" id="addTriggerCID" />
+          <input type="hidden" name="triggernum" id="triggernum" />
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="createTriggerModalLabel">Add a Trigger to this Project</h4>
+            <h4 class="modal-title" id="addTriggerModalLabel">Assign Trigger to <span id="modalControllerName"></span></h4>
           </div><!-- /.modal-header -->
           <div class="modal-body">
             <div class="form-group">
-              <label for="triggerName" class="control-label">Name:</label>
-              <input type="text" class="form-control" id="triggerName" name="triggerName" value="My Trigger"/>
+              <label for="triggerName" class="col-xs-3 control-label">Name:</label>
+              <div class="col-xs-5">
+                <input type="text" class="form-control" id="triggerName" name="triggerName" value="My Trigger" />
+              </div>
             </div><!-- /.form-group -->
+            <div class="form-group pad-6">
+              <label for="triggerType" class="col-xs-3 control-label">Trigger Type:</label>
+              <div class="col-xs-4">
+                <select class="form-control" id="triggerType" name="triggerType">
+                  {% for t in triggers %}
+                  <option value="{{ t.triggerid }}">{{ t.triggername }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div><!-- /.form-group -->
+            <div class="form-group triggerForm pad-6" id="Motion">
+              <label for="resetTime" class="col-xs-3 control-label">Time to reset:</label>
+              <div class="col-xs-3">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="resetTime" name="resetTime" value="30000" />
+                  <div class="input-group-addon">ms</div>
+                </div>
+              </div>
+              <div class="col-xs-4 form-control-static">
+                <em>Time before motion sensor detects motion again.</em>
+              </div>
+            </div><!-- /#Motion -->
+            <div class="form-group triggerForm pad-6 hidden" id="Pushbutton">
+              <label for="defaultStateOn" class="col-xs-3 control-label">Default state: </label>
+              <div class="col-xs-3">
+                <label class="radio-inline">
+                  <input type="radio" name="defaultState" id="defaultStateOn" value="ON"> On
+                </label>
+                <label class="radio-inline">
+                  <input type="radio" name="defaultState" id="defaultStateOff" value="OFF" checked="checked"> Off
+                </label>
+              </div>
+              <div class="col-xs-4 form-control-static">
+                <em>Is the pushbutton normally off or normally on?</em>
+              </div>
+            </div><!-- /#Pushbutton -->
+            <div class="form-group triggerForm pad-6 hidden" id="Switch">
+              <span class="text-muted col-xs-5 col-xs-offset-3">No parameters to configure.</span>
+            </div><!-- /#Switch -->
+            <div class="form-group triggerForm pad-6 hidden" id="Interval">
+              <label for="cycleTime" class="col-xs-3 control-label">Interval Time:</label>
+              <div class="col-xs-3">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="cycleTime" name="cycleTime" value="10000" />
+                  <div class="input-group-addon">ms</div>
+                </div>
+              </div>
+              <div class="col-xs-4 form-control-static">
+                <em>Triggers on a regular interval.</em>
+              </div>
+            </div><!-- /#Interval -->
+            <div class="form-group triggerForm pad-6 hidden" id="Random">
+              <label for="randomLow" class="col-xs-3 control-label">Between:</label>
+              <div class="col-xs-3">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="randomLow" name="randomLow" value="5000" />
+                  <div class="input-group-addon">ms</div>
+                </div>
+              </div>
+              <div class="col-xs-1 form-control-static">and</div>
+              <div class="col-xs-3">
+                <div class="input-group">
+                  <input type="text" class="form-control" id="randomHigh" name="randomHigh" value="15000" />
+                  <div class="input-group-addon">ms</div>
+                </div>
+              </div>
+            </div><!-- /#Interval -->
           </div><!-- /.modal-body -->
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary" id="createTriggerModalAddButton" data-adding-text="Adding...">Add</button>
+            <button type="button" class="btn btn-primary" id="addTriggerModalAddButton" data-adding-text="Adding...">Add</button>
           </div><!-- ./modal-footer -->
         </div><!-- /.modal-content -->
       </form><!-- /.form #createTriggerForm -->
@@ -142,8 +212,8 @@
     </div><!-- /.panel-heading -->
     <ul class="list-group">
       <li class="list-group-item borderless">
-        <div class="pull-left"><i class="fa fa-arrow-left"></i> Triggers</div>
-        <div class="pull-right">Outputs <i class="fa fa-arrow-right"></i></div>
+        <div class="pull-left"><i class="fa fa-arrow-down"></i> Triggers</div>
+        <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa"  data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputa-templateid" data-toggle="popover">A</span></span></div>
@@ -173,8 +243,8 @@
     </div><!-- /.panel-heading -->
     <ul class="list-group">
       <li class="list-group-item borderless">
-        <div class="pull-left"><i class="fa fa-arrow-left"></i> Triggers</div>
-        <div class="pull-right">Outputs <i class="fa fa-arrow-right"></i></div>
+        <div class="pull-left"><i class="fa fa-arrow-down"></i> Triggers</div>
+        <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-right">

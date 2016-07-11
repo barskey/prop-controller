@@ -15,11 +15,10 @@ colors = [
 	{'colorid': '2', 'colorname': 'black', 'colorhex': '#273a3f'},
 	{'colorid': '10', 'colorname': 'salmon', 'colorhex': '#fa8072'}
 ]
-triggers = [
+triggertypes = [
 	{'triggerid': '1', 'triggername': 'Motion'},
 	{'triggerid': '2', 'triggername': 'Pushbutton'},
 	{'triggerid': '3', 'triggername': 'Switch'},
-	{'triggerid': '4', 'triggername': 'Event'},
 	{'triggerid': '5', 'triggername': 'Interval'},
 	{'triggerid': '6', 'triggername': 'Random'}
 ]
@@ -50,19 +49,22 @@ events = [
 	]}
 ]
 cntrlrs = [
-	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': '', 'input1trigger': '1', 'input2': '', 'input2trigger': '', 'outputa': 'ON', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '2', 'outputc': 'OFF', 'outputcaction': '3', 'outputd': 'OFF',  'outputdaction': '', 'sounds': [
+	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': 'ON', 'input1trigger': '1', 'input2': 'DISABLED', 'input2trigger': '', 'outputa': 'ON', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '2', 'outputc': 'OFF', 'outputcaction': '3', 'outputd': 'OFF',  'outputdaction': '', 'sounds': [
 		{'soundid': '1', 'soundname': 'Scream'},
 		{'soundid': '2', 'soundname': 'Zombie'},
 		{'soundid': '3', 'soundname': 'Evil Laugh'},
 		{'soundid': '4', 'soundname': 'Ghost'}
 	]}
 ]
+triggers = [
+	{'triggerid': '1', 'controllerid': '1', 'triggername': 'Motion 1', 'triggertype': '1', 'param1': '10000', 'param2': ''}
+]
 
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
-	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggers, actions=actions, sounds=sounds, events=events)
+	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, events=events)
 
 @app.route('/add_trigger_to_event', methods=['POST'])
 def add_trigger_to_event():
@@ -94,7 +96,7 @@ def add_trigger_to_event():
 @app.route('/controllers')
 def controllers():
 	project = projectname
-	return render_template('controllers.html', title='Controllers', projectname=project, triggers=triggers, actions=actions, sounds=sounds, controllers=cntrlrs, colors=colors)
+	return render_template('controllers.html', title='Controllers', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, controllers=cntrlrs, colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -131,6 +133,22 @@ def get_controller():
 		if c['controllerid'] == cid:
 			test.append(c)
 	return jsonify(controller = test)
+
+@app.route('/add_trigger', methods=['POST'])
+def add_trigger():
+	cid = request.form['cid']
+	triggernum = "input" + request.form['triggernum'] + "trigger"
+	triggername = request.form['triggerName']
+	triggertype = request.form['triggerType']
+	param1 = request.form['']
+	for c in cntrlrs:
+		if c['controllerid'] == cid:
+			c[triggernum] = request.form['triggerType']
+			newtrigger = {'triggerid': '1', 'controllerid': cid, 'triggername': triggername, 'triggertype': triggertype, 'param1': '10000', 'param2': ''}
+			triggers.append()
+			r = {'status':'OK', 'tlist': triggers}
+			return jsonify(data = r)
+	return jsonify(data = {'status': 'FAIL'})
 
 @app.route('/_update_toggle', methods=['POST'])
 def update_toggle():
