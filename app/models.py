@@ -24,6 +24,7 @@ class Color(db.Model):
 class Triggertype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(24), index=True)
+	virtual = db.Column(db.Boolean)
 
 class Actiontype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -96,17 +97,17 @@ class Event(db.Model):
 		secondaryjoin = (event_sounds.c.sound_id == id),
 		backref = db.backref('event_sounds', lazy='dynamic'),
 		lazy = 'dynamic')
-	
+
 	def add_trigger(self, trigger):
 		if not self.has_trigger(trigger):
 			self.triggers.append(trigger)
 			return self
-	
+
 	def rem_trigger(self, trigger):
 		if self.has_trigger(trigger):
 			self.triggers.remove(trigger)
 			return self
-	
+
 	def has_trigger(self, trigger):
 		return self.triggers.filter(event_triggers.c.trigger_id == trigger.id).count() > 0
 
@@ -114,12 +115,12 @@ class Event(db.Model):
 		if not self.has_action(action):
 			self.actions.append(action)
 			return self
-	
+
 	def rem_action(self, action):
 		if self.has_action(action):
 			self.actions.remove(action)
 			return self
-	
+
 	def has_action(self, action):
 		return self.actions.filter(event_actions.c.action_id == action.id).count() > 0
 
@@ -127,12 +128,12 @@ class Event(db.Model):
 		if not self.has_sound(sound):
 			self.sounds.append(sound)
 			return self
-	
+
 	def rem_sound(self, sound):
 		if self.has_sound(sound):
 			self.sounds.remove(sound)
 			return self
-	
+
 	def has_sound(self, sound):
 		return self.sounds.filter(event_sounds.c.sound_id == sound.id).count() > 0
 

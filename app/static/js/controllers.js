@@ -44,28 +44,41 @@ function connectController(c) {
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
     $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid );
-    //Create toggle tooltips
-    $newController.find( "[id^='toggle-output']" ).tooltip({
-      placement: "top",
-      title: "Default OFF<br>(Click to toggle)",
-      container: "body",
-      html: true
-    });
-    //Create assign-output tooltips
-    $newController.find( ".label.output" ).tooltip({
-      placement: "right",
-      title: "(Click to assign)",
-      container: "body",
-      html: true
-    });
-    //Create assign-trigger tooltips
-    $newController.find( ".label.input" ).tooltip({
-      placement: "left",
-      title: "(Click to assign)",
-      container: "body",
-      html: true
-    });
   } // end for loop
+  for (i=0; i<2; i++) { // loops through 1,2
+    var port = "input" + i;
+    //console.log(port); //debug
+    $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
+    $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid );
+  } // end for loop
+
+  //Create toggle tooltips
+  $newController.find( "[id^='toggle-output']" ).tooltip({
+    placement: "top",
+    title: "Default OFF<br>(Click to toggle)",
+    container: "body",
+    html: true
+  });
+  $newController.find( "[id^='toggle-input']" ).tooltip({
+    placement: "top",
+    title: "ACTIVE<br>(Click to toggle)",
+    container: "body",
+    html: true
+  });
+  //Create assign-output tooltips
+  $newController.find( ".label.output" ).tooltip({
+    placement: "right",
+    title: "(Click to assign)",
+    container: "body",
+    html: true
+  });
+  //Create assign-trigger tooltips
+  $newController.find( ".label.input" ).tooltip({
+    placement: "left",
+    title: "(Click to assign)",
+    container: "body",
+    html: true
+  });
 
   $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
   $( ".dashboard" ).append($newController); //add it to dashboard
@@ -80,7 +93,7 @@ $( "#triggerType" ).change(function() {
 });
 
 //------------------------- Click Handlers --------------------------//
-// Click to toggle between Default Off/Default On/Disabled
+// Click to toggle output between Default OFF/Default ON/DISABLED
 $( "span[id^='toggle-output']" ).click(function() {
   // toggle: OFF / ON / DISABLED
   var oldvalue = "";
@@ -133,6 +146,57 @@ $( "span[id^='toggle-output']" ).click(function() {
     .tooltip("fixTitle")
     .tooltip("show");
   $i.removeClass( "fa-toggle-on fa-toggle-off fa-ban" ).addClass( newclass ); //Change the image
+  $i.attr("data-setting", newvalue ); //change data-setting to new value
+});
+
+// Click to toggle input between ACTIVE/DISABLED
+$( "span[id^='toggle-input']" ).click(function() {
+  // toggle: ACTIVE / DISABLED
+  var oldvalue = "";
+  var title = "";
+  var newvalue = "";
+  var newclass = "";
+
+  var id = $( this ).attr("id");
+  //console.log(id); //debug
+  var $i = $( this ).find( "i" );
+  var arr = id.split("-"); //arr[0]='toggle', arr[1]='input1/2', arr[2]=controller id
+  var oldvalue = $i.attr( "data-setting" );
+  console.log(oldvalue); //debug
+  //console.log(arr); //debug
+  //get current setting so we know what to switch to
+  switch (oldvalue) {
+  	case "ACTIVE":
+  	  title = "DISABLED<br>(click to toggle)";
+  	  newvalue = "DISABLED";
+      newclass = "fa-ban";
+  	  break;
+  	case "DISABLED":
+  	  title = "ACTIVE<br>(click to toggle)";
+  	  newvalue = "ACTIVE";
+      newclass = "fa-check-circle-o";
+  	  break;
+  }
+  //use AJAX to update setting in db. Returns OK.
+  $.ajax({
+    url: "/_update_toggle_input",
+    data: {cntid:arr[2],thisinput:arr[1],val:newvalue},
+    type: "POST",
+    dataType: "json",
+    success: function( data ) {
+      console.log(data.response); //debug
+    },
+      error: function( error ) {
+      console.log(error);
+    }
+  });
+  //console.log(title); //debug
+  //update the title on the tooltip
+  $( this ).tooltip("hide")
+    .attr("data-original-title", title)
+    .tooltip("fixTitle")
+    .tooltip("show");
+  $i.removeClass( "fa-check-circle-o fa-ban" ).addClass( newclass ); //Change the image
   $i.attr("data-setting", newvalue ); //change data-setting to new value
 });
 

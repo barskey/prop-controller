@@ -176,7 +176,7 @@
                   <div class="input-group-addon">ms</div>
                 </div>
               </div>
-              <div class="col-xs-4 form-control-static">
+              <div class="col-xs-5 form-control-static">
                 <em>Triggers on a regular interval.</em>
               </div>
             </div><!-- /#Interval -->
@@ -216,18 +216,18 @@
         <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa"  data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputa-templateid" data-toggle="popover">A</span></span></div>
+        <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputa-templateid" data-toggle="popover">A</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left"><span class="label input unassigned">1</span></div>
-        <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb"  data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputb-templateid" data-toggle="popover">B</span></span></div>
+        <div class="pull-left"><span class="label input unassigned">1</span>&nbsp;<span id="toggle-input1-templateid"><i class="fa fa-check-circle-o fa-fw input1" data-setting="ACTIVE"></i></span></div>
+        <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputb-templateid" data-toggle="popover">B</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left"><span class="label input unassigned">2</span></div>
-        <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc"  data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputc-templateid" data-toggle="popover">C</span></span></div>
+        <div class="pull-left"><span class="label input unassigned">2</span>&nbsp;<span id="toggle-input2-templateid"><i class="fa fa-check-circle-o fa-fw input2" data-setting="ACTIVE"></i></span></div>
+        <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputc-templateid" data-toggle="popover">C</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd"  data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputd-templateid" data-toggle="popover">D</span></span></div>
+        <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span id="assign-outputd-templateid" data-toggle="popover">D</span></span></div>
       </li>
     </ul><!-- list-group -->
   </div><!-- /.panel .template -->
@@ -258,7 +258,10 @@
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left">
-          <span class="label input cc-{{ c.controllercolor }}">1</span>
+          <span class="label input cc-{{ c.controllercolor }}{% if c.input1trigger == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="left" title="{% if c.input1trigger %}Assigned to trigger {{ c.input1trigger }}.<br>{% endif %}(Click to assign)" data-container="body" data-html="true">1</span>&nbsp;
+          <span id="toggle-input1-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{{ c.input1 }}<br>(Click to toggle)" data-html="true" data-container="body">
+            <i class="fa fa-{% if c.input1 == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw input1" data-setting="{{ c.input1 }}"></i>
+          </span>
         </div>
         <div class="pull-right">
           <span id="toggle-outputb-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputb == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputb }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body">
@@ -271,7 +274,10 @@
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left">
-          <span class="label input cc-{{ c.controllercolor }}">2</span>
+          <span class="label input cc-{{ c.controllercolor }}{% if c.input2trigger == '' %} unassigned{% endif %}" data-toggle="tooltip" data-placement="left" title="{% if c.input2trigger %}Assigned to trigger {{ c.input2trigger }}.<br>{% endif %}(Click to assign)" data-container="body" data-html="true">2</span>&nbsp;
+          <span id="toggle-input2-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{{ c.input2 }}<br>(Click to toggle)" data-html="true" data-container="body">
+            <i class="fa fa-{% if c.input2 == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw input2" data-setting="{{ c.input2 }}"></i>
+          </span>
         </div>
         <div class="pull-right">
           <span id="toggle-outputc-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputc == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputc }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body">

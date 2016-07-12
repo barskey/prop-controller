@@ -49,7 +49,7 @@ events = [
 	]}
 ]
 cntrlrs = [
-	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': 'ON', 'input1trigger': '1', 'input2': 'DISABLED', 'input2trigger': '', 'outputa': 'ON', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '2', 'outputc': 'OFF', 'outputcaction': '3', 'outputd': 'OFF',  'outputdaction': '', 'sounds': [
+	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': 'ACTIVE', 'input1trigger': '1', 'input2': 'DISABLED', 'input2trigger': '', 'outputa': 'ON', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '2', 'outputc': 'OFF', 'outputcaction': '3', 'outputd': 'OFF',  'outputdaction': '', 'sounds': [
 		{'soundid': '1', 'soundname': 'Scream'},
 		{'soundid': '2', 'soundname': 'Zombie'},
 		{'soundid': '3', 'soundname': 'Evil Laugh'},
@@ -157,6 +157,16 @@ def update_toggle():
 	for c in cntrlrs:
 		if c['controllerid'] == cid:
 			c[output] = request.form['val']
+			return jsonify(response = 'OK')
+	return jsonify(response = 'FAIL')
+
+@app.route('/_update_toggle_input', methods=['POST'])
+def update_toggle_input():
+	cid = request.form['cntid']
+	thisinput = request.form['thisinput']
+	for c in cntrlrs:
+		if c['controllerid'] == cid:
+			c[thisinput] = request.form['val']
 			return jsonify(response = 'OK')
 	return jsonify(response = 'FAIL')
 
