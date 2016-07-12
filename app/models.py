@@ -34,9 +34,8 @@ class Controller(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	color_id = db.Column(db.Integer, db.ForeignKey('color.id'))
-	sounds= db.relationship('sound', backref='sound', lazy='dynamic')
-	triggers = db.relationship('trigger', backref='trigger', lazy='dynamic')
-	actions = db.relationship('action', backref='action', lazy='dynamic')
+	sounds= db.relationship('Sound', backref='sound', lazy='dynamic')
+	triggers = db.relationship('Trigger', backref='trigger', lazy='dynamic')
 	name = db.Column(db.String(24), index=True, unique=True)
 	input1 = db.Column(db.String(10))
 	input2 = db.Column(db.String(10))
@@ -46,7 +45,7 @@ class Controller(db.Model):
 	outputd = db.Column(db.String(10))
 
 	@staticmethod
-	def make_unique_imgname(tempname):
+	def make_unique_name(tempname):
 		if Controller.query.filter_by(name=tempname).first() is None:
 			return tempname
 		version = 2
@@ -56,6 +55,15 @@ class Controller(db.Model):
 				break
 			version += 1
 		return new_name
+	
+	@property
+	def serialize(self):
+		#Return object data in easily serializable format
+		return {
+			'controllerid': self.id,
+			'controllername': self.name,
+			'controllercolor': self.color_id
+		}
 
 event_triggers = db.Table('event_triggers',
 	db.Column('event_id', db.Integer, db.ForeignKey('event.id')),
@@ -138,7 +146,7 @@ class Event(db.Model):
 		return self.sounds.filter(event_sounds.c.sound_id == sound.id).count() > 0
 
 	@staticmethod
-	def make_unique_imgname(tempname):
+	def make_unique_name(tempname):
 		if Event.query.filter_by(name=tempname).first() is None:
 			return tempname
 		version = 2

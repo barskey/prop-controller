@@ -43,7 +43,6 @@ function connectController(c) {
     var port = "output" + outputs[i];
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
-    $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid );
   } // end for loop
   for (i=0; i<2; i++) { // loops through 1,2
     var port = "input" + i;
@@ -62,13 +61,6 @@ function connectController(c) {
   $newController.find( "[id^='toggle-input']" ).tooltip({
     placement: "top",
     title: "ACTIVE<br>(Click to toggle)",
-    container: "body",
-    html: true
-  });
-  //Create assign-output tooltips
-  $newController.find( ".label.output" ).tooltip({
-    placement: "right",
-    title: "(Click to assign)",
     container: "body",
     html: true
   });
@@ -198,11 +190,6 @@ $( "span[id^='toggle-input']" ).click(function() {
     .tooltip("show");
   $i.removeClass( "fa-check-circle-o fa-ban" ).addClass( newclass ); //Change the image
   $i.attr("data-setting", newvalue ); //change data-setting to new value
-});
-
-// Click to assign output
-$( "span[id^='assign-output']" ).click(function() {
-  console.log ("Assign output clicked."); //debug
 });
 
 // Click to assign trigger

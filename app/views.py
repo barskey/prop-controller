@@ -1,8 +1,10 @@
-from app import app
+from app import app, db
 from flask import render_template, request, jsonify, json
+from .models import Controller
 
 #Dummy data for testing
 projectname = "Halloween 2016"
+projectid = 1
 colors = [
 	{'colorid': '5', 'colorname': 'red', 'colorhex': '#DD5F32'},
 	{'colorid': '6', 'colorname': 'orange', 'colorhex': '#FFA200'},
@@ -101,11 +103,14 @@ def controllers():
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
 	cid = request.form['cidform']
-	cname = request.form['name']
+	cname = Controller.make_unique_name(request.form['name'])
 	b, cc = request.form['color'].split('-')
-	newcontroller = {'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input1trigger': '', 'input2': '', 'input2trigger': '', 'outputa': 'OFF', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '', 'outputc': 'OFF', 'outputcaction': '', 'outputd': 'OFF',  'outputdaction': '', 'sounds': []}
-	cntrlrs.append(newcontroller)
-	r = {'status':'OK', 'clist': cntrlrs, 'controller': newcontroller}
+	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
+	#newcontroller = {'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input1trigger': '', 'input2': '', 'input2trigger': '', 'outputa': 'OFF', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '', 'outputc': 'OFF', 'outputcaction': '', 'outputd': 'OFF',  'outputdaction': '', 'sounds': []}
+	#cntrlrs.append(newcontroller)
+	db.session.add(newcontroller)
+	db.session.commit()
+	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': [newcontroller.serialize]}
 	return jsonify(data = r)
 
 @app.route('/update_controller', methods=['POST'])
