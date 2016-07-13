@@ -35,7 +35,8 @@ class Controller(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	color_id = db.Column(db.Integer, db.ForeignKey('color.id'))
 	sounds= db.relationship('Sound', backref='sound', lazy='dynamic')
-	triggers = db.relationship('Trigger', backref='trigger', lazy='dynamic')
+	trigger1 = db.relationship('Trigger', backref='trigger1', lazy='dynamic')
+	trigger2 = db.relationship('Trigger', backref='trigger2', lazy='dynamic')
 	name = db.Column(db.String(24), index=True, unique=True)
 	input1 = db.Column(db.String(10), default='ACTIVE')
 	input2 = db.Column(db.String(10), default='ACTIVE')
@@ -70,6 +71,30 @@ class Controller(db.Model):
 			'outputc': self.outputc,
 			'outputd': self.outputd
 		}
+
+	def add_trigger(self, trigger, triggernum):
+		num = int(triggernum, 0)
+		if not self.has_trigger(trigger, num):
+			if num == 1:
+				self.trigger1.append(trigger)
+			elif num == 2:
+				self.trigger2.append(trigger)
+		return self
+
+	def rem_trigger(self, trigger, triggernum):
+		num = int(triggernum, 0)
+		if self.has_trigger(trigger, num):
+			if num == 1:
+				self.trigger1.remove(trigger)
+			elif num == 2:
+				self.trigger2.remove(trigger)
+		return self
+
+	def has_trigger(self, trigger, triggernum):
+		if triggernum == 1:
+			return self.trigger1.filter(trigger1.id == trigger.id).count() > 0
+		elif triggernum == 2:
+			return self.trigger2.filter(trigger2.id == trigger.id).count() > 0
 
 event_triggers = db.Table('event_triggers',
 	db.Column('event_id', db.Integer, db.ForeignKey('event.id')),

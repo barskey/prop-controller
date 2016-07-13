@@ -111,6 +111,20 @@ def add_controller():
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': [newcontroller.serialize]}
 	return jsonify(data = r)
 
+@app.route('/rem_controller', methods=['POST'])
+def rem_controller():
+	cid = request.form['controllerid']
+	c = Controller.query.get(cid)
+	status = ''
+	if c:
+	  status = 'OK'
+	else:
+	  status = 'FAIL'
+	db.session.delete(c)
+	db.session.commit()
+	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
+	return jsonify(data = r)
+	
 @app.route('/update_controller', methods=['POST'])
 def update_controller():
 	a, cid = request.form['controllerSelect'].split("-")

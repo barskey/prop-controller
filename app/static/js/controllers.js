@@ -77,6 +77,16 @@ function connectController(c) {
   $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" }); //make it draggable
   $( $newController ).animateCss( "rubberBand" ); //animate its appearance
 };
+
+function removeController(controllerid) {
+  //console.log(c.controllerid); //debug
+  $( "#" + controllerid ).animateCss( "bounceOut" ); //animate the exit
+  // Show the jumbotron if there aren't any controllers left
+  if ( !$( "div[id^='controller-']" ) ) {
+    $( ".jumbotron" ).removeClass( "hidden" ); 
+  }
+}
+
 //------------------------- Change Handlers -------------------------//
 $( "#triggerType" ).change(function() {
   $( ".triggerForm" ).addClass("hidden");
@@ -229,6 +239,35 @@ $( "#connectControllerModalAddButton" ).click(function() {
 			//} else if (response.r.status == "NAME") {
 			//	//do something about duplicate name here
 			//	break; //use while if is empty
+			}
+		},
+			error: function( error ) {
+			console.log(error);
+		}
+	});
+});
+
+// Click Delete modal button to disconnect controller (remove from db and dashboard)
+$( "#editControllerModalDeleteButton" ).click(function() {
+	var thiscid = $( "#editControllerCID" ).val();
+	//Use AJAX to remove the controller from the db. Returns updated controller list.
+	$.ajax({
+		url: "/rem_controller",
+		data: $( "#editControllerForm" ).serialize(),
+		type: "POST",
+		dataType: "json",
+		success: function( response ) {
+			//console.log(response.data); //debug
+			if (response.data.status == "OK") {
+				//update navbar controller list
+				var $cntlist = $( ".controller-list" );
+				$cntlist.empty();
+				$.each( response.data.clist, function( index, value ) {
+					$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
+				});
+				//console.log(response.data.controller[0]); //debug
+				removeController(thiscid);
+				$( "#editControllerModal" ).modal("toggle");
 			}
 		},
 			error: function( error ) {
