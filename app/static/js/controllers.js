@@ -32,7 +32,7 @@ function connectController(c) {
   var $template = $( ".template" );
   var controllerid = "controller-" + c.controllerid;
   var cc = "cc-" + c.controllercolor;
-  //console.log(controllerid); //debug
+  //console.log(c.controllerid); //debug
   //clone the template and update the elements with controller specific data
   var $newController = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
   $newController.addClass( "draggable-controller" ).addClass( cc );
@@ -44,7 +44,7 @@ function connectController(c) {
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
   } // end for loop
-  for (i=0; i<2; i++) { // loops through 1,2
+  for (i=1; i<3; i++) { // loops through 1,2
     var port = "input" + i;
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
@@ -98,7 +98,7 @@ $( "span[id^='toggle-output']" ).click(function() {
   var $i = $( this ).find( "i" );
   var arr = id.split("-"); //arr[0]='toggle', arr[1]='outputa/b/c/d', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
-  //console.log(oldvalue); //debug
+  //console.log(arr[2]); //debug
   //get current setting so we know what to switch to
   switch (oldvalue) {
     case "OFF":
@@ -154,7 +154,7 @@ $( "span[id^='toggle-input']" ).click(function() {
   var $i = $( this ).find( "i" );
   var arr = id.split("-"); //arr[0]='toggle', arr[1]='input1/2', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
-  console.log(oldvalue); //debug
+  //console.log(arr); //debug
   //console.log(arr); //debug
   //get current setting so we know what to switch to
   switch (oldvalue) {
@@ -222,7 +222,8 @@ $( "#connectControllerModalAddButton" ).click(function() {
 				$.each( response.data.clist, function( index, value ) {
 					$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
 				});
-				connectController(response.data.controller);
+        //console.log(response.data.controller[0]); //debug
+				connectController(response.data.controller[0]);
 				$( "#connectControllerModal" ).modal("toggle");
 				$btn.button("reset");
 			//} else if (response.r.status == "NAME") {

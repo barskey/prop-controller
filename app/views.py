@@ -98,7 +98,7 @@ def add_trigger_to_event():
 @app.route('/controllers')
 def controllers():
 	project = projectname
-	return render_template('controllers.html', title='Controllers', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, controllers=cntrlrs, colors=colors)
+	return render_template('controllers.html', title='Controllers', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, controllers=[c.serialize for c in Controller.query.all()], colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -106,8 +106,6 @@ def add_controller():
 	cname = Controller.make_unique_name(request.form['name'])
 	b, cc = request.form['color'].split('-')
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
-	#newcontroller = {'controllerid': cid, 'controllername': cname, 'controllercolor': cc, 'input1': '', 'input1trigger': '', 'input2': '', 'input2trigger': '', 'outputa': 'OFF', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '', 'outputc': 'OFF', 'outputcaction': '', 'outputd': 'OFF',  'outputdaction': '', 'sounds': []}
-	#cntrlrs.append(newcontroller)
 	db.session.add(newcontroller)
 	db.session.commit()
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': [newcontroller.serialize]}
@@ -159,21 +157,37 @@ def add_trigger():
 def update_toggle():
 	cid = request.form['cntid']
 	output = request.form['output']
-	for c in cntrlrs:
-		if c['controllerid'] == cid:
-			c[output] = request.form['val']
-			return jsonify(response = 'OK')
-	return jsonify(response = 'FAIL')
+	c = Controller.query.get(cid)
+	r = 'FAIL'
+	if output == 'outputa':
+		c.outputa = request.form['val']
+		r = 'OK'
+	elif output == 'outputb':
+		c.outputb = request.form['val']
+		r = 'OK'
+	elif output == 'outputc':
+		c.outputc = request.form['val']
+		r = 'OK'
+	elif output == 'outputd':
+		c.outputd = request.form['val']
+		r = 'OK'
+	db.session.commit()
+	return jsonify(response = r)
 
 @app.route('/_update_toggle_input', methods=['POST'])
 def update_toggle_input():
 	cid = request.form['cntid']
 	thisinput = request.form['thisinput']
-	for c in cntrlrs:
-		if c['controllerid'] == cid:
-			c[thisinput] = request.form['val']
-			return jsonify(response = 'OK')
-	return jsonify(response = 'FAIL')
+	c = Controller.query.get(cid)
+	r = 'FAIL'
+	if thisinput == 'input1':
+		c.input1 = request.form['val']
+		r = 'OK'
+	elif thisinput == 'input2':
+		c.input2 = request.form['val']
+		r = 'OK'
+	db.session.commit()
+	return jsonify(response = r)
 
 @app.route('/testpost', methods=['POST'])
 def testpost():

@@ -37,12 +37,12 @@ class Controller(db.Model):
 	sounds= db.relationship('Sound', backref='sound', lazy='dynamic')
 	triggers = db.relationship('Trigger', backref='trigger', lazy='dynamic')
 	name = db.Column(db.String(24), index=True, unique=True)
-	input1 = db.Column(db.String(10))
-	input2 = db.Column(db.String(10))
-	outputa = db.Column(db.String(10))
-	outputb = db.Column(db.String(10))
-	outputc = db.Column(db.String(10))
-	outputd = db.Column(db.String(10))
+	input1 = db.Column(db.String(10), default='ACTIVE')
+	input2 = db.Column(db.String(10), default='ACTIVE')
+	outputa = db.Column(db.String(10), default='OFF')
+	outputb = db.Column(db.String(10), default='OFF')
+	outputc = db.Column(db.String(10), default='OFF')
+	outputd = db.Column(db.String(10), default='OFF')
 
 	@staticmethod
 	def make_unique_name(tempname):
@@ -55,14 +55,20 @@ class Controller(db.Model):
 				break
 			version += 1
 		return new_name
-	
+
 	@property
 	def serialize(self):
 		#Return object data in easily serializable format
 		return {
 			'controllerid': self.id,
 			'controllername': self.name,
-			'controllercolor': self.color_id
+			'controllercolor': self.color_id,
+			'input1': self.input1,
+			'input2': self.input2,
+			'outputa': self.outputa,
+			'outputb': self.outputb,
+			'outputc': self.outputc,
+			'outputd': self.outputd
 		}
 
 event_triggers = db.Table('event_triggers',
