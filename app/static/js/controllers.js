@@ -92,6 +92,18 @@ function removeController(controllerid) {
   });
 }
 
+function updateController(c) {
+  var $controller = $( "#" + c.id );
+  $controller.$( "[class*='cc-']" ).removeClass( function(index, css) {
+    return (css.match (/(^|\s)cc-\S+/g) || []).join(' ');
+  }).addClass( "cc-" + c.color_id );
+  $controller.find( ".panel-heading" ).removeClass( function(index, css) {
+    return (css.match (/(^|\s)cc-\S+/g) || []).join(' ');
+  }).addClass( "cc-" + c.color_id + "-heading" );
+  $controller.find( '[data-ccolor=^"cc-"]' ).attr( {"data-ccolor": "cc-" + c.color_id, "data-cname": c.name} );
+  $controller.find( ".controller-name" ).html( c.name );
+}
+
 //------------------------- Change Handlers -------------------------//
 $( "#triggerType" ).change(function() {
   $( ".triggerForm" ).addClass("hidden");
@@ -257,6 +269,42 @@ $( "#connectControllerModalAddButton" ).click(function() {
 	});
 });
 
+// Click Save button on editControllerModal to update controller info (update db and dashboard)
+$( "#editControllerModalSaveButton" ).click(function() {
+	var $btn = $( this ).button("saving");
+	//Use AJAX to add the controller to the db. Returns new controller.
+	$.ajax({
+		url: "/update_controller",
+		data: $( "#editControllerForm" ).serialize(),
+		type: "POST",
+		dataType: "json",
+		success: function( response ) {
+			//console.log(response.data.status); //debug
+			if (response.data.status == "OK") {
+				//update navbar controller list
+				var $cntlist = $( ".controller-list" );
+				$cntlist.empty();
+				$.each( response.data.clist, function( index, value ) {
+					$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
+				});
+				//console.log(response.data.controller[0]); //debug
+				updateControler(response.data.controller);
+				$( "#editControllerModal" ).modal("toggle");
+				$btn.button("reset");
+			} else if (response.data.status == "NAME") {
+				$btn.button("reset");
+				$( "#editname" ).animateCss( "shake" );
+				if ( $( "#editnamealert" ).length == 0 ) {
+				  $( ".editappendalert" ).append("<div class='alert alert-danger alert-dismissible' id='editnamealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken.</div>");
+				}
+			}
+		},
+			error: function( error ) {
+			console.log(error);
+		}
+	});
+});
+
 // Click Delete modal button to disconnect controller (remove from db and dashboard)
 $( "#editControllerModalDeleteButton" ).click(function() {
 	var thiscid = $( "#editControllerCID" ).val();
@@ -315,7 +363,7 @@ $( "#addTriggerModalAddButton" ).click(function() {
 	});
 });
 
-// configre modal when it opens
+// configre #editControllerModal when it opens
 $('#editControllerModal').on('show.bs.modal', function (event) {
   var obj = $(event.relatedTarget); // object that triggered the modal
   // Extract info from data-* attributes
