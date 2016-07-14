@@ -88,6 +88,9 @@
               <em><small>A controller has been detected. Give it a name and a color to help you identify it on this dashboard. Click Add to connect it to this project.</small></em>
             </div>
             <div class="form-group">
+              <div class="col-xs-12 appendalert"></div>
+            </div><!-- /.form-group -->
+            <div class="form-group">
               <label for="name" class="col-xs-3 control-label">Name:</label>
               <div class="col-xs-5">
                 <input type="text" class="form-control" id="name" name="name" value="My Controller" />
@@ -216,7 +219,7 @@
           </div><!-- /.modal-header -->
           <div class="modal-body">
             <div class="form-group">
-              <label for="editame" class="col-xs-3 control-label">Name:</label>
+              <label for="editname" class="col-xs-3 control-label">Name:</label>
               <div class="col-xs-5">
                 <input type="text" class="form-control" id="editname" name="name" />
               </div>
@@ -233,7 +236,7 @@
             </div><!-- /.form-group -->
           </div><!-- /.modal-body -->
           <div class="modal-footer">
-            <span class="pull-left"><button type="button" class="btn btn-danger" id="editControllerModalDeleteButton">Detele</button></span>
+            <span class="pull-left"><button type="button" class="btn btn-danger" id="editControllerModalDeleteButton">Delete</button></span>
             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary" id="addTriggerModalAddButton" data-adding-text="Adding...">Add</button>
           </div><!-- ./modal-footer -->
@@ -244,7 +247,7 @@
   <!-- End Modals -->
   <div class="panel template hidden" id="template-controller">
     <div class="panel-heading">
-      <h3 class="panel-title"><span class="controller-name">Controller 1</span><div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="template-controller"><span class="glyphicon glyphicon-cog"></span></div></h3>
+      <h3 class="panel-title"><span class="controller-name">Controller 1</span><div class="pull-right" data-toggle="modal" data-target="#editControllerModal"><span class="glyphicon glyphicon-cog"></span></div></h3>
     </div><!-- /.panel-heading -->
     <ul class="list-group">
       <li class="list-group-item borderless">
@@ -252,18 +255,18 @@
         <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span>A</span></span></div>
+        <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>A</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left"><span class="label input unassigned">1</span>&nbsp;<span id="toggle-input1-templateid"><i class="fa fa-check-circle-o fa-fw input1" data-setting="ACTIVE"></i></span></div>
-        <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span>B</span></span></div>
+        <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>B</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left"><span class="label input unassigned">2</span>&nbsp;<span id="toggle-input2-templateid"><i class="fa fa-check-circle-o fa-fw input2" data-setting="ACTIVE"></i></span></div>
-        <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span>C</span></span></div>
+        <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>C</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd" data-setting="OFF"></i></span>&nbsp;<span class="label output unassigned"><span>D</span></span></div>
+        <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>D</span></span></div>
       </li>
     </ul><!-- list-group -->
   </div><!-- /.panel .template -->
@@ -272,7 +275,7 @@
     <div class="panel-heading cc-{{ c.controllercolor }}-heading">
       <h3 class="panel-title">
         <span class="controller-name">{{ c.controllername }}</span>
-        <div class="pull-right" data-toggle="modal" data-target="#configControllerModal" data-cid="controller-{{ c.controllerid }}">
+        <div class="pull-right" data-toggle="modal" data-target="#editControllerModal" data-cid="controller-{{ c.controllerid }}" data-ccolor="cc-{{ c.controllercolor }}" data-cname="{{ c.controllername }}">
           <span class="glyphicon glyphicon-cog"></span>
         </div>
       </h3>

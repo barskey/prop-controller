@@ -36,7 +36,7 @@ function connectController(c) {
   //clone the template and update the elements with controller specific data
   var $newController = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", controllerid );
   $newController.addClass( "draggable-controller" ).addClass( cc );
-  $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( "data-cid", controllerid );
+  $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-ccolor": cc, "data-cname": c.controllername} );
   $newController.find( ".controller-name" ).text( c.controllername );
   $newController.find( ".label" ).addClass( cc );
   for (i=0; i<outputs.length; i++) { // loops through a,b,c,d
@@ -73,18 +73,23 @@ function connectController(c) {
   });
 
   $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
-  $( ".dashboard" ).append($newController); //add it to dashboard
+  $( ".dashboard" ).append( $newController ); //add it to dashboard
   $( $newController ).draggable({ grid: [10, 10 ], containment: "parent" }); //make it draggable
   $( $newController ).animateCss( "rubberBand" ); //animate its appearance
 };
 
 function removeController(controllerid) {
   //console.log(c.controllerid); //debug
-  $( "#" + controllerid ).animateCss( "bounceOut" ); //animate the exit
-  // Show the jumbotron if there aren't any controllers left
-  if ( !$( "div[id^='controller-']" ) ) {
-    $( ".jumbotron" ).removeClass( "hidden" ); 
-  }
+  var $c = $( "#" + controllerid );
+  $c.animateCss( "bounceOut" ); //animate the exit
+  $c.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+    $c.remove();
+    // Show the jumbotron if there aren't any controllers left
+    console.log($( ".draggable-controller" ).length);
+    if ( $( ".draggable-controller" ).length < 1 ) { // less than 1 because of template div
+      $( ".jumbotron" ).removeClass( "hidden" );
+    }
+  });
 }
 
 //------------------------- Change Handlers -------------------------//
@@ -159,9 +164,10 @@ $( "span[id^='toggle-input']" ).click(function() {
   var newvalue = "";
   var newclass = "";
 
-  var id = $( this ).attr("id");
+  var $thisel = $( this );
+  var id = $thisel.attr("id");
   //console.log(id); //debug
-  var $i = $( this ).find( "i" );
+  var $i = $thisel.find( "i" );
   var arr = id.split("-"); //arr[0]='toggle', arr[1]='input1/2', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
   //console.log(arr); //debug
@@ -186,20 +192,21 @@ $( "span[id^='toggle-input']" ).click(function() {
     type: "POST",
     dataType: "json",
     success: function( data ) {
-      console.log(data.response); //debug
+      if (data.response == 'OK') {
+        $i.removeClass( "fa-check-circle-o fa-ban" ).addClass( newclass ); //Change the image
+        $i.attr("data-setting", newvalue ); //change data-setting to new value
+        //update the title on the tooltip
+        $thisel.tooltip("hide")
+          .attr("data-original-title", title)
+          .tooltip("fixTitle")
+          .tooltip("show");
+      }
+      //console.log(data.response); //debug
     },
       error: function( error ) {
       console.log(error);
     }
   });
-  //console.log(title); //debug
-  //update the title on the tooltip
-  $( this ).tooltip("hide")
-    .attr("data-original-title", title)
-    .tooltip("fixTitle")
-    .tooltip("show");
-  $i.removeClass( "fa-check-circle-o fa-ban" ).addClass( newclass ); //Change the image
-  $i.attr("data-setting", newvalue ); //change data-setting to new value
 });
 
 // Click to assign trigger
@@ -224,7 +231,7 @@ $( "#connectControllerModalAddButton" ).click(function() {
 		type: "POST",
 		dataType: "json",
 		success: function( response ) {
-			//console.log(response.data); //debug
+			console.log(response.data.status); //debug
 			if (response.data.status == "OK") {
 				//update navbar controller list
 				var $cntlist = $( ".controller-list" );
@@ -236,9 +243,12 @@ $( "#connectControllerModalAddButton" ).click(function() {
 				connectController(response.data.controller[0]);
 				$( "#connectControllerModal" ).modal("toggle");
 				$btn.button("reset");
-			//} else if (response.r.status == "NAME") {
-			//	//do something about duplicate name here
-			//	break; //use while if is empty
+			} else if (response.data.status == "NAME") {
+        $btn.button("reset");
+        $( "#name" ).animateCss( "shake" );
+        if ( $( "#namealert" ).length == 0 ) {
+          $( ".appendalert" ).append("<div class='alert alert-danger alert-dismissible' id='namealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken.</div>");
+        }
 			}
 		},
 			error: function( error ) {
@@ -304,4 +314,18 @@ $( "#addTriggerModalAddButton" ).click(function() {
 		}
 	});
 });
+
+// configre modal when it opens
+$('#editControllerModal').on('show.bs.modal', function (event) {
+  var obj = $(event.relatedTarget); // object that triggered the modal
+  // Extract info from data-* attributes
+  var controllerid = obj.data('cid');
+  var controllername = obj.data('cname');
+  var controllercolor = obj.data('ccolor');
+  var modal = $( this );
+  modal.find( '#editControllerCID' ).val( controllerid );
+  modal.find( '#editControllerName' ).text( controllername );
+  modal.find( '#editname' ).val( controllername );
+  modal.find( '#editcolor' ).val( controllercolor );
+})
 //--------------------- End Click Handlers --------------------------//

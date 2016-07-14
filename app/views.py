@@ -103,6 +103,9 @@ def controllers():
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
 	cid = request.form['cidform']
+	tempname = request.form['name']
+	if Controller.query.filter(Controller.name == tempname).count() > 0:
+		return jsonify(data={'status': 'NAME'})
 	cname = Controller.make_unique_name(request.form['name'])
 	b, cc = request.form['color'].split('-')
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
@@ -113,7 +116,7 @@ def add_controller():
 
 @app.route('/rem_controller', methods=['POST'])
 def rem_controller():
-	cid = request.form['controllerid']
+	a, cid = request.form['controllerid'].split("-")
 	c = Controller.query.get(cid)
 	status = ''
 	if c:
@@ -124,10 +127,11 @@ def rem_controller():
 	db.session.commit()
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
 	return jsonify(data = r)
-	
+
 @app.route('/update_controller', methods=['POST'])
 def update_controller():
 	a, cid = request.form['controllerSelect'].split("-")
+	c = Controller.query.get(cid)
 	test = []
 	for c in cntrlrs:
 		if c['controllerid'] == cid:
