@@ -110,7 +110,7 @@ def add_controller():
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
 	db.session.add(newcontroller)
 	db.session.commit()
-	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': [newcontroller.serialize]}
+	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
 
 @app.route('/rem_controller', methods=['POST'])
@@ -119,9 +119,9 @@ def rem_controller():
 	c = Controller.query.get(cid)
 	status = ''
 	if c:
-	  status = 'OK'
+		status = 'OK'
 	else:
-	  status = 'FAIL'
+		status = 'FAIL'
 	db.session.delete(c)
 	db.session.commit()
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
@@ -129,20 +129,16 @@ def rem_controller():
 
 @app.route('/update_controller', methods=['POST'])
 def update_controller():
-	a, cid = request.form['editControllerCID'].split("-")
+	a, cid = request.form['controllerid'].split("-")
+	tempname = request.form['name']
+	b, cc = request.form['color'].split('-')
 	c = Controller.query.get(cid)
-	status = ''
-	if c:
-	  status = 'OK'
-	else:
-	  status = 'FAIL'
-	tempname = request.form['editname']
-	if Controller.query.filter(Controller.name == tempname).count() > 0:
-		return jsonify(data={'status': 'NAME'})
-	b, cc = request.form['editcolor'].split('-')
+	if Controller.query.filter(Controller.name == tempname, Controller.id != cid).count() > 0:
+		return jsonify(data = {'status': 'NAME'})
 	c.name = tempname
 	c.color_id = cc
-	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()], 'controller': c.serialize}
+	db.session.commit()
+	r = {'status': 'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': c.serialize}
 	return jsonify(data = r)
 
 @app.route('/_get_controller')

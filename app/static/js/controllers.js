@@ -85,7 +85,7 @@ function removeController(controllerid) {
   $c.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
     $c.remove();
     // Show the jumbotron if there aren't any controllers left
-    console.log($( ".draggable-controller" ).length);
+    //console.log($( ".draggable-controller" ).length);
     if ( $( ".draggable-controller" ).length < 1 ) { // less than 1 because of template div
       $( ".jumbotron" ).removeClass( "hidden" );
     }
@@ -93,15 +93,15 @@ function removeController(controllerid) {
 }
 
 function updateController(c) {
-  var $controller = $( "#" + c.id );
-  $controller.$( "[class*='cc-']" ).removeClass( function(index, css) {
-    return (css.match (/(^|\s)cc-\S+/g) || []).join(' ');
-  }).addClass( "cc-" + c.color_id );
-  $controller.find( ".panel-heading" ).removeClass( function(index, css) {
-    return (css.match (/(^|\s)cc-\S+/g) || []).join(' ');
-  }).addClass( "cc-" + c.color_id + "-heading" );
-  $controller.find( '[data-ccolor=^"cc-"]' ).attr( {"data-ccolor": "cc-" + c.color_id, "data-cname": c.name} );
-  $controller.find( ".controller-name" ).html( c.name );
+  //console.log(c.controllerid); //debug
+  var $controller = $( "#controller-" + c.controllerid );
+  var oldclass = $controller.attr("class").match(/cc-[\w-]*\b/);
+  console.log("." + oldclass[0]); //debug
+  $controller.removeClass( oldclass[0] ).addClass( "cc-" + c.controllercolor );
+  $controller.find( "." + oldclass[0] ).removeClass( oldclass[0] ).addClass( "cc-" + c.controllercolor );
+  $controller.find( ".panel-heading" ).removeClass( oldclass[0] + "-heading" ).addClass( "cc-" + c.controllercolor + "-heading" );
+  $controller.find( '[data-ccolor^="cc-"]' ).attr( {"data-ccolor": "cc-" + c.controllercolor, "data-cname": c.controllername} );
+  $controller.find( ".controller-name" ).html( c.controllername );
 }
 
 //------------------------- Change Handlers -------------------------//
@@ -252,7 +252,7 @@ $( "#connectControllerModalAddButton" ).click(function() {
 					$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
 				});
         //console.log(response.data.controller[0]); //debug
-				connectController(response.data.controller[0]);
+				connectController(response.data.controller);
 				$( "#connectControllerModal" ).modal("toggle");
 				$btn.button("reset");
 			} else if (response.data.status == "NAME") {
@@ -287,9 +287,10 @@ $( "#editControllerModalSaveButton" ).click(function() {
 				$.each( response.data.clist, function( index, value ) {
 					$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
 				});
-				//console.log(response.data.controller[0]); //debug
-				updateControler(response.data.controller);
+				//console.log(response.data.controller); //debug
+				updateController(response.data.controller);
 				$( "#editControllerModal" ).modal("toggle");
+        $( "#controller-" + response.data.controller.controllerid ).animateCss("bounceIn");
 				$btn.button("reset");
 			} else if (response.data.status == "NAME") {
 				$btn.button("reset");
