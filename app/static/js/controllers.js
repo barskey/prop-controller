@@ -104,6 +104,19 @@ function updateController(c) {
   $controller.find( ".controller-name" ).html( c.controllername );
 }
 
+function updateInput(t) {
+  //console.log(t.cid); //debug
+  var $controller = $( "#" + t.cid );
+  var $thisinput = $controller.find( ".label.input" + t.inputnum ).removeClass( "unassigned" );
+  //update the title on the tooltip
+  var title = "Assigned to " + t.name + ".<br>(Click to assign)";
+  $thisinput.tooltip("hide")
+    .attr("data-original-title", title)
+    .tooltip("fixTitle")
+    .tooltip("show");
+  $thisinput.animateCss( "flipInY" );
+}
+
 //------------------------- Change Handlers -------------------------//
 $( "#triggerType" ).change(function() {
   $( ".triggerForm" ).addClass("hidden");
@@ -226,10 +239,13 @@ $( ".label.input" ).click(function() {
   var controllerid = $( this ).parents().eq(3).attr( "id" ).substr(11);
   var controllername = $( this ).parents().eq(3).find( ".controller-name" ).html();
   var triggernum = $( this ).html();
+  var triggerid = $( this ).data( "triggerid" );
   //console.log(controllerid); //debug
   $( "#addTriggerCID" ).val( controllerid );
   $( "#modalControllerName" ).text( controllername );
+  $( "#modalTriggerNum" ).text( triggernum );
   $( "#triggernum" ).val( triggernum );
+  $( "#triggerType" ).val( triggerid ).change();
   $( "#addTriggerModal" ).modal( "toggle" );
 });
 
@@ -338,7 +354,7 @@ $( "#editControllerModalDeleteButton" ).click(function() {
 // Click Add modal button to assign trigger (add to db and update controller on dashboard)
 $( "#addTriggerModalAddButton" ).click(function() {
 	var $btn = $( this ).button("adding");
-	//Use AJAX to add the trigger to the db. Returns list of Triggers.
+	//Use AJAX to add the trigger to the db. Returns list of Triggers and new trigger.
 	$.ajax({
 		url: "/add_trigger",
 		data: $( "#addTriggerForm" ).serialize(),
@@ -351,9 +367,9 @@ $( "#addTriggerModalAddButton" ).click(function() {
 				var $triggerlist = $( "#trigger-menu" );
 				$triggerlist.empty();
 				$.each( response.data.tlist, function( index, value ) {
-					$triggerlist.append( $( "<a>" ).addClass( "list-group-item" ).attr( {"id": "trigger-" + value.triggerid, "href": "#"} ).text( value.triggername ) );
+					$triggerlist.append( $( "<a>" ).addClass( "list-group-item" ).attr( {"id": "trigger-" + value.id, "href": "#"} ).text( value.name ) );
 				});
-
+				updateInput(response.data.trigger);
 				$( "#addTriggerModal" ).modal("toggle");
 				$btn.button("reset");
 			}

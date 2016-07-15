@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, jsonify, json
-from .models import Controller
+from .models import Project, Color, Triggertype, Actiontype, Controller, Event, Trigger, Action, Sound
 
 #Dummy data for testing
 projectname = "Halloween 2016"
@@ -98,7 +98,7 @@ def add_trigger_to_event():
 @app.route('/controllers')
 def controllers():
 	project = projectname
-	return render_template('controllers.html', title='Controllers', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, controllers=[c.serialize for c in Controller.query.all()], colors=colors)
+	return render_template('controllers.html', title='Controllers', projectname=project, triggers=[t.serialize for t in Trigger.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in Controller.query.all()], colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -152,19 +152,29 @@ def get_controller():
 
 @app.route('/add_trigger', methods=['POST'])
 def add_trigger():
-	cid = request.form['cid']
-	triggernum = "input" + request.form['triggernum'] + "trigger"
+	cid = request.form['controllerid']
+	triggernum = request.form['triggernum']
 	triggername = request.form['triggerName']
 	triggertype = request.form['triggerType']
-	param1 = request.form['']
-	for c in cntrlrs:
-		if c['controllerid'] == cid:
-			c[triggernum] = request.form['triggerType']
-			newtrigger = {'triggerid': '1', 'controllerid': cid, 'triggername': triggername, 'triggertype': triggertype, 'param1': '10000', 'param2': ''}
-			triggers.append()
-			r = {'status':'OK', 'tlist': triggers}
-			return jsonify(data = r)
-	return jsonify(data = {'status': 'FAIL'})
+	param1 = ''
+	param2 = ''
+	virtual = False
+	if triggertype == "Motion":
+		param1 = request.form['resetTime']
+	elif triggertype == "Pushbutton":
+		param1 = request.form['defaultState']
+	elif triggertype == "Interval":
+		param1 = request.form['cycleTime']
+		virtual = True
+	elif triggertype == "Random":
+		param1 = request.form['randomLow']
+		param2 = request.form['randomHigh']
+		virtual = True
+	t = Trigger(name = triggername, controller_id = cid, triggertype_id = triggertype, num = triggernum, param1 = param1, param2 = param2)
+	db.session.add(t)
+	db.session.commit()
+	r = {'status': 'OK', 'tlist': [t.serialize for t in Trigger.query.all()], 'trigger': t.serialize}
+	return jsonify(data = r)
 
 @app.route('/_update_toggle', methods=['POST'])
 def update_toggle():
