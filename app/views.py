@@ -98,17 +98,21 @@ def add_trigger_to_event():
 @app.route('/controllers')
 def controllers():
 	project = projectname
-	return render_template('controllers.html', title='Controllers', projectname=project, triggers=[t.serialize for t in Trigger.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in Controller.query.all()], colors=colors)
+	return render_template('controllers.html', title='Controllers', projectname=project, triggers=[t.serialize for t in Trigger.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in Controller.query.all()], colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
 	cid = request.form['cidform']
-	tempname = request.form['name']
-	if Controller.query.filter(Controller.name == tempname).count() > 0:
-		return jsonify(data={'status': 'NAME'})
+	cname = request.form['name']
+	if Controller.query.filter(Controller.name == cname).count() > 0:
+		newname = Controller.make_unique_name(cname)
+		return jsonify(data={'status': 'NAME', 'newname': newname})
 	b, cc = request.form['color'].split('-')
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
 	db.session.add(newcontroller)
+	for n in range(1,3):
+		t = Trigger(controller_id=cid, triggertype_id=0, num=n)
+		db.session.add(t)
 	db.session.commit()
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
@@ -122,6 +126,9 @@ def rem_controller():
 		status = 'OK'
 	else:
 		status = 'FAIL'
+		return jsonify(data = {'status': status})
+	for t in c.trigger:
+		db.session.delete(t)
 	db.session.delete(c)
 	db.session.commit()
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
@@ -150,30 +157,33 @@ def get_controller():
 			test.append(c)
 	return jsonify(controller = test)
 
-@app.route('/add_trigger', methods=['POST'])
-def add_trigger():
+@app.route('/update_trigger', methods=['POST'])
+def update_trigger():
 	cid = request.form['controllerid']
 	triggernum = request.form['triggernum']
-	triggername = request.form['triggerName']
 	triggertype = request.form['triggerType']
+	c = Controller.query.get(cid)
+	t = c.trigger.filter_by(num=triggernum).first()
 	param1 = ''
 	param2 = ''
-	virtual = False
-	if triggertype == "Motion":
+	typename = ''
+	if int(triggertype) == 0: #unassigned
+		param1 = ''
+		typename = "unassigned"
+	if int(triggertype) == 1: #Motion
 		param1 = request.form['resetTime']
-	elif triggertype == "Pushbutton":
+		typename = "Motion"
+	elif int(triggertype) == 2: #Pushbutton
 		param1 = request.form['defaultState']
-	elif triggertype == "Interval":
-		param1 = request.form['cycleTime']
-		virtual = True
-	elif triggertype == "Random":
-		param1 = request.form['randomLow']
-		param2 = request.form['randomHigh']
-		virtual = True
-	t = Trigger(name = triggername, controller_id = cid, triggertype_id = triggertype, num = triggernum, param1 = param1, param2 = param2)
-	db.session.add(t)
+		typename = "Pushbutton"
+	elif int(triggertype) == 3: #Switch
+		typename = "Switch"
+	t.triggertype_id = triggertype
+	t.param1 = param1
+	t.param2 = param2
+	trigger = {'cid': cid, 'inputnum': triggernum, 'type_id': triggertype, 'type_name': typename, 'param1': param1}
 	db.session.commit()
-	r = {'status': 'OK', 'tlist': [t.serialize for t in Trigger.query.all()], 'trigger': t.serialize}
+	r = {'status': 'OK', 'tlist': [t.serialize for t in Trigger.query.all()], 'trigger': trigger}
 	return jsonify(data = r)
 
 @app.route('/_update_toggle', methods=['POST'])
@@ -216,3 +226,7 @@ def update_toggle_input():
 def testpost():
 	items = request.form
 	return render_template('testpost.html', items=items)
+
+@app.route('/admin')
+def admin():
+	return render_template('admin.html', title='Admin', projects=[p.serialize for p in Project.query.all()], triggers=[t.serialize for t in Trigger.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[a.serialize for a in Action.query.all()], controllers=[c.serialize for c in Controller.query.all()], events=[e.serialize for e in Event.query.all()], colors=[c.serialize for c in Color.query.all()])

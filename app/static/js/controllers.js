@@ -39,16 +39,18 @@ function connectController(c) {
   $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-ccolor": cc, "data-cname": c.controllername} );
   $newController.find( ".controller-name" ).text( c.controllername );
   $newController.find( ".label" ).addClass( cc );
+  // Assign ids to outputs
   for (i=0; i<outputs.length; i++) { // loops through a,b,c,d
     var port = "output" + outputs[i];
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
   } // end for loop
+  // Assign ids to inputs
   for (i=1; i<3; i++) { // loops through 1,2
     var port = "input" + i;
     //console.log(port); //debug
     $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
-    $newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid );
+    //$newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid ); //<-- Are these ids even used?
   } // end for loop
 
   //Create toggle tooltips
@@ -66,8 +68,7 @@ function connectController(c) {
   });
   //Create assign-trigger tooltips
   $newController.find( ".label.input" ).tooltip({
-    placement: "left",
-    title: "(Click to assign)",
+    title: "(Click to configure)",
     container: "body",
     html: true
   });
@@ -96,7 +97,7 @@ function updateController(c) {
   //console.log(c.controllerid); //debug
   var $controller = $( "#controller-" + c.controllerid );
   var oldclass = $controller.attr("class").match(/cc-[\w-]*\b/);
-  console.log("." + oldclass[0]); //debug
+  //console.log("." + oldclass[0]); //debug
   $controller.removeClass( oldclass[0] ).addClass( "cc-" + c.controllercolor );
   $controller.find( "." + oldclass[0] ).removeClass( oldclass[0] ).addClass( "cc-" + c.controllercolor );
   $controller.find( ".panel-heading" ).removeClass( oldclass[0] + "-heading" ).addClass( "cc-" + c.controllercolor + "-heading" );
@@ -105,16 +106,18 @@ function updateController(c) {
 }
 
 function updateInput(t) {
-  //console.log(t.cid); //debug
-  var $controller = $( "#" + t.cid );
-  var $thisinput = $controller.find( ".label.input" + t.inputnum ).removeClass( "unassigned" );
+  //console.log(t); //debug
+  var $controller = $( "#controller-" + t.cid );
+  var $thisinput = $controller.find( ".label.input" + t.inputnum ).removeClass( "unassigned" ).attr( {"data-triggertypeid": t.type_id, "data-param1": t.param1} );
+  if (parseInt(t.type_id) == 0) {
+    $thisinput.addClass( "unassigned" );
+  }
   //update the title on the tooltip
-  var title = "Assigned to " + t.name + ".<br>(Click to assign)";
+  var title = t.type_name + "<br>(Click to configure)";
   $thisinput.tooltip("hide")
     .attr("data-original-title", title)
     .tooltip("fixTitle")
     .tooltip("show");
-  $thisinput.animateCss( "flipInY" );
 }
 
 //------------------------- Change Handlers -------------------------//
@@ -234,19 +237,29 @@ $( "span[id^='toggle-input']" ).click(function() {
   });
 });
 
-// Click to assign trigger
+// Click to update trigger
 $( ".label.input" ).click(function() {
   var controllerid = $( this ).parents().eq(3).attr( "id" ).substr(11);
   var controllername = $( this ).parents().eq(3).find( ".controller-name" ).html();
   var triggernum = $( this ).html();
-  var triggerid = $( this ).data( "triggerid" );
-  //console.log(controllerid); //debug
-  $( "#addTriggerCID" ).val( controllerid );
+  var triggertypeid = $( this ).attr( "data-triggertypeid" );
+  var param1 = $( this ).attr( "data-param1" );
+  //console.log(param1); //debug
+  switch(parseInt(triggertypeid)) {
+    case 1: //Motion
+      $( "#resetTime" ).val( param1 );
+      break;
+    case 2: //Pushbutton
+      $( "input[id^='defaultState']" ).prop( "checked", false );
+      $( "#defaultState" + param1 ).prop( "checked", true );
+      break;
+  }
+  $( "#updateTriggerCID" ).val( controllerid );
   $( "#modalControllerName" ).text( controllername );
   $( "#modalTriggerNum" ).text( triggernum );
   $( "#triggernum" ).val( triggernum );
-  $( "#triggerType" ).val( triggerid ).change();
-  $( "#addTriggerModal" ).modal( "toggle" );
+  $( "#triggerType" ).val( triggertypeid ).change();
+  $( "#updateTriggerModal" ).modal( "toggle" );
 });
 
 // Click Add modal button to connect controller (add to db and add to dashboard)
@@ -259,7 +272,7 @@ $( "#connectControllerModalAddButton" ).click(function() {
 		type: "POST",
 		dataType: "json",
 		success: function( response ) {
-			console.log(response.data.status); //debug
+			//console.log(response.data.status); //debug
 			if (response.data.status == "OK") {
 				//update navbar controller list
 				var $cntlist = $( ".controller-list" );
@@ -274,8 +287,9 @@ $( "#connectControllerModalAddButton" ).click(function() {
 			} else if (response.data.status == "NAME") {
         $btn.button("reset");
         $( "#name" ).animateCss( "shake" );
+        $( "#name" ).val( response.data.newname );
         if ( $( "#namealert" ).length == 0 ) {
-          $( ".appendalert" ).append("<div class='alert alert-danger alert-dismissible' id='namealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken.</div>");
+          $( ".appendalert" ).append("<div class='alert alert-danger alert-dismissible' id='namealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken. How about this one?</div>");
         }
 			}
 		},
@@ -352,16 +366,16 @@ $( "#editControllerModalDeleteButton" ).click(function() {
 });
 
 // Click Add modal button to assign trigger (add to db and update controller on dashboard)
-$( "#addTriggerModalAddButton" ).click(function() {
-	var $btn = $( this ).button("adding");
+$( "#updateTriggerModalSaveButton" ).click(function() {
+	var $btn = $( this ).button("saving");
 	//Use AJAX to add the trigger to the db. Returns list of Triggers and new trigger.
 	$.ajax({
-		url: "/add_trigger",
-		data: $( "#addTriggerForm" ).serialize(),
+		url: "/update_trigger",
+		data: $( "#updateTriggerForm" ).serialize(),
 		type: "POST",
 		dataType: "json",
 		success: function( response ) {
-			//console.log(response.data); //debug
+			//console.log(response.data.triggernum); //debug
 			if (response.data.status == "OK") {
 				//update navbar Trigger list
 				var $triggerlist = $( "#trigger-menu" );
@@ -369,8 +383,8 @@ $( "#addTriggerModalAddButton" ).click(function() {
 				$.each( response.data.tlist, function( index, value ) {
 					$triggerlist.append( $( "<a>" ).addClass( "list-group-item" ).attr( {"id": "trigger-" + value.id, "href": "#"} ).text( value.name ) );
 				});
-				updateInput(response.data.trigger);
-				$( "#addTriggerModal" ).modal("toggle");
+        updateInput(response.data.trigger);
+				$( "#updateTriggerModal" ).modal("toggle");
 				$btn.button("reset");
 			}
 		},

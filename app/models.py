@@ -13,6 +13,13 @@ class Project(db.Model):
 		except NameError:
 			return str(self.id)	 # python 3
 
+	@property
+	def serialize(self):
+		return{
+			'id': self.id,
+			'name': self.name
+		}
+
 	def __repr__(self):
 		return '<Project %r>' % (self.name)
 
@@ -21,14 +28,39 @@ class Color(db.Model):
 	name = db.Column(db.String(8), index=True)
 	hex = db.Column(db.String(8))
 
+	@property
+	def serialize(self):
+		return{
+			'id': self.id,
+			'name': self.name,
+			'hex': self.hex
+		}
+
 class Triggertype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(24), index=True)
 	virtual = db.Column(db.Boolean)
+	trigger = db.relationship('Trigger', backref='trigger', lazy='dynamic')
+
+	@property
+	def serialize(self):
+		#Return object data in easily serializable format
+		return {
+			'id': self.id,
+			'name': self.name,
+			'virtual': self.virtual
+		}
 
 class Actiontype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(24), index=True)
+
+	@property
+	def serialize(self):
+		return{
+			'id': self.id,
+			'name': self.name
+		}
 
 class Controller(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +76,12 @@ class Controller(db.Model):
 	outputc = db.Column(db.String(10), default='OFF')
 	outputd = db.Column(db.String(10), default='OFF')
 
+	def get_id(self):
+		try:
+			return unicode(self.id)  # python 2
+		except NameError:
+			return str(self.id)  # python 3
+
 	@staticmethod
 	def make_unique_name(tempname):
 		if Controller.query.filter_by(name=tempname).first() is None:
@@ -55,32 +93,29 @@ class Controller(db.Model):
 				break
 			version += 1
 		return new_name
-	
-	@property
-	def get_triggerid(self, triggernum):
-		try:
-			return self.trigger.filter(Trigger.num == triggernum).first().id
-		except:
-			return ""
 
-	@property
-	def get_triggername(self, triggernum):
+	def get_trigger(self, triggernum):
 		try:
-			return self.trigger.filter(Trigger.num == triggernum).first().name
+			return self.trigger.filter(Trigger.num == triggernum).first()
 		except:
-			return ""
+			return 0
 
 	@property
 	def serialize(self):
 		#Return object data in easily serializable format
 		return {
 			'controllerid': self.id,
+			'project_id': self.project_id,
 			'controllername': self.name,
 			'controllercolor': self.color_id,
-			'trigger1': self.get_triggerid(1),
-			'trigger1name': self.get_triggername(1),
-			'trigger2': self.get_triggerid(2),
-			'trigger2name': self.get_triggername(2),
+			'trigger1': self.get_trigger(1).id,
+			'trigger1typeid': self.get_trigger(1).serialize['type_id'],
+			'trigger1typename': self.get_trigger(1).serialize['type_name'],
+			'trigger1param1': self.get_trigger(1).serialize['param1'],
+			'trigger2': self.get_trigger(2).id,
+			'trigger2typeid': self.get_trigger(2).serialize['type_id'],
+			'trigger2typename': self.get_trigger(2).serialize['type_name'],
+			'trigger2param1': self.get_trigger(2).serialize['param1'],
 			'input1': self.input1,
 			'input2': self.input2,
 			'outputa': self.outputa,
@@ -181,14 +216,22 @@ class Event(db.Model):
 			version += 1
 		return new_name
 
+	@property
+	def serialize(self):
+		#Return object data in easily serializable format
+		return {
+			'id': self.id,
+			'project_id': self.project_id,
+			'name': self.name
+		}
+
 class Trigger(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	controller_id = db.Column(db.Integer, db.ForeignKey('controller.id'))
 	triggertype_id = db.Column(db.Integer, db.ForeignKey('triggertype.id'))
 	num = db.Column(db.Integer)
-	name = db.Column(db.String(24), index=True)
-	param1 = db.Column(db.String(8))
-	param2 = db.Column(db.String(8))
+	param1 = db.Column(db.String(8), default='')
+	param2 = db.Column(db.String(8), default='')
 
 	@property
 	def serialize(self):
@@ -200,7 +243,6 @@ class Trigger(db.Model):
 			'type_id': tt.id,
 			'type_name': tt.name,
 			'inputnum': self.num,
-			'name': self.name,
 			'param1': self.param1,
 			'param2': self.param2
 		}
@@ -212,6 +254,17 @@ class Action(db.Model):
 	outputport = db.Column(db.String(2))
 	param1 = db.Column(db.String(8))
 	param2 = db.Column(db.String(8))
+
+	@property
+	def serialize(self):
+		return{
+			'id': self.id,
+			'event_id': self.event_id,
+			'actiontype_id': self.actiontype_id,
+			'outputport': self.outputport,
+			'param1': self.param1,
+			'param2': self.param2
+		}
 
 class Sound(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
