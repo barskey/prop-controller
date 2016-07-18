@@ -15,8 +15,10 @@ function getRandomInt(min, max) {
 
 //Function to check if a controller is already added.
 // Identify if it is, or show modal if it isn't.
-function checkController() {
-  var cid = getRandomInt(1001, 1010);
+function checkController(cid) {
+  if (cid == "test") {
+    cid = getRandomInt(1001, 1010);
+  }
   var controllerid = "controller-" + cid;
   if ( $( "#" + controllerid ).length ) { //check if this controller is already added
     $( "#" + controllerid ).animateCss( "tada" );
@@ -106,7 +108,7 @@ function updateController(c) {
 }
 
 function updateInput(t) {
-  //console.log(t); //debug
+  console.log(t); //debug
   var $controller = $( "#controller-" + t.cid );
   var $thisinput = $controller.find( ".label.input" + t.inputnum ).removeClass( "unassigned" ).attr( {"data-triggertypeid": t.type_id, "data-param1": t.param1} );
   if (parseInt(t.type_id) == 0) {
@@ -116,8 +118,8 @@ function updateInput(t) {
   var title = t.type_name + "<br>(Click to configure)";
   $thisinput.tooltip("hide")
     .attr("data-original-title", title)
-    .tooltip("fixTitle")
-    .tooltip("show");
+    .tooltip("fixTitle");
+  return($thisinput.parent());
 }
 
 //------------------------- Change Handlers -------------------------//
@@ -375,15 +377,23 @@ $( "#updateTriggerModalSaveButton" ).click(function() {
 		type: "POST",
 		dataType: "json",
 		success: function( response ) {
-			//console.log(response.data.triggernum); //debug
+			console.log(response); //debug
 			if (response.data.status == "OK") {
-				//update navbar Trigger list
+				//rebuild navbar Trigger list
 				var $triggerlist = $( "#trigger-menu" );
 				$triggerlist.empty();
 				$.each( response.data.tlist, function( index, value ) {
-					$triggerlist.append( $( "<a>" ).addClass( "list-group-item" ).attr( {"id": "trigger-" + value.id, "href": "#"} ).text( value.name ) );
+					if (parseInt(value.type_id) != 0) {
+						$triggerlist.append( 
+						  $( "<li>" ).addClass( "list-group-item cc-" + value.color_id ).attr( "id", "trigger-" + value.id ).text( value.type_name ).append( 
+							$( "<div>" ).addClass( "pull-right" ).append( 
+							  $( "<span>" ).addClass( "label input cc-" + value.color_id ).html( value.inputnum )
+							)
+						  )
+						)
+					}
 				});
-        updateInput(response.data.trigger);
+        updateInput(response.data.trigger).animateCss("flipInY");
 				$( "#updateTriggerModal" ).modal("toggle");
 				$btn.button("reset");
 			}
@@ -401,6 +411,7 @@ $('#editControllerModal').on('show.bs.modal', function (event) {
   var controllerid = obj.data('cid');
   var controllername = obj.data('cname');
   var controllercolor = obj.data('ccolor');
+  console.log(controllerid);
   var modal = $( this );
   modal.find( '#editControllerCID' ).val( controllerid );
   modal.find( '#editControllerName' ).text( controllername );

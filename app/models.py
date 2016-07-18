@@ -66,8 +66,6 @@ class Controller(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	color_id = db.Column(db.Integer, db.ForeignKey('color.id'))
-	sounds= db.relationship('Sound', backref='sound', lazy='dynamic')
-	trigger = db.relationship('Trigger', backref='controller', lazy='dynamic')
 	name = db.Column(db.String(24), index=True, unique=True)
 	input1 = db.Column(db.String(10), default='ACTIVE')
 	input2 = db.Column(db.String(10), default='ACTIVE')
@@ -75,6 +73,8 @@ class Controller(db.Model):
 	outputb = db.Column(db.String(10), default='OFF')
 	outputc = db.Column(db.String(10), default='OFF')
 	outputd = db.Column(db.String(10), default='OFF')
+	
+	triggers = db.relationship('Trigger', backref='controller')
 
 	def get_id(self):
 		try:
@@ -96,7 +96,9 @@ class Controller(db.Model):
 
 	def get_trigger(self, triggernum):
 		try:
-			return self.trigger.filter(Trigger.num == triggernum).first()
+			for t in self.triggers:
+				if t.num == triggernum:
+					return t
 		except:
 			return 0
 
@@ -244,7 +246,8 @@ class Trigger(db.Model):
 			'type_name': tt.name,
 			'inputnum': self.num,
 			'param1': self.param1,
-			'param2': self.param2
+			'param2': self.param2,
+			'color_id': self.controller.color_id
 		}
 
 class Action(db.Model):

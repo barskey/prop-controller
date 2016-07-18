@@ -97,8 +97,12 @@ def add_trigger_to_event():
 
 @app.route('/controllers')
 def controllers():
-	project = projectname
-	return render_template('controllers.html', title='Controllers', projectname=project, triggers=[t.serialize for t in Trigger.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in Controller.query.all()], colors=colors)
+	controllers = Controller.query.filter(Controller.project_id==projectid)
+	triggers = []
+	for c in controllers:
+		for t in c.triggers:
+			triggers.append(t.serialize)
+	return render_template('controllers.html', title='Controllers', projectname=projectname, triggers=triggers, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -127,7 +131,7 @@ def rem_controller():
 	else:
 		status = 'FAIL'
 		return jsonify(data = {'status': status})
-	for t in c.trigger:
+	for t in c.triggers:
 		db.session.delete(t)
 	db.session.delete(c)
 	db.session.commit()
@@ -145,7 +149,8 @@ def update_controller():
 	c.name = tempname
 	c.color_id = cc
 	db.session.commit()
-	r = {'status': 'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': c.serialize}
+	controller = c.serialize
+	r = {'status': 'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': controller}
 	return jsonify(data = r)
 
 @app.route('/_get_controller')
@@ -163,7 +168,7 @@ def update_trigger():
 	triggernum = request.form['triggernum']
 	triggertype = request.form['triggerType']
 	c = Controller.query.get(cid)
-	t = c.trigger.filter_by(num=triggernum).first()
+	t = c.get_trigger(int(triggernum))
 	param1 = ''
 	param2 = ''
 	typename = ''
@@ -181,7 +186,7 @@ def update_trigger():
 	t.triggertype_id = triggertype
 	t.param1 = param1
 	t.param2 = param2
-	trigger = {'cid': cid, 'inputnum': triggernum, 'type_id': triggertype, 'type_name': typename, 'param1': param1}
+	trigger = t.serialize
 	db.session.commit()
 	r = {'status': 'OK', 'tlist': [t.serialize for t in Trigger.query.all()], 'trigger': trigger}
 	return jsonify(data = r)

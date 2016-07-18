@@ -93,7 +93,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc2-head);
 }
 
-.cc-2 > ul > li > div > span.label {
+.cc-2.label {
   background-color: var(--cc2-head);
 }
 
@@ -108,7 +108,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc3-head);
 }
 
-.cc-3 > ul > li > div > span.label {
+.cc-3.label {
   background-color: var(--cc3-head);
 }
 
@@ -123,7 +123,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc4-head);
 }
 
-.cc-4 > ul > li > div > span.label {
+.cc-4.label {
   background-color: var(--cc4-head);
 }
 
@@ -138,7 +138,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc5-head);
 }
 
-.cc-5 > ul > li > div > span.label {
+.cc-5.label {
   background-color: var(--cc5-head);
 }
 
@@ -153,7 +153,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc6-head);
 }
 
-.cc-6 > ul > li > div > span.label {
+.cc-6.label {
   background-color: var(--cc6-head);
 }
 
@@ -168,7 +168,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc7-head);
 }
 
-.cc-7 > ul > li > div > span.label {
+.cc-7.label {
   background-color: var(--cc7-head);
 }
 
@@ -183,7 +183,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc8-head);
 }
 
-.cc-8 > ul > li > div > span.label {
+.cc-8.label {
   background-color: var(--cc8-head);
 }
 
@@ -198,7 +198,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc9-head);
 }
 
-.cc-9 > ul > li > div > span.label {
+.cc-9.label {
   background-color: var(--cc9-head);
 }
 
@@ -213,7 +213,7 @@ span[class*='cc-'].unassigned {
   border-color: var(--cc10-head);
 }
 
-.cc-10 > ul > li > div > span.label {
+.cc-10.label {
   background-color: var(--cc10-head);
 }
 
