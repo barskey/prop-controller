@@ -41,6 +41,10 @@ function connectController(c) {
   $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-ccolor": cc, "data-cname": c.controllername} );
   $newController.find( ".controller-name" ).text( c.controllername );
   $newController.find( ".label" ).addClass( cc );
+  
+  // Update sounds icon
+  $newController.find( ".sounds" ).attr( "id", "sounds-" + c.controllerid );
+
   // Assign ids to outputs
   for (i=0; i<outputs.length; i++) { // loops through a,b,c,d
     var port = "output" + outputs[i];
@@ -72,6 +76,12 @@ function connectController(c) {
   $newController.find( ".label.input" ).tooltip({
     title: "(Click to configure)",
     container: "body",
+    html: true
+  });
+  //Create sound tooltips
+  $newController.find( ".sounds" ).tooltip({
+    title: "(Click to configure)",
+	container: "body",
     html: true
   });
 
@@ -280,7 +290,9 @@ $( "#connectControllerModalAddButton" ).click(function() {
 				var $cntlist = $( ".controller-list" );
 				$cntlist.empty();
 				$.each( response.data.clist, function( index, value ) {
-					$cntlist.append( $( "<li>" ).append( "<a>" ).attr( "href", "#" ).text( value.controllername ) );
+					$cntlist.append( 
+						$( "<li>" ).addClass( "list-group-item borderless cc-" + value.controllercolor ).attr( "data-cid", "controller-" + value.controllerid ).text( value.controllername )
+					)
 				});
         //console.log(response.data.controller[0]); //debug
 				connectController(response.data.controller);
@@ -327,8 +339,9 @@ $( "#editControllerModalSaveButton" ).click(function() {
 			} else if (response.data.status == "NAME") {
 				$btn.button("reset");
 				$( "#editname" ).animateCss( "shake" );
+				$( "#editname" ).val( response.data.newname );
 				if ( $( "#editnamealert" ).length == 0 ) {
-				  $( ".editappendalert" ).append("<div class='alert alert-danger alert-dismissible' id='editnamealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken.</div>");
+				  $( ".editappendalert" ).append("<div class='alert alert-danger alert-dismissible' id='editnamealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken. How about this one?</div>");
 				}
 			}
 		},

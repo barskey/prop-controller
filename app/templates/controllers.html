@@ -87,7 +87,7 @@
           </div><!-- /.modal-header -->
           <div class="modal-body">
             <div class="text-muted pad-6">
-              <em><small>A controller has been detected. Give it a name and a color to help you identify it on this dashboard. Click Add to connect it to this project.</small></em>
+              <em><small>A controller has been detected. Give it a name and a color to help you identify it on this dashboard.<br>Click Add to connect it to this project.</small></em>
             </div>
             <div class="form-group">
               <div class="col-xs-12 appendalert"></div>
@@ -271,7 +271,7 @@
       </li>
       <li class="list-group-item borderless">
         <div class="text-center">
-          <span id="music-template" data-toggle="tooltip" data-placement="bottom" title="(click to configure)" data-html="true" data-container="body"><span class="label sounds cc-template unassigned"><i class="fa fa-music"></i></span></span>
+          <span class="label sounds unassigned" id="sounds-template" data-toggle="tooltip" title="(Click to configure)" data-html="true" data-container="body"><i class="fa fa-music"></i></span>
         </div>
       </li>
     </ul><!-- list-group -->
@@ -317,7 +317,7 @@
       </li>
       <li class="list-group-item borderless">
         <div class="text-center">
-          <span id="music-{{ c.controllerid }}" data-toggle="tooltip" data-placement="bottom" title="(click to configure)" data-html="true" data-container="body"><span class="label sounds cc-{{ c.controllercolor }} unassigned"><i class="fa fa-music"></i></span></span>
+          <span class="label sounds cc-{{ c.controllercolor }} unassigned" id="sounds-{{ c.controllerid }}" data-toggle="tooltip" title="(Click to configure)" data-html="true" data-container="body"><i class="fa fa-music"></i></span>
         </div>
       </li>
     </ul>

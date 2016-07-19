@@ -141,12 +141,13 @@ def rem_controller():
 @app.route('/update_controller', methods=['POST'])
 def update_controller():
 	a, cid = request.form['controllerid'].split("-")
-	tempname = request.form['name']
+	cname = request.form['name']
 	b, cc = request.form['color'].split('-')
 	c = Controller.query.get(cid)
-	if Controller.query.filter(Controller.name == tempname, Controller.id != cid).count() > 0:
-		return jsonify(data = {'status': 'NAME'})
-	c.name = tempname
+	if Controller.query.filter(Controller.name == cname, Controller.id != cid).count() > 0:
+		newname = Controller.make_unique_name(cname)
+		return jsonify(data = {'status': 'NAME', 'newname': newname})
+	c.name = cname
 	c.color_id = cc
 	db.session.commit()
 	controller = c.serialize
