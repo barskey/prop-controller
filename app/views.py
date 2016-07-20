@@ -63,6 +63,14 @@ triggers = [
 ]
 
 @app.route('/')
+def index():
+	controllers = Controller.query.filter(Controller.project_id==projectid)
+	triggers = []
+	for c in controllers:
+		for t in c.triggers:
+			triggers.append(t.serialize)
+	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
+
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
