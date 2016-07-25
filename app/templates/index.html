@@ -31,27 +31,25 @@
       </ul>
     </div><!-- /.sidebar -->
     <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-      <h1 class="sub-header">Controllers</h1>
       <div class="jumbotron hidden" style="height: 90%">
         <div class="container">
-          <h3 class="text-muted">Connect a Controller</h3>
-          <p class="text-muted">Press the button on a controller to automatically connect it to this project to begin configuring...</p>
+          <h3 class="text-muted">Create an Event</h3>
+          <p class="text-muted">Use the Add button to create an event and configure it for this project...</p>
         </div>
       </div>
       <div class="container-fluid dashboard">
         <!-- Modals -->
-        <div class="modal fade" id="connectControllerModal" tabindex="-1" role="dialog" labeledby="connectControllerModalLabel">
+        <div class="modal fade" id="createEvent" tabindex="-1" role="dialog" labeledby="createEventModalLabel">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
-              <form class="form-horizontal" id="connectControllerForm">
-                <input type="hidden" name="cidform" id="cidform" value="" />
+              <form class="form-horizontal" id="createEventForm">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="connectControllerModalLabel">Connect Controller (id:<span id="cid"></span>)</h4>
+                  <h4 class="modal-title" id="connectControllerModalLabel">Create Event</h4>
                 </div><!-- /.modal-header -->
                 <div class="modal-body">
                   <div class="text-muted pad-6">
-                    <em><small>A controller has been detected. Give it a name and a color to help you identify it on this dashboard.<br>Click Add to connect it to this project.</small></em>
+                    <em><small>Events allow you to link a series of Actions to run after a Trigger is detected. Give this Event a name and click Create to begin configuring it...</small></em>
                   </div>
                   <div class="form-group">
                     <div class="col-xs-12 appendalert"></div>
@@ -59,115 +57,18 @@
                   <div class="form-group">
                     <label for="name" class="col-xs-3 control-label">Name:</label>
                     <div class="col-xs-5">
-                      <input type="text" class="form-control" id="name" name="name" value="My Controller" />
-                    </div><!-- /.col -->
-                  </div><!-- /.form-group -->
-                  <div class="form-group">
-                    <label for="color" class="col-xs-3 control-label">Color: </label>
-                    <div class="col-xs-3">
-                      <select class="form-control" id="color" name="color">
-                        {% for c in colors %}
-                        <option value="cc-{{ c.colorid }}">{{ c.colorname }}</option>
-                        {% endfor %}
-                      </select>
+                      <input type="text" class="form-control" id="name" name="name" value="My Event" />
                     </div><!-- /.col -->
                   </div><!-- /.form-group -->
                 </div><!-- /.modal-body -->
                 <div class="modal-footer">
                   <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary" id="connectControllerModalAddButton" data-adding-text="Connecting...">Add</button>
+                  <button type="button" class="btn btn-primary" id="connectControllerModalAddButton" data-creating-text="Creating...">Create</button>
                 </div><!-- ./modal-footer -->
               </div><!-- /.modal-content -->
-            </form><!-- /.form #connectControllerForm -->
+            </form><!-- /.form #createEventrForm -->
           </div><!-- /.modal-dialog -->
-        </div><!-- /.modal #connectControllerModal -->
-        <div class="modal fade" id="updateTriggerModal" tabindex="-1" role="dialog" labeledby="updateTriggerModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <form class="form-horizontal" id="updateTriggerForm">
-                <input type="hidden" name="controllerid" id="updateTriggerCID" />
-                <input type="hidden" name="triggernum" id="triggernum" />
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="updateTriggerModalLabel">Configure <span id="modalControllerName"></span>: Trigger <span id="modalTriggerNum"></span></h4>
-                </div><!-- /.modal-header -->
-                <div class="modal-body">
-                  <div class="form-group pad-6">
-                    <label for="triggerType" class="col-xs-3 control-label">Trigger Type:</label>
-                    <div class="col-xs-4">
-                      <select class="form-control" id="triggerType" name="triggerType">
-                        {% for tt in triggertypes %}
-                        <option value="{{ tt.id }}">{{ tt.name }}</option>
-                        {% endfor %}
-                      </select>
-                    </div>
-                  </div><!-- /.form-group -->
-                  <div class="form-group triggerForm pad-6 hidden" id="Motion">
-                    <label for="resetTime" class="col-xs-3 control-label">Time to reset:</label>
-                    <div class="col-xs-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" id="resetTime" name="resetTime" value="30000" />
-                        <div class="input-group-addon">ms</div>
-                      </div>
-                    </div>
-                    <div class="col-xs-4 form-control-static">
-                      <em>Time before motion sensor detects motion again.</em>
-                    </div>
-                  </div><!-- /#Motion -->
-                  <div class="form-group triggerForm pad-6 hidden" id="Pushbutton">
-                    <label for="defaultStateOn" class="col-xs-3 control-label">Default state: </label>
-                    <div class="col-xs-4">
-                      <label class="radio-inline">
-                        <input type="radio" name="defaultState" id="defaultStateOPEN" value="OPEN" checked="checked"> Open
-                      </label>
-                      <label class="radio-inline">
-                        <input type="radio" name="defaultState" id="defaultStateCLOSED" value="CLOSED"> Closed
-                      </label>
-                    </div>
-                    <div class="col-xs-4 form-control-static">
-                      <em>Is the pushbutton normally open or normally closed?</em>
-                    </div>
-                  </div><!-- /#Pushbutton -->
-                  <div class="form-group triggerForm pad-6 hidden" id="Switch">
-                    <span class="text-muted col-xs-5 col-xs-offset-3">No parameters to configure.</span>
-                  </div><!-- /#Switch -->
-                  <div class="form-group triggerForm pad-6 hidden" id="Interval">
-                    <label for="cycleTime" class="col-xs-3 control-label">Interval Time:</label>
-                    <div class="col-xs-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" id="cycleTime" name="cycleTime" value="10000" />
-                        <div class="input-group-addon">ms</div>
-                      </div>
-                    </div>
-                    <div class="col-xs-5 form-control-static">
-                      <em>Triggers on a regular interval.</em>
-                    </div>
-                  </div><!-- /#Interval -->
-                  <div class="form-group triggerForm pad-6 hidden" id="Random">
-                    <label for="randomLow" class="col-xs-3 control-label">Between:</label>
-                    <div class="col-xs-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" id="randomLow" name="randomLow" value="5000" />
-                        <div class="input-group-addon">ms</div>
-                      </div>
-                    </div>
-                    <div class="col-xs-1 form-control-static">and</div>
-                    <div class="col-xs-3">
-                      <div class="input-group">
-                        <input type="text" class="form-control" id="randomHigh" name="randomHigh" value="15000" />
-                        <div class="input-group-addon">ms</div>
-                      </div>
-                    </div>
-                  </div><!-- /#Interval -->
-                </div><!-- /.modal-body -->
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary" id="updateTriggerModalSaveButton" data-saving-text="Saving...">Save</button>
-                </div><!-- ./modal-footer -->
-              </div><!-- /.modal-content -->
-            </form><!-- /.form #createTriggerForm -->
-          </div><!-- /.modal-dialog -->
-        </div><!-- /.modal #createTriggerModal -->
+        </div><!-- /.modal #createEventModal -->
         <div class="modal fade" id="editControllerModal" tabindex="-1" role="dialog" labeledby="editControllerModalLabel">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -208,84 +109,48 @@
           </div><!-- /.modal-dialog -->
         </div><!-- /.modal #editControllerModal -->
         <!-- End Modals -->
-        <div class="panel template hidden" id="template-controller">
+        <div class="panel template hidden" id="template-event">
           <div class="panel-heading">
-            <h3 class="panel-title"><span class="controller-name">Controller 1</span><div class="pull-right" data-toggle="modal" data-target="#editControllerModal"><span class="glyphicon glyphicon-cog"></span></div></h3>
+            <h3 class="panel-title"><span class="event-name">Event 1</span><div class="pull-right" data-toggle="modal" data-target="#editEventModal"><span class="glyphicon glyphicon-cog"></span></div></h3>
           </div><!-- /.panel-heading -->
           <ul class="list-group">
-            <li class="list-group-item borderless">
-              <div class="pull-left"><i class="fa fa-arrow-down"></i> Triggers</div>
-              <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>A</span></span></div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-left spin"><span class="label input input1 unassigned" data-triggertypeid="0">1</span></div>
-              <div class="pull-left">&nbsp;<span id="toggle-input1-templateid"><i class="fa fa-check-circle-o fa-fw" data-setting="ACTIVE"></i></span></div>
-              <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>B</span></span></div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-left spin"><span class="label input input2 unassigned" data-triggertypeid="0">2</span></div>
-              <div class="pull-left">&nbsp;<span id="toggle-input2-templateid"><i class="fa fa-check-circle-o fa-fw" data-setting="ACTIVE"></i></span></div>
-              <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>C</span></span></div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>D</span></span></div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="text-center">
-                <span class="label sounds unassigned" id="sounds-template" data-toggle="tooltip" title="(Click to configure)" data-html="true" data-container="body"><i class="fa fa-music"></i></span>
-              </div>
+            <li class="list-group-item">
+              <select class="form-control" id="" name="">
+                {% for t in triggers %}
+                <option value="t.ttid">{{ t.selecttext }}</option>
+                {% endfor %}
+              </select>
+              <div class="pull-right"><i class="fa fa-check"></i><i class="fa fa-times"></i></div>
             </li>
           </ul><!-- list-group -->
         </div><!-- /.panel .template -->
-        {% for c in controllers %}
-        <div class="panel draggable-controller cc-{{ c.controllercolor }}" id="controller-{{ c.controllerid }}">
-          <div class="panel-heading cc-{{ c.controllercolor }}-heading">
+        {% for e in events %}
+        <div class="panel panel-default draggable-event" id="event-{{ e.eventid }}">
+          <div class="panel-heading">
             <h3 class="panel-title">
-              <span class="controller-name">{{ c.controllername }}</span>
-              <div class="pull-right" data-toggle="modal" data-target="#editControllerModal" data-cid="controller-{{ c.controllerid }}" data-ccolor="cc-{{ c.controllercolor }}" data-cname="{{ c.controllername }}">
+              <span class="event-name">{{ e.eventname }}</span>
+              <div class="pull-right" data-toggle="modal" data-target="#editEventModal" data-eid="event-{{ e.eventid }}" data-ename="{{ e.eventname }}">
                 <span class="glyphicon glyphicon-cog"></span>
               </div>
             </h3>
           </div><!-- /.panel-heading -->
           <ul class="list-group">
-            <li class="list-group-item borderless">
-              <div class="pull-left"><i class="fa fa-arrow-down"></i> Triggers</div>
-              <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
+            <li class="list-group-item active">When this happens...</li>
+            <li class="list-group-item">
+              <select class="form-control" id="" name="">
+                {% for t in triggers %}
+                <option value="t.ttid">{{ t.selecttext }}</option>
+                {% endfor %}
+              </select>
+              <span> turns ON</span>
             </li>
-            <li class="list-group-item borderless">
-              <div class="pull-right">
-                <span id="toggle-outputa-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputa == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputa }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputa == 'DISABLED' %}ban{% else %}toggle-{{ c.outputa|lower }}{% endif %} fa-fw" data-setting="{{ c.outputa }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>A</span></span>
-              </div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-left spin"><span class="label input input1 cc-{{ c.controllercolor }}{% if c.trigger1typeid|int == 0 %} unassigned{% endif %}" data-toggle="tooltip" title="{{ c.trigger1typename }}<br>(Click to configure)" data-container="body" data-html="true" data-triggertypeid="{{ c.trigger1typeid }}" data-param1="{{ c.trigger1param1 }}">1</span></div>
-              <div class="pull-left">&nbsp;<span id="toggle-input1-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{{ c.input1 }}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.input1 == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw" data-setting="{{ c.input1 }}"></i></span></div>
-              <div class="pull-right">
-                <span id="toggle-outputb-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputb == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputb }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputb == 'DISABLED' %}ban{% else %}toggle-{{ c.outputb|lower }}{% endif %} fa-fw" data-setting="{{ c.outputb }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>B</span></span>
-              </div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-left spin"><span class="label input input2 cc-{{ c.controllercolor }}{% if c.trigger2typeid|int == 0 %} unassigned{% endif %}" data-toggle="tooltip" title="{{ c.trigger2typename }}<br>(Click to configure)" data-container="body" data-html="true" data-triggertypeid="{{ c.trigger2typeid }}" data-param1="{{ c.trigger2param1 }}">2</span></div>
-              <div class="pull-left">&nbsp;<span id="toggle-input2-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{{ c.input2 }}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.input2 == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw" data-setting="{{ c.input2 }}"></i></span></div>
-              <div class="pull-right">
-                <span id="toggle-outputc-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputc == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputc }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputc == 'DISABLED' %}ban{% else %}toggle-{{ c.outputc|lower }}{% endif %} fa-fw" data-setting="{{ c.outputc }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>C</span></span>
-              </div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="pull-right">
-                <span id="toggle-outputd-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputd == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputd }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputd == 'DISABLED' %}ban{% else %}toggle-{{ c.outputd|lower }}{% endif %} fa-fw" data-setting="{{ c.outputd }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>D</span></span>
-              </div>
-            </li>
-            <li class="list-group-item borderless">
-              <div class="text-center">
-                <span class="label sounds cc-{{ c.controllercolor }} unassigned" id="sounds-{{ c.controllerid }}" data-toggle="tooltip" title="(Click to configure)" data-html="true" data-container="body"><i class="fa fa-music"></i></span>
-              </div>
+            <li class="list-group-item"></li>
+            <li class="list-group-item active">Do this...</li>
+            <li class="list-group-item"></li>
+            <li class="list-group-item"></li>
             </li>
           </ul>
-        </div><!-- /.panel #controller-{{ c.controllerid }} -->
+        </div><!-- /.panel #event-{{ e.eventid }} -->
         {% endfor %}
       </div><!-- /.dashboard -->
       <script>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>

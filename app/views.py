@@ -66,10 +66,23 @@ triggers = [
 def index():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
 	triggers = []
+	outputs = []
 	for c in controllers:
-		for t in c.triggers:
-			triggers.append(t.serialize)
-	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
+		if c.input1 != "DISABLED":
+			triggers.append({'ttid': '0', 'inputnum': '1', 'selecttext': c.name + '-Input 1'})
+		if c.input2 != "DISABLED":
+			triggers.append({'ttid': '0', 'inputnum': '2', 'selecttext': c.name + '-Input 2'})
+		if c.outputa != "DISABLED":
+			outputs.append({'outputnum': 'a'})
+		if c.outputb != "DISABLED":
+			outputs.append({'outputnum': 'b'})
+		if c.outputc != "DISABLED":
+			outputs.append({'outputnum': 'c'})
+		if c.outputd != "DISABLED":
+			outputs.append({'outputnum': 'd'})
+	triggers.append({'ttid': '1', 'selecttext': 'Every'})
+	triggers.append({'ttid': '2', 'selecttext': 'Randomly between'})
+	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, outputs=outputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
 
 @app.route('/dashboard')
 def dashboard():
