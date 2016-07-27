@@ -1,6 +1,6 @@
 from app import app, db
 from flask import render_template, request, jsonify, json
-from .models import Project, Color, Triggertype, Actiontype, Controller, Event, Trigger, Action, Sound
+from .models import Project, Color, Triggertype, Actiontype, Controller, Event, Input, Output, Action, Sound
 
 #Dummy data for testing
 projectname = "Halloween 2016"
@@ -68,18 +68,18 @@ def index():
 	triggers = []
 	outputs = []
 	for c in controllers:
-		if c.input1 != "DISABLED":
+		if c.serialize['input1state'] != "DISABLED":
 			triggers.append({'ttid': '0', 'inputnum': '1', 'selecttext': c.name + '-Input 1'})
-		if c.input2 != "DISABLED":
+		if c.serialize['input2state'] != "DISABLED":
 			triggers.append({'ttid': '0', 'inputnum': '2', 'selecttext': c.name + '-Input 2'})
-		if c.outputa != "DISABLED":
-			outputs.append({'outputnum': 'a'})
-		if c.outputb != "DISABLED":
-			outputs.append({'outputnum': 'b'})
-		if c.outputc != "DISABLED":
-			outputs.append({'outputnum': 'c'})
-		if c.outputd != "DISABLED":
-			outputs.append({'outputnum': 'd'})
+		if c.serialize['outputAstate'] != "DISABLED":
+			outputs.append({'outputnum': 'A'})
+		if c.serialize['outputBstate'] != "DISABLED":
+			outputs.append({'outputnum': 'B'})
+		if c.serialize['outputCstate'] != "DISABLED":
+			outputs.append({'outputnum': 'C'})
+		if c.serialize['outputDstate'] != "DISABLED":
+			outputs.append({'outputnum': 'D'})
 	triggers.append({'ttid': '1', 'selecttext': 'Every'})
 	triggers.append({'ttid': '2', 'selecttext': 'Randomly between'})
 	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, outputs=outputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
@@ -119,11 +119,11 @@ def add_trigger_to_event():
 @app.route('/controllers')
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
-	triggers = []
+	inputs = []
 	for c in controllers:
-		for t in c.triggers:
-			triggers.append(t.serialize)
-	return render_template('controllers.html', title='Controllers', projectname=projectname, triggers=triggers, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
+		for i in c.inputs:
+			inputs.append(i.serialize)
+	return render_template('controllers.html', title='Controllers', projectname=projectname, triggers=inputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -136,8 +136,11 @@ def add_controller():
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
 	db.session.add(newcontroller)
 	for n in range(1,3):
-		t = Trigger(controller_id=cid, triggertype_id=0, num=n)
-		db.session.add(t)
+		i = Input(controller_id=cid, triggertype_id=0, port=n, name=str(n))
+		db.session.add(i)
+	for let in {'A', 'B', 'C', 'D'}:
+		o = Output(controller_id=cid, port=let, name=let)
+		db.session.add(o)
 	db.session.commit()
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
@@ -152,8 +155,10 @@ def rem_controller():
 	else:
 		status = 'FAIL'
 		return jsonify(data = {'status': status})
-	for t in c.triggers:
-		db.session.delete(t)
+	for i in c.inputs:
+		db.session.delete(i)
+	for o in c.outputs:
+		db.session.delete(o)
 	db.session.delete(c)
 	db.session.commit()
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}

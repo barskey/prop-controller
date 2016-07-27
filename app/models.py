@@ -40,7 +40,8 @@ class Triggertype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(24), index=True)
 	virtual = db.Column(db.Boolean)
-	trigger = db.relationship('Trigger', backref='trigger', lazy='dynamic')
+	
+	inputs = db.relationship('Input', backref='triggertype')
 
 	@property
 	def serialize(self):
@@ -66,15 +67,10 @@ class Controller(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	color_id = db.Column(db.Integer, db.ForeignKey('color.id'))
-	name = db.Column(db.String(24), index=True, unique=True)
-	input1 = db.Column(db.String(10), default='ACTIVE')
-	input2 = db.Column(db.String(10), default='ACTIVE')
-	outputa = db.Column(db.String(10), default='OFF')
-	outputb = db.Column(db.String(10), default='OFF')
-	outputc = db.Column(db.String(10), default='OFF')
-	outputd = db.Column(db.String(10), default='OFF')
+	name = db.Column(db.String(25), index=True, unique=True)
 	
-	triggers = db.relationship('Trigger', backref='controller')
+	inputs = db.relationship('Input', backref='controller')
+	outputs = db.relationship('Output', backref='controller')
 
 	def get_id(self):
 		try:
@@ -94,11 +90,19 @@ class Controller(db.Model):
 			version += 1
 		return new_name
 
-	def get_trigger(self, triggernum):
+	def get_input(self, num):
 		try:
-			for t in self.triggers:
-				if t.num == triggernum:
-					return t
+			for i in self.inputs:
+				if i.port == num:
+					return i
+		except:
+			return 0
+
+	def get_output(self, let):
+		try:
+			for o in self.outputs:
+				if o.port == let:
+					return o
 		except:
 			return 0
 
@@ -110,25 +114,37 @@ class Controller(db.Model):
 			'project_id': self.project_id,
 			'controllername': self.name,
 			'controllercolor': self.color_id,
-			'trigger1': self.get_trigger(1).id,
-			'trigger1typeid': self.get_trigger(1).serialize['type_id'],
-			'trigger1typename': self.get_trigger(1).serialize['type_name'],
-			'trigger1param1': self.get_trigger(1).serialize['param1'],
-			'trigger2': self.get_trigger(2).id,
-			'trigger2typeid': self.get_trigger(2).serialize['type_id'],
-			'trigger2typename': self.get_trigger(2).serialize['type_name'],
-			'trigger2param1': self.get_trigger(2).serialize['param1'],
-			'input1': self.input1,
-			'input2': self.input2,
-			'outputa': self.outputa,
-			'outputb': self.outputb,
-			'outputc': self.outputc,
-			'outputd': self.outputd
+			'input1_id': self.get_input(1).id,
+			'input1name': self.get_input(1).name,
+			'input1state': self.get_input(1).state,
+			'input1typeid': self.get_input(1).triggertype.id,
+			'input1typename': self.get_input(1).triggertype.name,
+			'input1param1': self.get_input(1).param1,
+			'input1param2': self.get_input(1).param2,
+			'input2_id': self.get_input(2).id,
+			'input2name': self.get_input(2).name,
+			'input2state': self.get_input(2).state,
+			'input2typeid': self.get_input(2).triggertype.id,
+			'input2typename': self.get_input(2).triggertype.name,
+			'input2param1': self.get_input(2).param1,
+			'input2param2': self.get_input(2).param2,
+			'outputA_id': self.get_output('A').id,
+			'outputAname': self.get_output('A').name,
+			'outputAstate': self.get_output('A').state,
+			'outputB_id': self.get_output('B').id,
+			'outputBname': self.get_output('B').name,
+			'outputBstate': self.get_output('B').state,
+			'outputC_id': self.get_output('C').id,
+			'outputCname': self.get_output('C').name,
+			'outputCstate': self.get_output('C').state,
+			'outputD_id': self.get_output('D').id,
+			'outputDname': self.get_output('D').name,
+			'outputDstate': self.get_output('D').state,
 		}
 
 event_triggers = db.Table('event_triggers',
 	db.Column('event_id', db.Integer, db.ForeignKey('event.id')),
-	db.Column('trigger_id', db.Integer, db.ForeignKey('trigger.id'))
+	db.Column('input_id', db.Integer, db.ForeignKey('input.id'))
 )
 
 event_sounds = db.Table('event_sounds',
@@ -145,11 +161,11 @@ class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	name = db.Column(db.String(24), index=True, unique=True)
-	triggers = db.relationship(
-		'Trigger',
+	inputs = db.relationship(
+		'Input',
 		secondary = event_triggers,
 		primaryjoin = (event_triggers.c.event_id == id),
-		secondaryjoin = (event_triggers.c.trigger_id == id),
+		secondaryjoin = (event_triggers.c.input_id == id),
 		backref = db.backref('events', lazy='dynamic'),
 		lazy = 'dynamic')
 	actions = db.relationship(
@@ -167,18 +183,18 @@ class Event(db.Model):
 		backref = db.backref('events', lazy='dynamic'),
 		lazy = 'dynamic')
 
-	def add_trigger(self, trigger):
-		if not self.has_trigger(trigger):
-			self.triggers.append(trigger)
+	def add_trigger(self, input):
+		if not self.has_trigger(input):
+			self.inputs.append(input)
 			return self
 
-	def rem_trigger(self, trigger):
-		if self.has_trigger(trigger):
-			self.triggers.remove(trigger)
+	def rem_trigger(self, input):
+		if self.has_trigger(input):
+			self.inputs.remove(input)
 			return self
 
-	def has_trigger(self, trigger):
-		return self.triggers.filter(event_triggers.c.trigger_id == trigger.id).count() > 0
+	def has_trigger(self, input):
+		return self.inputs.filter(event_triggers.c.input_id == input.id).count() > 0
 
 	def add_action(self, action):
 		if not self.has_action(action):
@@ -227,26 +243,48 @@ class Event(db.Model):
 			'name': self.name
 		}
 
-class Trigger(db.Model):
+class Input(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	controller_id = db.Column(db.Integer, db.ForeignKey('controller.id'))
 	triggertype_id = db.Column(db.Integer, db.ForeignKey('triggertype.id'))
-	num = db.Column(db.Integer)
+	port = db.Column(db.Integer)
+	name = db.Column(db.String(25))
+	state = db.Column(db.String(10), default='PULLUP')
 	param1 = db.Column(db.String(8), default='')
 	param2 = db.Column(db.String(8), default='')
 
 	@property
 	def serialize(self):
-		tt = Triggertype.query.get(self.triggertype_id)
 		#Return object data in easily serializable format
 		return {
 			'id': self.id,
 			'cid': self.controller_id,
-			'type_id': tt.id,
-			'type_name': tt.name,
-			'inputnum': self.num,
+			'type_id': self.triggertype.id,
+			'type_name': self.triggertype.name,
+			'port': self.port,
+			'name': self.name,
+			'state': self.state,
 			'param1': self.param1,
 			'param2': self.param2,
+			'color_id': self.controller.color_id
+		}
+
+class Output(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	controller_id = db.Column(db.Integer, db.ForeignKey('controller.id'))
+	port = db.Column(db.String(2))
+	name = db.Column(db.String(25))
+	state = db.Column(db.String(10), default='OFF')
+
+	@property
+	def serialize(self):
+		#Return object data in easily serializable format
+		return {
+			'id': self.id,
+			'cid': self.controller_id,
+			'port': self.port,
+			'name': self.name,
+			'state': self.state,
 			'color_id': self.controller.color_id
 		}
 
