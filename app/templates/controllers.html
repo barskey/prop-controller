@@ -54,7 +54,7 @@
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">Controllers <span class="caret"></span></a>
       <ul class="dropdown-menu controller-list">
       {% for c in controllers %}
-      <li><a href="#" onclick="checkController({{ c.controllerid }})">{{ c.controllername }}</a></li>
+      <li><a href="#" onclick="checkController({{ c.controller_id }})">{{ c.controllername }}</a></li>
       {% endfor %}
       </ul><!-- /.dropdown-menu -->
         <li>
@@ -121,7 +121,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form class="form-horizontal" id="updateTriggerForm">
-          <input type="hidden" name="controllerid" id="updateTriggerCID" />
+          <input type="hidden" name="controller_id" id="updateTriggerCID" />
           <input type="hidden" name="triggernum" id="triggernum" />
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -208,7 +208,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <form class="form-horizontal" id="editControllerForm">
-          <input type="hidden" name="controllerid" id="editControllerCID" />
+          <input type="hidden" name="controller_id" id="editControllerCID" />
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title" id="editControllerModalLabel">Edit Controller <span id="editControllerName"></span></h4>
@@ -254,20 +254,20 @@
         <div class="pull-right">Outputs <i class="fa fa-arrow-down"></i></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>A</span></span></div>
+        <div class="pull-right"><span id="toggle-outputa-templateid"><i class="fa fa-toggle-off fa-fw outputa" data-setting="OFF"></i></span>&nbsp;<span class="label output" data-toggle="tooltip" data-placement="right" title="(click to name)"><span>A</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left spin"><span class="label input input1 unassigned" data-triggertypeid="0">1</span></div>
         <div class="pull-left">&nbsp;<span id="toggle-input1-templateid"><i class="fa fa-check-circle-o fa-fw" data-setting="ACTIVE"></i></span></div>
-        <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>B</span></span></div>
+        <div class="pull-right"><span id="toggle-outputb-templateid"><i class="fa fa-toggle-off fa-fw outputb" data-setting="OFF"></i></span>&nbsp;<span class="label output" data-toggle="tooltip" data-placement="right" title="(click to name)"><span>B</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-left spin"><span class="label input input2 unassigned" data-triggertypeid="0">2</span></div>
         <div class="pull-left">&nbsp;<span id="toggle-input2-templateid"><i class="fa fa-check-circle-o fa-fw" data-setting="ACTIVE"></i></span></div>
-        <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>C</span></span></div>
+        <div class="pull-right"><span id="toggle-outputc-templateid"><i class="fa fa-toggle-off fa-fw outputc" data-setting="OFF"></i></span>&nbsp;<span class="label output" data-toggle="tooltip" data-placement="right" title="(click to name)"><span>C</span></span></div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd" data-setting="OFF"></i></span>&nbsp;<span class="label output"><span>D</span></span></div>
+        <div class="pull-right"><span id="toggle-outputd-templateid"><i class="fa fa-toggle-off fa-fw outputd" data-setting="OFF"></i></span>&nbsp;<span class="label output" data-toggle="tooltip" data-placement="right" title="(click to name)"><span>D</span></span></div>
       </li>
       <li class="list-group-item borderless">
         <div class="text-center">
@@ -277,11 +277,11 @@
     </ul><!-- list-group -->
   </div><!-- /.panel .template -->
   {% for c in controllers %}
-  <div class="panel draggable-controller cc-{{ c.controllercolor }}" id="controller-{{ c.controllerid }}">
+  <div class="panel draggable-controller cc-{{ c.controllercolor }}" id="controller-{{ c.controller_id }}">
     <div class="panel-heading cc-{{ c.controllercolor }}-heading">
       <h3 class="panel-title">
         <span class="controller-name">{{ c.controllername }}</span>
-        <div class="pull-right" data-toggle="modal" data-target="#editControllerModal" data-cid="controller-{{ c.controllerid }}" data-ccolor="cc-{{ c.controllercolor }}" data-cname="{{ c.controllername }}">
+        <div class="pull-right" data-toggle="modal" data-target="#editControllerModal" data-cid="controller-{{ c.controller_id }}" data-ccolor="cc-{{ c.controllercolor }}" data-cname="{{ c.controllername }}">
           <span class="glyphicon glyphicon-cog"></span>
         </div>
       </h3>
@@ -293,35 +293,35 @@
       </li>
       <li class="list-group-item borderless">
         <div class="pull-right">
-          <span id="toggle-outputa-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputa == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputa }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputa == 'DISABLED' %}ban{% else %}toggle-{{ c.outputa|lower }}{% endif %} fa-fw" data-setting="{{ c.outputa }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>A</span></span>
+          <span id="toggle-outputa-{{ c.controller_id }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputAstate == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputAstate }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputAstate == 'DISABLED' %}ban{% else %}toggle-{{ c.outputAstate|lower }}{% endif %} fa-fw" data-setting="{{ c.outputAstate }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>{{ c.outputAname }}</span></span>
         </div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left spin"><span class="label input input1 cc-{{ c.controllercolor }}{% if c.trigger1typeid|int == 0 %} unassigned{% endif %}" data-toggle="tooltip" title="{{ c.trigger1typename }}<br>(Click to configure)" data-container="body" data-html="true" data-triggertypeid="{{ c.trigger1typeid }}" data-param1="{{ c.trigger1param1 }}">1</span></div>
-        <div class="pull-left">&nbsp;<span id="toggle-input1-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{{ c.input1 }}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.input1 == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw" data-setting="{{ c.input1 }}"></i></span></div>
+        <div class="pull-left spin"><span class="label input input1 cc-{{ c.controllercolor }}{% if c.input1type_id|int == 0 %} unassigned{% endif %}" data-toggle="tooltip" title="{{ c.input1typename }}<br>(Click to configure)" data-container="body" data-html="true" data-triggertypeid="{{ c.input1type_id }}" data-param1="{{ c.input1param1 }}">{{ c.input1name }}</span></div>
+        <div class="pull-left">&nbsp;<span id="toggle-input1-{{ c.controller_id }}" data-toggle="tooltip" data-placement="top" title="{{ c.input1 }}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.input1state == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw" data-setting="{{ c.input1state }}"></i></span></div>
         <div class="pull-right">
-          <span id="toggle-outputb-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputb == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputb }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputb == 'DISABLED' %}ban{% else %}toggle-{{ c.outputb|lower }}{% endif %} fa-fw" data-setting="{{ c.outputb }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>B</span></span>
+          <span id="toggle-outputb-{{ c.controller_id }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputBstate == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputBstate }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputBstate == 'DISABLED' %}ban{% else %}toggle-{{ c.outputBstate|lower }}{% endif %} fa-fw" data-setting="{{ c.outputBstate }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>{{ c.outputBname }}</span></span>
         </div>
       </li>
       <li class="list-group-item borderless">
-        <div class="pull-left spin"><span class="label input input2 cc-{{ c.controllercolor }}{% if c.trigger2typeid|int == 0 %} unassigned{% endif %}" data-toggle="tooltip" title="{{ c.trigger2typename }}<br>(Click to configure)" data-container="body" data-html="true" data-triggertypeid="{{ c.trigger2typeid }}" data-param1="{{ c.trigger2param1 }}">2</span></div>
-        <div class="pull-left">&nbsp;<span id="toggle-input2-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{{ c.input2 }}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.input2 == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw" data-setting="{{ c.input2 }}"></i></span></div>
+        <div class="pull-left spin"><span class="label input input2 cc-{{ c.controllercolor }}{% if c.input2type_id|int == 0 %} unassigned{% endif %}" data-toggle="tooltip" title="{{ c.input2typename }}<br>(Click to configure)" data-container="body" data-html="true" data-triggertypeid="{{ c.input2type_id }}" data-param1="{{ c.input2param1 }}">{{ c.input2name }}</span></div>
+        <div class="pull-left">&nbsp;<span id="toggle-input2-{{ c.controller_id }}" data-toggle="tooltip" data-placement="top" title="{{ c.input2state }}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.input2state == 'DISABLED' %}ban{% else %}check-circle-o{% endif %} fa-fw" data-setting="{{ c.input2state }}"></i></span></div>
         <div class="pull-right">
-          <span id="toggle-outputc-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputc == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputc }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputc == 'DISABLED' %}ban{% else %}toggle-{{ c.outputc|lower }}{% endif %} fa-fw" data-setting="{{ c.outputc }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>C</span></span>
+          <span id="toggle-outputc-{{ c.controller_id }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputCstate == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputCstate }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputCstate == 'DISABLED' %}ban{% else %}toggle-{{ c.outputCstate|lower }}{% endif %} fa-fw" data-setting="{{ c.outputCstate }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>{{ c.outputCname }}</span></span>
         </div>
       </li>
       <li class="list-group-item borderless">
         <div class="pull-right">
-          <span id="toggle-outputd-{{ c.controllerid }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputd == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputd }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputd == 'DISABLED' %}ban{% else %}toggle-{{ c.outputd|lower }}{% endif %} fa-fw" data-setting="{{ c.outputd }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>D</span></span>
+          <span id="toggle-outputd-{{ c.controller_id }}" data-toggle="tooltip" data-placement="top" title="{% if c.outputDstate == 'DISABLED' %}DISABLED{% else %}Default {{ c.outputDstate }}{% endif %}<br>(Click to toggle)" data-html="true" data-container="body"><i class="fa fa-{% if c.outputDstate == 'DISABLED' %}ban{% else %}toggle-{{ c.outputDstate|lower }}{% endif %} fa-fw" data-setting="{{ c.outputDstate }}"></i></span>&nbsp;<span class="label output cc-{{ c.controllercolor }}"><span>{{ c.outputDname }}</span></span>
         </div>
       </li>
       <li class="list-group-item borderless">
         <div class="text-center">
-          <span class="label sounds cc-{{ c.controllercolor }} unassigned" id="sounds-{{ c.controllerid }}" data-toggle="tooltip" title="(Click to configure)" data-html="true" data-container="body"><i class="fa fa-music"></i></span>
+          <span class="label sounds cc-{{ c.controllercolor }} unassigned" id="sounds-{{ c.controller_id }}" data-toggle="tooltip" title="(Click to configure)" data-html="true" data-container="body"><i class="fa fa-music"></i></span>
         </div>
       </li>
     </ul>
-  </div><!-- /.panel #controller-{{ c.controllerid }} -->
+  </div><!-- /.panel #controller-{{ c.controller_id }} -->
   {% endfor %}
 </div><!-- /.dashboard -->
 <script>$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>

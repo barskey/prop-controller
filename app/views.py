@@ -119,11 +119,7 @@ def add_trigger_to_event():
 @app.route('/controllers')
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
-	inputs = []
-	for c in controllers:
-		for i in c.inputs:
-			inputs.append(i.serialize)
-	return render_template('controllers.html', title='Controllers', projectname=projectname, triggers=inputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
+	return render_template('controllers.html', title='Controllers', projectname=projectname, triggertypes=[tt.serialize for tt in Triggertype.query.all()], sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -147,7 +143,7 @@ def add_controller():
 
 @app.route('/rem_controller', methods=['POST'])
 def rem_controller():
-	a, cid = request.form['controllerid'].split("-")
+	a, cid = request.form['controller_id'].split("-")
 	c = Controller.query.get(cid)
 	status = ''
 	if c:
@@ -166,7 +162,7 @@ def rem_controller():
 
 @app.route('/update_controller', methods=['POST'])
 def update_controller():
-	a, cid = request.form['controllerid'].split("-")
+	a, cid = request.form['controller_id'].split("-")
 	cname = request.form['name']
 	b, cc = request.form['color'].split('-')
 	c = Controller.query.get(cid)
@@ -191,7 +187,7 @@ def get_controller():
 
 @app.route('/update_trigger', methods=['POST'])
 def update_trigger():
-	cid = request.form['controllerid']
+	cid = request.form['controller_id']
 	triggernum = request.form['triggernum']
 	triggertype = request.form['triggerType']
 	c = Controller.query.get(cid)
@@ -261,4 +257,4 @@ def testpost():
 
 @app.route('/admin')
 def admin():
-	return render_template('admin.html', title='Admin', projects=[p.serialize for p in Project.query.all()], triggers=[t.serialize for t in Trigger.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[a.serialize for a in Action.query.all()], controllers=[c.serialize for c in Controller.query.all()], events=[e.serialize for e in Event.query.all()], colors=[c.serialize for c in Color.query.all()])
+	return render_template('admin.html', title='Admin', projects=[p.serialize for p in Project.query.all()], inputs=[i.serialize for i in Input.query.all()], outputs=[o.serialize for o in Output.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[a.serialize for a in Action.query.all()], controllers=[c.serialize for c in Controller.query.all()], events=[e.serialize for e in Event.query.all()], colors=[c.serialize for c in Color.query.all()])

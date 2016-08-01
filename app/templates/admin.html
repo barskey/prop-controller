@@ -7,183 +7,199 @@
 
 <div class="container">
   <div class="row">
-      <div class="col-xs-6">
-        <table class="table table-condensed">
-          <caption>Project Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th>name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for p in projects %}
-            <tr>
-              <td class="id">{{ p.id }}</td>
-              <td>{{ p.name }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-condensed">
-          <caption>Color Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th>name</th>
-              <th>hex</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for c in colors %}
-            <tr>
-              <td class="id">{{ c.id }}</td>
-              <td>{{ c.name }}</td>
-              <td>{{ c.hex }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-condensed">
-          <caption>Triggertype Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th>name</th>
-              <th>virtual</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for tt in triggertypes %}
-            <tr>
-              <td class="id">{{ tt.id }}</td>
-              <td>{{ tt.name }}</td>
-              <td>{{ tt.virtual }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-condensed">
-          <caption>Actiontype Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th>name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for a in actiontypes %}
-            <tr>
-              <td class="id">{{ a.id }}</td>
-              <td>{{ a.name }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-condensed">
-          <caption>Action Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th class="id">event_id</th>
-              <th class="id">actiontype_id</th>
-              <th class="id">outputport</th>
-              <th>param1</th>
-              <th>param2</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for a in actions %}
-            <tr>
-              <td class="id">{{ a.id }}</td>
-              <td class="id">{{ a.event_id }}</td>
-              <td class="id">{{ a.actiontype_id }}</td>
-              <td class="id">{{ a.outputport }}</td>
-              <td>{{ a.param1 }}</td>
-              <td>{{ a.param2 }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <div class="col-xs-6">
-        <table class="table table-condensed">
-          <caption>Trigger Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th class="id">controller_id</th>
-              <th class="id">triggertype_id</th>
-              <th class="id">num</th>
-              <th>param1</th>
-              <th>param2</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for t in triggers %}
-            <tr>
-              <td class="id">{{ t.id }}</td>
-              <td class="id">{{ t.cid }}</td>
-              <td class="id">{{ t.type_id }}</td>
-              <td class="id">{{ t.inputnum }}</td>
-              <td>{{ t.param1 }}</td>
-              <td>{{ t.param2 }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-condensed">
-          <caption>Controller Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th class="id">project_id</th>
-              <th class="id">color_id</th>
-              <th>name</th>
-              <th>input1</th>
-              <th>input2</th>
-              <th>outputa</th>
-              <th>outputb</th>
-              <th>outputc</th>
-              <th>outputd</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for c in controllers %}
-            <tr>
-              <td class="id">{{ c.controllerid }}</td>
-              <td class="id">{{ c.project_id }}</td>
-              <td class="id">{{ c.controllercolor }}</td>
-              <td>{{ c.controllername }}</td>
-              <td>{{ c.input1 }}</td>
-              <td>{{ c.input2 }}</td>
-              <td>{{ c.outputa }}</td>
-              <td>{{ c.outputb }}</td>
-              <td>{{ c.outputc }}</td>
-              <td>{{ c.outputd }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <table class="table table-condensed">
-          <caption>Event Table</caption>
-          <thead>
-            <tr>
-              <th class="id">id</th>
-              <th class="id">project_id</th>
-              <th>name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for e in events %}
-            <tr>
-              <td class="id">{{ c.id }}</td>
-              <td class="id">{{ c.project_id }}</td>
-              <td>{{ c.name }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+    <div class="col-xs-6">
+      <table class="table table-condensed">
+        <caption>Project Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th>name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in projects %}
+          <tr>
+            <td class="id">{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Color Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th>name</th>
+            <th>hex</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in colors %}
+          <tr>
+            <td class="id">{{ c.id }}</td>
+            <td>{{ c.name }}</td>
+            <td>{{ c.hex }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Triggertype Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th>name</th>
+            <th>virtual</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for tt in triggertypes %}
+          <tr>
+            <td class="id">{{ tt.id }}</td>
+            <td>{{ tt.name }}</td>
+            <td>{{ tt.virtual }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Actiontype Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th>name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in actiontypes %}
+          <tr>
+            <td class="id">{{ a.id }}</td>
+            <td>{{ a.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Action Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">event_id</th>
+            <th class="id">actiontype_id</th>
+            <th class="id">outputport</th>
+            <th>param1</th>
+            <th>param2</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in actions %}
+          <tr>
+            <td class="id">{{ a.id }}</td>
+            <td class="id">{{ a.event_id }}</td>
+            <td class="id">{{ a.actiontype_id }}</td>
+            <td class="id">{{ a.outputport }}</td>
+            <td>{{ a.param1 }}</td>
+            <td>{{ a.param2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="col-xs-6">
+      <table class="table table-condensed">
+        <caption>Controller Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">project_id</th>
+            <th class="id">color_id</th>
+            <th>name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in controllers %}
+          <tr>
+            <td class="id">{{ c.controllerid }}</td>
+            <td class="id">{{ c.project_id }}</td>
+            <td class="id">{{ c.controllercolor }}</td>
+            <td>{{ c.controllername }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Input Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">controller_id</th>
+            <th class="id">tt_id</th>
+            <th class="id">port</th>
+            <th>name</th>
+            <th>state</th>
+            <th>param1</th>
+            <th>param2</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in inputs %}
+          <tr>
+            <td class="id">{{ i.id }}</td>
+            <td class="id">{{ i.cid }}</td>
+            <td class="id">{{ i.type_id }}</td>
+            <td class="id">{{ i.port }}</td>
+            <td>{{ i.name }}</td>
+            <td>{{ i.state }}</td>
+            <td>{{ i.param1 }}</td>
+            <td>{{ i.param2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Output Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">controller_id</th>
+            <th class="id">port</th>
+            <th>name</th>
+            <th>state</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in outputs %}
+          <tr>
+            <td class="id">{{ o.id }}</td>
+            <td class="id">{{ o.cid }}</td>
+            <td class="id">{{ o.port }}</td>
+            <td>{{ o.name }}</td>
+            <td>{{ o.state }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Event Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">project_id</th>
+            <th>name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for e in events %}
+          <tr>
+            <td class="id">{{ c.id }}</td>
+            <td class="id">{{ c.project_id }}</td>
+            <td>{{ c.name }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
