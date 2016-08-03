@@ -43,6 +43,8 @@ sounds = [
 @app.route('/')
 def index():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
+	if controllers.count() == 0:
+		return redirect("/controllers")
 	triggers = []
 	outputs = []
 	for c in controllers:
