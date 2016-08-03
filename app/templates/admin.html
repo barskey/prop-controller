@@ -5,6 +5,33 @@
 <!-- Custom styles for this template -->
 <link href="static/css/admin.css" rel="stylesheet">
 
+
+<!-- Second navbar for this page -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        	<a class="btn btn-default navbar-btn" href="init_setup" role="button">
+        	  <i class="fa fa-cogs"></i>
+        	</a>
+        </li>
+      </ul><!-- .navbar-right -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav><!-- /.navbar-default -->
+
+<!-- Main body content for this page -->
 <div class="container">
   <div class="row">
     <div class="col-xs-6">
@@ -50,7 +77,7 @@
           <tr>
             <th class="id">id</th>
             <th>name</th>
-            <th>virtual</th>
+            <th>type</th>
           </tr>
         </thead>
         <tbody>
@@ -58,7 +85,7 @@
           <tr>
             <td class="id">{{ tt.id }}</td>
             <td>{{ tt.name }}</td>
-            <td>{{ tt.virtual }}</td>
+            <td>{{ tt.type }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -69,6 +96,7 @@
           <tr>
             <th class="id">id</th>
             <th>name</th>
+            <th>type</th>
           </tr>
         </thead>
         <tbody>
@@ -76,31 +104,7 @@
           <tr>
             <td class="id">{{ a.id }}</td>
             <td>{{ a.name }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <table class="table table-condensed">
-        <caption>Action Table</caption>
-        <thead>
-          <tr>
-            <th class="id">id</th>
-            <th class="id">event_id</th>
-            <th class="id">actiontype_id</th>
-            <th class="id">outputport</th>
-            <th>param1</th>
-            <th>param2</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for a in actions %}
-          <tr>
-            <td class="id">{{ a.id }}</td>
-            <td class="id">{{ a.event_id }}</td>
-            <td class="id">{{ a.actiontype_id }}</td>
-            <td class="id">{{ a.outputport }}</td>
-            <td>{{ a.param1 }}</td>
-            <td>{{ a.param2 }}</td>
+            <td>{{ a.type }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -120,7 +124,7 @@
         <tbody>
           {% for c in controllers %}
           <tr>
-            <td class="id">{{ c.controllerid }}</td>
+            <td class="id">{{ c.controller_id }}</td>
             <td class="id">{{ c.project_id }}</td>
             <td class="id">{{ c.controllercolor }}</td>
             <td>{{ c.controllername }}</td>
@@ -129,36 +133,7 @@
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Input Table</caption>
-        <thead>
-          <tr>
-            <th class="id">id</th>
-            <th class="id">controller_id</th>
-            <th class="id">tt_id</th>
-            <th class="id">port</th>
-            <th>name</th>
-            <th>state</th>
-            <th>param1</th>
-            <th>param2</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for i in inputs %}
-          <tr>
-            <td class="id">{{ i.id }}</td>
-            <td class="id">{{ i.cid }}</td>
-            <td class="id">{{ i.type_id }}</td>
-            <td class="id">{{ i.port }}</td>
-            <td>{{ i.name }}</td>
-            <td>{{ i.state }}</td>
-            <td>{{ i.param1 }}</td>
-            <td>{{ i.param2 }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <table class="table table-condensed">
-        <caption>Output Table</caption>
+        <caption>Port Table</caption>
         <thead>
           <tr>
             <th class="id">id</th>
@@ -166,16 +141,18 @@
             <th class="id">port</th>
             <th>name</th>
             <th>state</th>
+            <th>type</th>
           </tr>
         </thead>
         <tbody>
-          {% for o in outputs %}
+          {% for p in ports %}
           <tr>
-            <td class="id">{{ o.id }}</td>
-            <td class="id">{{ o.cid }}</td>
-            <td class="id">{{ o.port }}</td>
-            <td>{{ o.name }}</td>
-            <td>{{ o.state }}</td>
+            <td class="id">{{ p.id }}</td>
+            <td class="id">{{ p.cid }}</td>
+            <td class="id">{{ p.port }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.state }}</td>
+            <td>{{ p.type }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -187,14 +164,62 @@
             <th class="id">id</th>
             <th class="id">project_id</th>
             <th>name</th>
+            <th class="id">loop</th>
           </tr>
         </thead>
         <tbody>
           {% for e in events %}
           <tr>
-            <td class="id">{{ c.id }}</td>
-            <td class="id">{{ c.project_id }}</td>
-            <td>{{ c.name }}</td>
+            <td class="id">{{ e.id }}</td>
+            <td class="id">{{ e.project_id }}</td>
+            <td>{{ e.name }}</td>
+            <td class="id">{{ e.loop }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Trigger Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">input_id</th>
+            <th class="id">tt_id</th>
+            <th>param1</th>
+            <th>param2</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in triggers %}
+          <tr>
+            <td class="id">{{ t.id }}</td>
+            <td class="id">{{ t.input_id }}</td>
+            <td class="id">{{ t.tt_id }}</td>
+            <td>{{ t.param1 }}</td>
+            <td>{{ t.param2 }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <table class="table table-condensed">
+        <caption>Action Table</caption>
+        <thead>
+          <tr>
+            <th class="id">id</th>
+            <th class="id">out_snd_id</th>
+            <th class="id">actiontype_id</th>
+            <th>delay</th>
+            <th>param1</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in actions %}
+          <tr>
+            <td class="id">{{ a.id }}</td>
+            <td class="id">{{ a.output_sound_id }}</td>
+            <td class="id">{{ a.actiontype_id }}</td>
+            <td>{{ a.delay }}</td>
+            <td>{{ a.param1 }}</td>
           </tr>
           {% endfor %}
         </tbody>

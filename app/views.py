@@ -1,65 +1,43 @@
 from app import app, db
-from flask import render_template, request, jsonify, json
-from .models import Project, Color, Triggertype, Actiontype, Controller, Event, Input, Output, Action, Sound
+from flask import render_template, redirect, request, jsonify, json
+from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
 
 #Dummy data for testing
 projectname = "Halloween 2016"
 projectid = 1
+projects = [
+	{'id': 1, 'name': 'Halloween 2016'}
+]
 colors = [
-	{'colorid': '5', 'colorname': 'red', 'colorhex': '#DD5F32'},
-	{'colorid': '6', 'colorname': 'orange', 'colorhex': '#FFA200'},
-	{'colorid': '9', 'colorname': 'yellow', 'colorhex': '#e6e600'},
-	{'colorid': '7', 'colorname': 'green', 'colorhex': '#00A03E'},
-	{'colorid': '1', 'colorname': 'blue', 'colorhex': '#4298B5'},
-	{'colorid': '4', 'colorname': 'purple', 'colorhex': '#9900ff'},
-	{'colorid': '3', 'colorname': 'olive', 'colorhex': '#92B06A'},
-	{'colorid': '8', 'colorname': 'teal', 'colorhex': '#24A8AC'},
-	{'colorid': '2', 'colorname': 'black', 'colorhex': '#273a3f'},
-	{'colorid': '10', 'colorname': 'salmon', 'colorhex': '#fa8072'}
+	{'id': '5', 'name': 'red', 'hex': '#DD5F32'},
+	{'id': '6', 'name': 'orange', 'hex': '#FFA200'},
+	{'id': '9', 'name': 'yellow', 'hex': '#e6e600'},
+	{'id': '7', 'name': 'green', 'hex': '#00A03E'},
+	{'id': '1', 'name': 'blue', 'hex': '#4298B5'},
+	{'id': '4', 'name': 'purple', 'hex': '#9900ff'},
+	{'id': '3', 'name': 'olive', 'hex': '#92B06A'},
+	{'id': '8', 'name': 'teal', 'hex': '#24A8AC'},
+	{'id': '2', 'name': 'black', 'hex': '#273a3f'},
+	{'id': '10', 'name': 'salmon', 'hex': '#fa8072'}
 ]
 triggertypes = [
-	{'triggerid': '1', 'triggername': 'Motion'},
-	{'triggerid': '2', 'triggername': 'Pushbutton'},
-	{'triggerid': '3', 'triggername': 'Switch'},
-	{'triggerid': '5', 'triggername': 'Interval'},
-	{'triggerid': '6', 'triggername': 'Random'}
+	{'id': '0', 'type': 'input', 'name': 'Input'},
+	{'id': '1', 'type': 'interval', 'name': 'Every'},
+	{'id': '2', 'type': 'random', 'name': 'Randomly'},
+	{'id': '3', 'type': 'event', 'name': 'Event'}
 ]
-actions = [
-	{'actionid': '1', 'actionname': 'Turn On'},
-	{'actionid': '2', 'actionname': 'Turn Off'},
-	{'actionid': '3', 'actionname': 'Toggle'},
-	{'actionid': '4', 'actionname': 'Blink'},
-	{'actionid': '5', 'actionname': 'Play Sound'}
+actiontypes = [
+	{'id': '0', 'type': 'on', 'name': 'Turn On'},
+	{'id': '1', 'type': 'off', 'name': 'Turn Off'},
+	{'id': '2', 'type': 'toggle', 'name': 'Toggle'},
+	{'id': '3', 'type': 'blink', 'name': 'Blink'},
+	{'id': '4', 'type': 'sound', 'name': 'Play Sound'}
 ]
 sounds = [
-	{'soundid': '1', 'soundname': 'Scream'},
-	{'soundid': '2', 'soundname': 'Zombie'},
-	{'soundid': '3', 'soundname': 'Evil Laugh'},
-	{'soundid': '4', 'soundname': 'Ghost'}
-]
-events = [
-	{'eventid': '1', 'eventname': 'Driveway Motion', 'triggers': [
-		{'triggerid': '1', 'triggername': 'Motion', 'triggerparam': '30000', 'tiptitle':'Reset after: 30000ms<br />(click to edit)'}
-	], 'actions': [
-		{'actionid': '1', 'actionparam': '1000'},
-		{'actionid': '2', 'actionparam': '3000'}
-	]},
-	{'eventid': '2', 'eventname': 'Sidewalk Motion', 'triggers':[
-		{'triggerid': '1', 'triggername': 'Motion', 'triggerparam': '10000', 'tiptitle':'Reset after: 10000ms<br />(click to edit)'}
-	], 'actions':[
-		{'actionid': '4', 'actionparam': '2000'}
-	]}
-]
-cntrlrs = [
-	{'controllerid': '1', 'controllername': 'Controller 1', 'controllercolor': '5', 'input1': 'ACTIVE', 'input1trigger': '1', 'input2': 'DISABLED', 'input2trigger': '', 'outputa': 'ON', 'outputaaction': '', 'outputb': 'OFF', 'outputbaction': '2', 'outputc': 'OFF', 'outputcaction': '3', 'outputd': 'OFF',  'outputdaction': '', 'sounds': [
-		{'soundid': '1', 'soundname': 'Scream'},
-		{'soundid': '2', 'soundname': 'Zombie'},
-		{'soundid': '3', 'soundname': 'Evil Laugh'},
-		{'soundid': '4', 'soundname': 'Ghost'}
-	]}
-]
-triggers = [
-	{'triggerid': '1', 'controllerid': '1', 'triggername': 'Motion 1', 'triggertype': '1', 'param1': '10000', 'param2': ''}
+	{'id': '1', 'name': 'Scream'},
+	{'id': '2', 'name': 'Zombie'},
+	{'id': '3', 'name': 'Evil Laugh'},
+	{'id': '4', 'name': 'Ghost'}
 ]
 
 @app.route('/')
@@ -89,37 +67,11 @@ def dashboard():
 	project = projectname
 	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, events=events)
 
-@app.route('/add_trigger_to_event', methods=['POST'])
-def add_trigger_to_event():
-	param = ""
-	tiptitle = ""
-	a, eventid = request.form['triggerEventnameSelect'].split('-')
-	triggerid = request.form['triggerType']
-	triggername = ""
-	for t in triggers:
-		if t['triggerid'] == triggerid:
-			triggername = t['triggername']
-	if triggerid == '1':
-		param = request.form['resetTime']
-		tiptitle = "Reset after: " + param + "ms<br />(click to edit)"
-	elif triggerid == '2':
-		param = request.form['defaultState']
-		tiptitle = "Default state: " + param + "<br />(click to edit)"
-	elif triggerid == '3':
-		tiptitle = "No parameters to config"
-	elif triggerid == '4':
-		param = request.form['eventTrigger']
-		tiptitle = "Using event: " + param + "<br />(click to edit)"
-	#Add to sql db and commit, return new list of actions
-	for e in events:
-		if e['eventid'] == eventid:
-			e['triggers'].append({'triggerid': triggerid, 'triggername': triggername, 'triggerparam': param, 'tiptitle': tiptitle})
-			return jsonify(triggers = e['triggers'])
-
 @app.route('/controllers')
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
-	return render_template('controllers.html', title='Controllers', projectname=projectname, triggertypes=[tt.serialize for tt in Triggertype.query.all()], sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
+	colors = Color.query.all()
+	return render_template('controllers.html', title='Controllers', projectname=projectname, controllers=[c.serialize for c in controllers], colors=[color.serialize for color in colors])
 
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
@@ -132,10 +84,10 @@ def add_controller():
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
 	db.session.add(newcontroller)
 	for n in range(1,3):
-		i = Input(controller_id=cid, triggertype_id=0, port=n, name=str(n))
+		i = Port(controller_id=cid, port=n, name=str(n), type='input', state='PULLDOWN')
 		db.session.add(i)
 	for let in {'A', 'B', 'C', 'D'}:
-		o = Output(controller_id=cid, port=let, name=let)
+		o = Port(controller_id=cid, port=let, name=let, type='output', state='OFF')
 		db.session.add(o)
 	db.session.commit()
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
@@ -151,10 +103,8 @@ def rem_controller():
 	else:
 		status = 'FAIL'
 		return jsonify(data = {'status': status})
-	for i in c.inputs:
-		db.session.delete(i)
-	for o in c.outputs:
-		db.session.delete(o)
+	for p in c.ports:
+		db.session.delete(p)
 	db.session.delete(c)
 	db.session.commit()
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
@@ -176,64 +126,15 @@ def update_controller():
 	r = {'status': 'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': controller}
 	return jsonify(data = r)
 
-@app.route('/_get_controller')
-def get_controller():
-	cid = request.args.get('controllerid')
-	test = []
-	for c in cntrlrs:
-		if c['controllerid'] == cid:
-			test.append(c)
-	return jsonify(controller = test)
-
-@app.route('/update_trigger', methods=['POST'])
-def update_trigger():
-	cid = request.form['controller_id']
-	triggernum = request.form['triggernum']
-	triggertype = request.form['triggerType']
-	c = Controller.query.get(cid)
-	t = c.get_trigger(int(triggernum))
-	param1 = ''
-	param2 = ''
-	typename = ''
-	if int(triggertype) == 0: #unassigned
-		param1 = ''
-		typename = "unassigned"
-	if int(triggertype) == 1: #Motion
-		param1 = request.form['resetTime']
-		typename = "Motion"
-	elif int(triggertype) == 2: #Pushbutton
-		param1 = request.form['defaultState']
-		typename = "Pushbutton"
-	elif int(triggertype) == 3: #Switch
-		typename = "Switch"
-	t.triggertype_id = triggertype
-	t.param1 = param1
-	t.param2 = param2
-	trigger = t.serialize
-	db.session.commit()
-	r = {'status': 'OK', 'tlist': [t.serialize for t in Trigger.query.all()], 'trigger': trigger}
-	return jsonify(data = r)
-
 @app.route('/_update_toggle', methods=['POST'])
 def update_toggle():
 	cid = request.form['cntid']
-	output = request.form['output']
-	c = Controller.query.get(cid)
-	r = 'FAIL'
-	if output == 'outputa':
-		c.outputa = request.form['val']
-		r = 'OK'
-	elif output == 'outputb':
-		c.outputb = request.form['val']
-		r = 'OK'
-	elif output == 'outputc':
-		c.outputc = request.form['val']
-		r = 'OK'
-	elif output == 'outputd':
-		c.outputd = request.form['val']
-		r = 'OK'
+	port = request.form['port']
+	p = Port.query.filter_by(controller_id=cid, port=port).first()
+	p.state = request.form['val']
+	print p.serialize
 	db.session.commit()
-	return jsonify(response = r)
+	return jsonify(response = "OK")
 
 @app.route('/_update_toggle_input', methods=['POST'])
 def update_toggle_input():
@@ -257,4 +158,63 @@ def testpost():
 
 @app.route('/admin')
 def admin():
-	return render_template('admin.html', title='Admin', projects=[p.serialize for p in Project.query.all()], inputs=[i.serialize for i in Input.query.all()], outputs=[o.serialize for o in Output.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[a.serialize for a in Action.query.all()], controllers=[c.serialize for c in Controller.query.all()], events=[e.serialize for e in Event.query.all()], colors=[c.serialize for c in Color.query.all()])
+	return render_template('admin.html', title='Admin', projects=[p.serialize for p in Project.query.all()], ports=[p.serialize for p in Port.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actiontypes=[at.serialize for at in Actiontype.query.all()], actions=[a.serialize for a in Action.query.all()], controllers=[c.serialize for c in Controller.query.all()], events=[e.serialize for e in Event.query.all()], colors=[c.serialize for c in Color.query.all()])
+
+@app.route('/init_setup')
+def init_setup():
+	#Empty Project table and add new entries
+	proj = Project.query.all()
+	for p in proj:
+		db.session.delete(p)
+	db.session.commit()
+	
+	for p in projects:
+		project = Project(id=p['id'], name=p['name'])
+		db.session.add(project)
+	db.session.commit()
+	
+	#Empty Actiontype table and add new entries
+	at = Actiontype.query.all()
+	for a in at:
+		db.session.delete(a)
+	db.session.commit()
+	
+	for a in actiontypes:
+		actiontype = Actiontype(id=a['id'], name=a['name'], type=a['type'])
+		db.session.add(actiontype)
+	db.session.commit()
+	
+	#Empty Triggertype table and add new entries
+	tt = Triggertype.query.all()
+	for t in tt:
+		db.session.delete(t)
+	db.session.commit()
+	
+	for t in triggertypes:
+		triggertype = Triggertype(id=t['id'], name=t['name'], type=t['type'])
+		db.session.add(triggertype)
+	db.session.commit()
+
+	#Empty Color table and add new entries
+	col = Color.query.all()
+	for c in col:
+		db.session.delete(c)
+	db.session.commit()
+	
+	for c in colors:
+		color = Color(id=c['id'], name=c['name'], hex=c['hex'])
+		db.session.add(color)
+	db.session.commit()
+	
+	#Empty Sound table and add new entries
+	snd = Sound.query.all()
+	for s in snd:
+		db.session.delete(s)
+	db.session.commit()
+	
+	for s in sounds:
+		sound = Sound(id=s['id'], name=s['name'])
+		db.session.add(sound)
+	db.session.commit()
+	
+	return redirect('/admin')

@@ -6,7 +6,21 @@ if ( $( ".draggable-controller" ).length ) {
 } else {
   $( ".jumbotron" ).removeClass( "hidden" );
 }
-var outputs = ['a', 'b', 'c', 'd']; //For looping through the outputs
+var ports = ['1', '2', 'A', 'B', 'C', 'D']; //For looping through the ports
+var toggle_output = new Object();
+toggle_output.OFF = 'ON';
+toggle_output.ON = 'DISABLED';
+toggle_output.DISABLED = 'OFF';
+var toggle_input = new Object();
+toggle_input.PULLDOWN = 'PULLUP';
+toggle_input.PULLUP = 'DISABLED';
+toggle_input.DISABLED = 'PULLDOWN';
+var toggle_classes = new Object();
+toggle_classes.OFF = 'fa-toggle-off';
+toggle_classes.ON = 'fa-toggle-on';
+toggle_classes.PULLUP = 'fa-level-up';
+toggle_classes.PULLDOWN = 'fa-level-down';
+toggle_classes.DISABLED = 'fa-ban';
 
 // Get a random integer between `min` and `max`.
 function getRandomInt(min, max) {
@@ -32,7 +46,7 @@ function checkController(cid) {
 // (Clones template object and updates settings)
 function connectController(c) {
   var $template = $( ".template" );
-  var controllerid = "controller-" + c.controllerid;
+  var controllerid = "controller-" + c.controller_id;
   var cc = "cc-" + c.controllercolor;
   //console.log(c.controllerid); //debug
   //clone the template and update the elements with controller specific data
@@ -45,42 +59,29 @@ function connectController(c) {
   // Update sounds icon
   $newController.find( ".sounds" ).attr( "id", "sounds-" + c.controllerid );
 
-  // Assign ids to outputs
-  for (i=0; i<outputs.length; i++) { // loops through a,b,c,d
-    var port = "output" + outputs[i];
+  // Assign ids to ports
+  for (i=0; i<ports.length; i++) { // loops through 1,2,A,B,C,D
+    var port = ports[i];
     //console.log(port); //debug
-    $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
-  } // end for loop
-  // Assign ids to inputs
-  for (i=1; i<3; i++) { // loops through 1,2
-    var port = "input" + i;
-    //console.log(port); //debug
-    $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controllerid );
-    //$newController.find( "#assign-" + port + "-templateid" ).attr( "id", "assign-" + port + "-" + c.controllerid ); //<-- Are these ids even used?
+    $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controller_id );
   } // end for loop
 
   //Create toggle tooltips
-  $newController.find( "[id^='toggle-output']" ).tooltip({
-    placement: "top",
-    title: "Default OFF<br>(Click to toggle)",
+  $newController.find( "[id^='toggle-']" ).tooltip({
+    title: "(Click to toggle)",
     container: "body",
     html: true
   });
-  $newController.find( "[id^='toggle-input']" ).tooltip({
-    placement: "top",
-    title: "ACTIVE<br>(Click to toggle)",
-    container: "body",
-    html: true
-  });
-  //Create assign-trigger tooltips
-  $newController.find( ".label.input" ).tooltip({
-    title: "(Click to configure)",
+  //Create name input/output tooltips
+  $newController.find( ".label" ).tooltip({
+    title: "(Click to name)",
     container: "body",
     html: true
   });
   //Create sound tooltips
   $newController.find( ".sounds" ).tooltip({
     title: "(Click to configure)",
+	placement: "bottom",
 	container: "body",
     html: true
   });
@@ -107,7 +108,7 @@ function removeController(controllerid) {
 
 function updateController(c) {
   //console.log(c.controllerid); //debug
-  var $controller = $( "#controller-" + c.controllerid );
+  var $controller = $( "#controller-" + c.controller_id );
   var oldclass = $controller.attr("class").match(/cc-[\w-]*\b/);
   //console.log("." + oldclass[0]); //debug
   $controller.removeClass( oldclass[0] ).addClass( "cc-" + c.controllercolor );
@@ -132,17 +133,11 @@ function updateInput(t) {
   return($thisinput.parent());
 }
 
-//------------------------- Change Handlers -------------------------//
-$( "#triggerType" ).change(function() {
-  $( ".triggerForm" ).addClass("hidden");
-  var trigger = $( this ).find( ":selected" ).text();
-  $( "#" + trigger.replace(/\s/g, '') ).removeClass("hidden");
-});
-
 //------------------------- Click Handlers --------------------------//
-// Click to toggle output between Default OFF/Default ON/DISABLED
-$( "span[id^='toggle-output']" ).click(function() {
-  // toggle: OFF / ON / DISABLED
+// Click to toggle port Default state
+$( "span[id^='toggle-']" ).click(function() {
+  // toggle output: OFF -> ON -> DISABLED ->
+  // toggle input: PULLDOWN -> PULLUP -> DISABLED ->
   var oldvalue = "";
   var title = "";
   var newvalue = "";
@@ -151,32 +146,23 @@ $( "span[id^='toggle-output']" ).click(function() {
   var id = $( this ).attr("id");
   //console.log(id); //debug
   var $i = $( this ).find( "i" );
-  var arr = id.split("-"); //arr[0]='toggle', arr[1]='outputa/b/c/d', arr[2]=controller id
+  var arr = id.split("-"); //arr[0]='toggle', arr[1]='1/2/A/B/C/D', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
-  //console.log(arr[2]); //debug
-  //get current setting so we know what to switch to
-  switch (oldvalue) {
-    case "OFF":
-	  title = "Default ON<br>(click to toggle)";
-	  newvalue = "ON";
-    newclass = "fa-toggle-on";
-	  break;
-	case "ON":
-	  title = "DISABLED<br>(click to toggle)";
-	  newvalue = "DISABLED";
-    newclass = "fa-ban";
-	  break;
-	case "DISABLED":
-	  title = "Default OFF<br>(click to toggle)";
-	  newvalue = "OFF";
-    newclass = "fa-toggle-off";
-	  break;
+  //console.log(oldvalue); //debug
+  if (arr[1] == '1' || arr[1] == '2') {
+    title = toggle_input[oldvalue] + "<br>(Click to toggle)";
+	newvalue = toggle_input[oldvalue];
+	newclass = toggle_classes[newvalue];
+  } else {
+    title = "Default " + toggle_output[oldvalue] + "<br>(Click to toggle)";
+	newvalue = toggle_output[oldvalue];
+	newclass = toggle_classes[newvalue];
   }
-  //console.log(arr); //debug
+  //console.log(newvalue); //debug
   //use AJAX to update setting in db. Returns OK.
   $.ajax({
     url: "/_update_toggle",
-    data: {cntid:arr[2],output:arr[1],val:newvalue},
+    data: {cntid:arr[2],port:arr[1],val:newvalue},
     type: "POST",
     dataType: "json",
     success: function( data ) {
@@ -192,61 +178,8 @@ $( "span[id^='toggle-output']" ).click(function() {
     .attr("data-original-title", title)
     .tooltip("fixTitle")
     .tooltip("show");
-  $i.removeClass( "fa-toggle-on fa-toggle-off fa-ban" ).addClass( newclass ); //Change the image
+  $i.removeClass( "fa-toggle-on fa-toggle-off fa-level-up fa-level-down fa-ban" ).addClass( newclass ); //Change the image
   $i.attr("data-setting", newvalue ); //change data-setting to new value
-});
-
-// Click to toggle input between ACTIVE/DISABLED
-$( "span[id^='toggle-input']" ).click(function() {
-  // toggle: ACTIVE / DISABLED
-  var oldvalue = "";
-  var title = "";
-  var newvalue = "";
-  var newclass = "";
-
-  var $thisel = $( this );
-  var id = $thisel.attr("id");
-  //console.log(id); //debug
-  var $i = $thisel.find( "i" );
-  var arr = id.split("-"); //arr[0]='toggle', arr[1]='input1/2', arr[2]=controller id
-  var oldvalue = $i.attr( "data-setting" );
-  //console.log(arr); //debug
-  //console.log(arr); //debug
-  //get current setting so we know what to switch to
-  switch (oldvalue) {
-  	case "ACTIVE":
-  	  title = "DISABLED<br>(click to toggle)";
-  	  newvalue = "DISABLED";
-      newclass = "fa-ban";
-  	  break;
-  	case "DISABLED":
-  	  title = "ACTIVE<br>(click to toggle)";
-  	  newvalue = "ACTIVE";
-      newclass = "fa-check-circle-o";
-  	  break;
-  }
-  //use AJAX to update setting in db. Returns OK.
-  $.ajax({
-    url: "/_update_toggle_input",
-    data: {cntid:arr[2],thisinput:arr[1],val:newvalue},
-    type: "POST",
-    dataType: "json",
-    success: function( data ) {
-      if (data.response == 'OK') {
-        $i.removeClass( "fa-check-circle-o fa-ban" ).addClass( newclass ); //Change the image
-        $i.attr("data-setting", newvalue ); //change data-setting to new value
-        //update the title on the tooltip
-        $thisel.tooltip("hide")
-          .attr("data-original-title", title)
-          .tooltip("fixTitle")
-          .tooltip("show");
-      }
-      //console.log(data.response); //debug
-    },
-      error: function( error ) {
-      console.log(error);
-    }
-  });
 });
 
 // Click to update trigger
