@@ -110,7 +110,7 @@ def rem_controller():
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
 	return jsonify(data = r)
 
-@app.route('/update_controller', methods=['POST'])
+@app.route('/_update_controller', methods=['POST'])
 def update_controller():
 	a, cid = request.form['controller_id'].split("-")
 	cname = request.form['name']
@@ -126,30 +126,26 @@ def update_controller():
 	r = {'status': 'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': controller}
 	return jsonify(data = r)
 
+@app.route('/_update_portname', methods=['POST'])
+def update_portname():
+	cid = request.form['controller_id']
+	name = request.form['name']
+	port = request.form['portnum']
+	p = Port.query.filter_by(controller_id=cid, port=port).first()
+	p.name = name
+	db.session.commit()
+	newport = p.serialize
+	r = {'status': 'OK', 'port': newport}
+	return jsonify(data = r)
+
 @app.route('/_update_toggle', methods=['POST'])
 def update_toggle():
 	cid = request.form['cntid']
 	port = request.form['port']
 	p = Port.query.filter_by(controller_id=cid, port=port).first()
 	p.state = request.form['val']
-	print p.serialize
 	db.session.commit()
 	return jsonify(response = "OK")
-
-@app.route('/_update_toggle_input', methods=['POST'])
-def update_toggle_input():
-	cid = request.form['cntid']
-	thisinput = request.form['thisinput']
-	c = Controller.query.get(cid)
-	r = 'FAIL'
-	if thisinput == 'input1':
-		c.input1 = request.form['val']
-		r = 'OK'
-	elif thisinput == 'input2':
-		c.input2 = request.form['val']
-		r = 'OK'
-	db.session.commit()
-	return jsonify(response = r)
 
 @app.route('/testpost', methods=['POST'])
 def testpost():

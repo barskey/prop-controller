@@ -59,27 +59,39 @@ function connectController(c) {
   // Update sounds icon
   $newController.find( ".sounds" ).attr( "id", "sounds-" + c.controllerid );
 
-  // Assign ids to ports
+  // Add ids and tooltips to ports
   for (i=0; i<ports.length; i++) { // loops through 1,2,A,B,C,D
     var port = ports[i];
     //console.log(port); //debug
-    $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controller_id );
+    var $thisport = $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controller_id );
+	if (port == '1' || port == '2') {
+      $thisport.tooltip({
+        title: "PULLDOWN<br>(Click to toggle)",
+        container: "body",
+        html: true
+      });
+	} else {
+      $thisport.tooltip({
+        title: "Default OFF<br>(Click to toggle)",
+        container: "body",
+        html: true
+      });
+	}
   } // end for loop
 
-  //Create toggle tooltips
-  $newController.find( "[id^='toggle-']" ).tooltip({
-    title: "(Click to toggle)",
+  //Create name input/output tooltips
+  $newController.find( ".label.input" ).tooltip({
+    title: "(Click to name)",
     container: "body",
     html: true
   });
-  //Create name input/output tooltips
-  $newController.find( ".label" ).tooltip({
+  $newController.find( ".label.output" ).tooltip({
     title: "(Click to name)",
     container: "body",
     html: true
   });
   //Create sound tooltips
-  $newController.find( ".sounds" ).tooltip({
+  $newController.find( ".label.sounds" ).tooltip({
     title: "(Click to configure)",
 	placement: "bottom",
 	container: "body",
@@ -118,19 +130,18 @@ function updateController(c) {
   $controller.find( ".controller-name" ).html( c.controllername );
 }
 
-function updateInput(t) {
-  console.log(t); //debug
-  var $controller = $( "#controller-" + t.cid );
-  var $thisinput = $controller.find( ".label.input" + t.inputnum ).removeClass( "unassigned" ).attr( {"data-triggertypeid": t.type_id, "data-param1": t.param1} );
-  if (parseInt(t.type_id) == 0) {
-    $thisinput.addClass( "unassigned" );
+function updatePortname(p) {
+  var $controller = $( "#controller-" + p.cid );
+  var shortname;
+  if (p.name.length > 7) {
+    shortname = p.name.substring(0, 3) + "...";
+  } else {
+    shortname = p.name;
   }
-  //update the title on the tooltip
-  var title = t.type_name + "<br>(Click to configure)";
-  $thisinput.tooltip("hide")
-    .attr("data-original-title", title)
-    .tooltip("fixTitle");
-  return($thisinput.parent());
+  $controller.find( ".port" + p.port ).html( shortname ).attr( "data-fullname", p.name ).tooltip("hide")
+    .attr("data-original-title", p.name + "<br>(Click to name)")
+    .tooltip("fixTitle")
+    .tooltip("show");
 }
 
 //------------------------- Click Handlers --------------------------//
@@ -182,31 +193,37 @@ $( "span[id^='toggle-']" ).click(function() {
   $i.attr("data-setting", newvalue ); //change data-setting to new value
 });
 
-// Click to update trigger
-$( ".label.input" ).click(function() {
-  var controllerid = $( this ).parents().eq(3).attr( "id" ).substr(11);
-  var controllername = $( this ).parents().eq(3).find( ".controller-name" ).html();
-  var triggernum = $( this ).html();
-  var triggertypeid = $( this ).attr( "data-triggertypeid" );
-  var param1 = $( this ).attr( "data-param1" );
-  //console.log(param1); //debug
-  switch(parseInt(triggertypeid)) {
-    case 1: //Motion
-      $( "#resetTime" ).val( param1 );
-      break;
-    case 2: //Pushbutton
-      $( "input[id^='defaultState']" ).prop( "checked", false );
-      $( "#defaultState" + param1 ).prop( "checked", true );
-      break;
+// Click to name input/output port - does not affect sounds label
+$( ".label" ).click(function() {
+  var $port = $( this );
+  var cid, portnum, name;
+  var type = false;
+  if ($port.hasClass( "input" )) {
+    type = "input";
+  } else if ($port.hasClass( "output" )) {
+    type = "output";
   }
-  $( "#updateTriggerCID" ).val( controllerid );
-  $( "#modalControllerName" ).text( controllername );
-  $( "#modalTriggerNum" ).text( triggernum );
-  $( "#triggernum" ).val( triggernum );
-  $( "#triggerType" ).val( triggertypeid ).change();
-  $( "#updateTriggerModal" ).modal( "toggle" );
+  if (type) {
+	  cid = $port.parents().eq(3).attr( "id" ).substr(11);
+	  var name = $port.attr( "data-fullname" );
+	  var classes = $port.attr( "class" ).split( " " );
+	  $.each(classes, function( index, value ) {
+		if (value.substring(0, 4) == "port") {
+		  portnum = value.substring(4, 5);
+		}
+	  });
+	  //console.log(portnum); //debug
+	  
+	  //Set the hidden fields on the modal
+	  $( "#portcid" ).val( cid );
+	  $( "#portnum" ).val ( portnum );
+	  $( "#portname" ).val( name );
+	  
+	  $( "#editPortnameModal" ).modal( "toggle" );
+  }
 });
 
+//------------------------- Modals ---------------------------------//
 // Click Add modal button to connect controller (add to db and add to dashboard)
 $( "#connectControllerModalAddButton" ).click(function() {
 	var $btn = $( this ).button("adding");
@@ -224,10 +241,10 @@ $( "#connectControllerModalAddButton" ).click(function() {
 				$cntlist.empty();
 				$.each( response.data.clist, function( index, value ) {
 					$cntlist.append( 
-						$( "<li>" ).addClass( "list-group-item borderless cc-" + value.controllercolor ).attr( "data-cid", "controller-" + value.controllerid ).text( value.controllername )
+						$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "checkController(" + value.controller_id + ")", "href": "#"} ).text( value.controllername ) )
 					)
 				});
-        //console.log(response.data.controller[0]); //debug
+				//console.log(response.data.controller[0]); //debug
 				connectController(response.data.controller);
 				$( "#connectControllerModal" ).modal("toggle");
 				$btn.button("reset");
@@ -251,7 +268,7 @@ $( "#editControllerModalSaveButton" ).click(function() {
 	var $btn = $( this ).button("saving");
 	//Use AJAX to add the controller to the db. Returns new controller.
 	$.ajax({
-		url: "/update_controller",
+		url: "/_update_controller",
 		data: $( "#editControllerForm" ).serialize(),
 		type: "POST",
 		dataType: "json",
@@ -267,7 +284,7 @@ $( "#editControllerModalSaveButton" ).click(function() {
 				//console.log(response.data.controller); //debug
 				updateController(response.data.controller);
 				$( "#editControllerModal" ).modal("toggle");
-        $( "#controller-" + response.data.controller.controllerid ).animateCss("bounceIn");
+				$( "#controller-" + response.data.controller.controller_id ).animateCss("bounceIn");
 				$btn.button("reset");
 			} else if (response.data.status == "NAME") {
 				$btn.button("reset");
@@ -275,6 +292,37 @@ $( "#editControllerModalSaveButton" ).click(function() {
 				$( "#editname" ).val( response.data.newname );
 				if ( $( "#editnamealert" ).length == 0 ) {
 				  $( ".editappendalert" ).append("<div class='alert alert-danger alert-dismissible' id='editnamealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken. How about this one?</div>");
+				}
+			}
+		},
+			error: function( error ) {
+			console.log(error);
+		}
+	});
+});
+
+// Click Save button on editPortnameModal (update db and dashboard)
+$( "#editPortnameModalSaveButton" ).click(function() {
+	var $btn = $( this ).button("saving");
+	//Use AJAX to add the controller to the db. Returns new port obj.
+	$.ajax({
+		url: "/_update_portname",
+		data: $( "#editPortnameForm" ).serialize(),
+		type: "POST",
+		dataType: "json",
+		success: function( response ) {
+			//console.log(response.data.status); //debug
+			if (response.data.status == "OK") {
+				//console.log(response.data.port); //debug
+				updatePortname(response.data.port);
+				$( "#editPortnameModal" ).modal("toggle");
+				$btn.button("reset");
+			} else if (response.data.status == "NAME") {
+				$btn.button("reset");
+				$( "#portname" ).animateCss( "shake" );
+				$( "#portname" ).val( response.data.newname );
+				if ( $( "#editportnamealert" ).length == 0 ) {
+				  $( ".editportappendalert" ).append("<div class='alert alert-danger alert-dismissible' id='editportnamealert' role='alert'><button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button>That name is already taken. How about this one?</div>");
 				}
 			}
 		},
@@ -305,43 +353,6 @@ $( "#editControllerModalDeleteButton" ).click(function() {
 				//console.log(response.data.controller[0]); //debug
 				removeController(thiscid);
 				$( "#editControllerModal" ).modal("toggle");
-			}
-		},
-			error: function( error ) {
-			console.log(error);
-		}
-	});
-});
-
-// Click Add modal button to assign trigger (add to db and update controller on dashboard)
-$( "#updateTriggerModalSaveButton" ).click(function() {
-	var $btn = $( this ).button("saving");
-	//Use AJAX to add the trigger to the db. Returns list of Triggers and new trigger.
-	$.ajax({
-		url: "/update_trigger",
-		data: $( "#updateTriggerForm" ).serialize(),
-		type: "POST",
-		dataType: "json",
-		success: function( response ) {
-			console.log(response); //debug
-			if (response.data.status == "OK") {
-				//rebuild navbar Trigger list
-				var $triggerlist = $( "#trigger-menu" );
-				$triggerlist.empty();
-				$.each( response.data.tlist, function( index, value ) {
-					if (parseInt(value.type_id) != 0) {
-						$triggerlist.append( 
-						  $( "<li>" ).addClass( "list-group-item cc-" + value.color_id ).attr( "id", "trigger-" + value.id ).text( value.type_name ).append( 
-							$( "<div>" ).addClass( "pull-right" ).append( 
-							  $( "<span>" ).addClass( "label input cc-" + value.color_id ).html( value.inputnum )
-							)
-						  )
-						)
-					}
-				});
-        updateInput(response.data.trigger).animateCss("flipInY");
-				$( "#updateTriggerModal" ).modal("toggle");
-				$btn.button("reset");
 			}
 		},
 			error: function( error ) {
