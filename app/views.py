@@ -67,7 +67,7 @@ def index():
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
-	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggertypes, actions=actions, sounds=sounds, events=events)
+	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggertypes, actions=[], sounds=sounds, events=[])
 
 @app.route('/controllers')
 def controllers():

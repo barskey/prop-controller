@@ -1,4 +1,5 @@
 $( "#dashboard" ).addClass( "active" );
+$( ".action-list" ).sortable();
 $( '[data-toggle="tooltip"]' ).tooltip();
 function createEvent(event) {
   event.preventDefault();

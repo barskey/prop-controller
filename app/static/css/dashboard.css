@@ -36,7 +36,7 @@ body {
 
 .draggable-panel
 {
-  width: 12.5em;
+  width: 30em;
   float: left;
 }
 
@@ -60,3 +60,16 @@ body {
   padding-top: 6px;
   padding-bottom: 6px;
 }
+
+.cc-1.label {
+  background-color: red;
+}
+
+.cc-2.label {
+  background-color: orange;
+}
+
+.cc-3.label {
+  background-color: blue;
+}
+
