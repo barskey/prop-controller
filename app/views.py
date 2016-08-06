@@ -147,7 +147,12 @@ def update_toggle():
 	p = Port.query.filter_by(controller_id=cid, port=port).first()
 	p.state = request.form['val']
 	db.session.commit()
-	return jsonify(response = "OK")
+	return jsonify(response = 'OK')
+
+@app.route('/_get_triggers', methods=['GET'])
+def get_triggers():
+	trigger = "test-trigger"
+	return jsonify(data = {'triggers': [t.serialize for t in Trigger.query.all()], 'triggertypes': [tt.serialize for tt in Triggertype.query.all()], 'trigger': trigger})
 
 @app.route('/testpost', methods=['POST'])
 def testpost():
@@ -213,6 +218,35 @@ def init_setup():
 	for s in sounds:
 		sound = Sound(id=s['id'], name=s['name'])
 		db.session.add(sound)
+	db.session.commit()
+	
+	return redirect('/admin')
+	
+@app.route('/_empty_table', methods=['POST'])
+def empty_table():
+	empty = []
+	table = request.form['tablename']
+	if table == 'project':
+		empty = Project.query.all()
+	elif table == 'color':
+		empty = Color.query.all()
+	elif table == 'triggertype':
+		empty = Triggertype.query.all()
+	elif table == 'actiontype':
+		empty = Actiontype.query.all()
+	elif table == 'controller':
+		empty = Controller.query.all()
+	elif table == 'port':
+		empty = Port.query.all()
+	elif table == 'event':
+		empty = Event.query.all()
+	elif table == 'trigger':
+		empty = Trigger.query.all()
+	elif table == 'action':
+		empty = Action.query.all()
+	
+	for d in empty:
+		db.session.delete(d)
 	db.session.commit()
 	
 	return redirect('/admin')

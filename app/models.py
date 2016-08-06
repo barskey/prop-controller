@@ -1,5 +1,6 @@
 from app import db
 from flask import json
+from collections import namedtuple
 
 class Project(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -94,6 +95,9 @@ class Controller(db.Model):
 			for p in self.ports:
 				if p.port == port:
 					return p
+			NotFound = namedtuple('NotFound', 'id name state')
+			p = NotFound(id='<NOT_FOUND>', name='<NOT_FOUND>', state='<NOT_FOUND>')
+			return p
 		except:
 			return 0
 

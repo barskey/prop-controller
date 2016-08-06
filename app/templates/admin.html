@@ -36,11 +36,12 @@
   <div class="row">
     <div class="col-xs-6">
       <table class="table table-condensed">
-        <caption>Project Table</caption>
+        <caption>Project Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="project" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
             <th>name</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -48,17 +49,19 @@
           <tr>
             <td class="id">{{ p.id }}</td>
             <td>{{ p.name }}</td>
+            <td><i class="fa fa-times" id="project-{{ p.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Color Table</caption>
+        <caption>Color Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="color" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
             <th>name</th>
             <th>hex</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -67,17 +70,19 @@
             <td class="id">{{ c.id }}</td>
             <td>{{ c.name }}</td>
             <td>{{ c.hex }}</td>
+            <td><i class="fa fa-times" id="color-{{ c.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Triggertype Table</caption>
+        <caption>Triggertype Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="triggertype" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
             <th>name</th>
             <th>type</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -86,17 +91,19 @@
             <td class="id">{{ tt.id }}</td>
             <td>{{ tt.name }}</td>
             <td>{{ tt.type }}</td>
+            <td><i class="fa fa-times" id="triggertype-{{ tt.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Actiontype Table</caption>
+        <caption>Actiontype Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="actiontype" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
             <th>name</th>
             <th>type</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -105,6 +112,7 @@
             <td class="id">{{ a.id }}</td>
             <td>{{ a.name }}</td>
             <td>{{ a.type }}</td>
+            <td><i class="fa fa-times" id="actiontype-{{ a.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -112,13 +120,14 @@
     </div>
     <div class="col-xs-6">
       <table class="table table-condensed">
-        <caption>Controller Table</caption>
+        <caption>Controller Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="controller" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
             <th class="id">project_id</th>
             <th class="id">color_id</th>
             <th>name</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -128,12 +137,13 @@
             <td class="id">{{ c.project_id }}</td>
             <td class="id">{{ c.controllercolor }}</td>
             <td>{{ c.controllername }}</td>
+            <td><i class="fa fa-times" id="controller-{{ c.controller_id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Port Table</caption>
+        <caption>Port Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="port" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
@@ -142,6 +152,7 @@
             <th>name</th>
             <th>state</th>
             <th>type</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -153,18 +164,20 @@
             <td>{{ p.name }}</td>
             <td>{{ p.state }}</td>
             <td>{{ p.type }}</td>
+            <td><i class="fa fa-times" id="port-{{ p.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Event Table</caption>
+        <caption>Event Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="event" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
             <th class="id">project_id</th>
             <th>name</th>
             <th class="id">loop</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -174,12 +187,13 @@
             <td class="id">{{ e.project_id }}</td>
             <td>{{ e.name }}</td>
             <td class="id">{{ e.loop }}</td>
+            <td><i class="fa fa-times" id="event-{{ e.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Trigger Table</caption>
+        <caption>Trigger Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="trigger" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
@@ -187,6 +201,7 @@
             <th class="id">tt_id</th>
             <th>param1</th>
             <th>param2</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -197,12 +212,13 @@
             <td class="id">{{ t.tt_id }}</td>
             <td>{{ t.param1 }}</td>
             <td>{{ t.param2 }}</td>
+            <td><i class="fa fa-times" id="trigger-{{ t.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
       <table class="table table-condensed">
-        <caption>Action Table</caption>
+        <caption>Action Table&nbsp;&nbsp;<i class="fa fa-trash-o" id="action" style="color:red;"></caption>
         <thead>
           <tr>
             <th class="id">id</th>
@@ -210,6 +226,7 @@
             <th class="id">actiontype_id</th>
             <th>delay</th>
             <th>param1</th>
+            <th>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -220,6 +237,7 @@
             <td class="id">{{ a.actiontype_id }}</td>
             <td>{{ a.delay }}</td>
             <td>{{ a.param1 }}</td>
+            <td><i class="fa fa-times" id="action-{{ a.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
         </tbody>
