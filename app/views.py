@@ -67,7 +67,7 @@ def index():
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
-	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=triggertypes, actions=[], sounds=sounds, events=[])
+	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=[tt.serialize for tt in Triggertype.query.all()], actions=[], sounds=sounds, events=[])
 
 @app.route('/controllers')
 def controllers():
@@ -151,8 +151,7 @@ def update_toggle():
 
 @app.route('/_get_triggers', methods=['GET'])
 def get_triggers():
-	trigger = "test-trigger"
-	return jsonify(data = {'triggers': [t.serialize for t in Trigger.query.all()], 'triggertypes': [tt.serialize for tt in Triggertype.query.all()], 'trigger': trigger})
+	return jsonify(response = {'inputs': [i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], 'triggertypes': [tt.serialize for tt in Triggertype.query.all()]})
 
 @app.route('/testpost', methods=['POST'])
 def testpost():

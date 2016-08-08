@@ -61,6 +61,10 @@ body {
   padding-bottom: 6px;
 }
 
+.form-group {
+  margin-bottom: 0;
+}
+
 .cc-1.label {
   background-color: red;
 }
