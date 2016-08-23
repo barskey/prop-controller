@@ -31,7 +31,6 @@ body {
 
 .dashboard {
   height: calc(100vh - 100px);
-  padding: 15px;
 }
 
 .draggable-panel
@@ -41,6 +40,10 @@ body {
 }
 
 .panel-trigger {
+  border: 1px solid orange;
+}
+
+.panel-trigger > .panel-heading {
   background-color: orange;
 }
 
@@ -59,10 +62,6 @@ body {
 .pad-6 {
   padding-top: 6px;
   padding-bottom: 6px;
-}
-
-.form-group {
-  margin-bottom: 0;
 }
 
 .cc-1.label {

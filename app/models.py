@@ -221,6 +221,7 @@ class Port(db.Model):
 		return {
 			'id': self.id,
 			'cid': self.controller_id,
+			'cname': self.controller.name,
 			'port': self.port,
 			'name': self.name,
 			'state': self.state,

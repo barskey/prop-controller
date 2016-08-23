@@ -1,7 +1,7 @@
 $( "#dashboard" ).addClass( "active" );
 $( ".action-list" ).sortable();
 $( '[data-toggle="tooltip"]' ).tooltip();
-$( ".draggable-panel" ).draggable({ grid: [10, 10 ], containment: "parent" });
+//$( ".draggable-panel" ).draggable({ grid: [10, 10 ], containment: "parent" });
 
 $( "#triggerType" ).change(function() {
   $( ".triggerForm" ).addClass("hidden");
@@ -21,11 +21,11 @@ function updateTrigger(triggertypes, inputs) {
   });
   var $inputselect = $( "<select>" ).attr( {"name": "inputname", "id": "inputid", "class": "form-control"} );
   inputs.forEach(function(i) {
-    $inputselect.append( $( "<option>" ).val( i.id ).text( i.name ) );
+    $inputselect.append( $( "<option>" ).val( i.id ).text( i.cname + "--" + i.name ) );
   });
   var $formgroup = $( "<div>" ).addClass( "form-group form-group-sm" );
   var $newli = $( "<li>" ).addClass( "list-group-item list-group-item-warning hidden" );
-  var $triggertypes = $( "<div>" ).addClass( "col-xs-4" ).append( $ttselect );
+  var $triggertypes = $( "<div>" ).addClass( "col-xs-2" ).append( $ttselect );
   var $inputs = $( "<div>" ).addClass( "col-xs-3" ).append( $inputselect );
   var $condition = $( "<div>" ).addClass( "col-xs-2" ).append( $( "<span>" ).attr( "id", "condition" ).html( "turns" ) );
   var $buttons = $( "<div>" ).addClass( "col-xs-3" ).append(
@@ -55,10 +55,10 @@ $( "#add-trigger" ).click(function() {
     inputs = data.response.inputs;
   }).done( function() {
     $triggerform = updateTrigger(triggertypes, inputs);
-	$li.addClass( "animated flipOutY" ).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function() {
-		$li.removeClass( "animated flipOutY" ).addClass( "hidden" );
+	$li.addClass( "animated flipOutX" ).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function() {
+		$li.removeClass( "animated flipOutX" ).addClass( "hidden" );
 		$li.before( $triggerform );
-		$triggerform.animateCss( "flipInY" );
+		$triggerform.animateCss( "flipInX" );
 		$triggerform.removeClass( "hidden" );
 	});
   });
