@@ -45,6 +45,15 @@ function updateTrigger(triggertypes, inputs) {
   return $newli;
 }
 
+
+//------------------------- Change Handlers --------------------------//
+$( "#triggertype_select" ).change(function() {
+  console.log($(this).val());
+  $( this ).parent().find( ".trigger-group" ).addClass( "hidden" );
+  var tt = $( this ).find( "option:selected" ).text();
+  $( this ).parent().find( "." + tt ).removeClass( "hidden" );
+});
+
 $( "#add-trigger" ).click(function() {
   var $li = $( this );
   //console.log(arry); //debug

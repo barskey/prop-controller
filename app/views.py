@@ -67,7 +67,7 @@ def index():
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
-	return render_template('dashboard.html', title='Dashboard', projectname=project, triggers=[tt.serialize for tt in Triggertype.query.all()], actions=[], sounds=sounds, events=[])
+	return render_template('dashboard.html', title='Dashboard', projectname=project, inputs=[i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[], sounds=sounds, events=[])
 
 @app.route('/controllers')
 def controllers():

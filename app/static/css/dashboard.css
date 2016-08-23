@@ -41,6 +41,7 @@ body {
 
 .panel-trigger {
   border: 1px solid orange;
+  margin-bottom: 0;
 }
 
 .panel-trigger > .panel-heading {
