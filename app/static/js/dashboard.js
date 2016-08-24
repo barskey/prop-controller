@@ -54,9 +54,9 @@ $( "#triggertype_select" ).change(function() {
   $( this ).parent().find( "." + tt ).removeClass( "hidden" );
 });
 
+//------------------------- Click Handlers --------------------------//
 $( "#add-trigger" ).click(function() {
-  var $li = $( this );
-  //console.log(arry); //debug
+  var $paneltrigger = $( this ).parents().eq(4);
   var inputs, triggertypes;
   $.get( "_get_triggers", function( data ) {
     //console.log(data.response.inputs); //debug

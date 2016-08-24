@@ -161,14 +161,14 @@
                     <div class="form-group actionForm pad-6" id="TurnOn">
                       <label for="delayStart">Delay before On:</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" id="delayOn" name="delayOn" value="3000" size=4 />
+                        <input type="text" class="form-control" id="delayOn" name="delayOn" value="3000" size=6 />
                         <div class="input-group-addon">ms</div>
                       </div><!-- /.input-group -->
                     </div><!-- /#TurnOn -->
                     <div class="form-group actionForm pad-6 hidden" id="TurnOff">
                       <label for="delayStart">Delay before Off:</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" id="delayOff" name="delayOff" value="3000" size=4 />
+                        <input type="text" class="form-control" id="delayOff" name="delayOff" value="3000" size=6 />
                         <div class="input-group-addon">ms</div>
                       </div><!-- /.input-group -->
                     </div><!-- /#TurnOff -->
@@ -178,7 +178,7 @@
                     <div class="form-group actionForm pad-6 hidden" id="Blink">
                       <label for="cycleTime">Cycle time:</label>
                       <div class="input-group">
-                        <input type="text" class="form-control" id="cycleTime" name="cycleTime" value="1000" size=4 />
+                        <input type="text" class="form-control" id="cycleTime" name="cycleTime" value="1000" size=6 />
                         <div class="input-group-addon">ms</div>
                       </div><!-- /.input-group -->
                     </div><!-- /#Blink -->
@@ -200,6 +200,8 @@
             </div><!-- /.modal-dialog -->
           </div><!-- /.modal #addActionModal -->
           <!-- End Modals -->
+          <!-- Templates -->
+          <!-- End Templates -->
           <div class="col-md-6">
             <div class="panel panel-black" id="event-1">
               <form class="form-inline">
@@ -219,9 +221,8 @@
                 </div><!-- /.panel-heading -->
                 <div class="panel panel-trigger">
                   <div class="panel-heading">
-                    <h3 class="panel-title">When this happens...<div class="add-trigger pull-right" data-toggle="tooltip" data-placement="right" title="Add a Trigger to this Event..." data-eventid="event-1" data-container="body"><i class="fa fa-plus"></i></div></h3>
+                    <h3 class="panel-title">When this happens...<div class="pull-right" data-toggle="tooltip" data-placement="right" title="Add a Trigger to this Event..." data-eventid="event-1" data-container="body"><i class="fa fa-plus add-trigger"></i></div></h3>
                   </div><!-- /.panel-heading -->
-                  <div class="panel-body"><em class="text-muted">Click to add a trigger to this event...</em></div>
                   <ul class="list-group sortable trigger-list">
                     <li class="list-group-item list-group-item-warning" id="trigger-2">
                       <select class="form-control" id="triggertype_select" name="triggertype_id">
@@ -231,6 +232,7 @@
                       </select>&nbsp;&nbsp;
                       <span class="trigger-group Input">
                         <select class="form-control" id="triggers" name="trigger_id">
+                          <option value="blank"></option>
                           {% for i in inputs %}
                           <option value="{{ i.id }}">{{ i.cname }}--{{ i.name }}</option>
                           {% endfor %}
@@ -243,28 +245,22 @@
                       </span>
                       <span class="trigger-group Every hidden">
                         <div class="input-group">
-                          <input class="form-control" id="param1" name="param1" value="30000" size=3>
+                          <input class="form-control" id="param1" name="param1" value="30000" size=6>
                           <span class="input-group-addon">ms</span>
                         </div>
                       </span>
                       <span class="trigger-group Randomly hidden">
-                        between&nbsp;
+                        repeat between&nbsp;
                         <div class="input-group">
-                          <input class="form-control" id="param1" name="param1" value="5000" size=3>
+                          <input class="form-control" id="param1" name="param1" value="5000" size=6>
                           <span class="input-group-addon">ms</span>
                         </div>
                         &nbsp;and&nbsp;
                         <div class="input-group">
-                          <input class="form-control" id="param2" name="param2" value="50000" size=3>
+                          <input class="form-control" id="param2" name="param2" value="50000" size=6>
                           <span class="input-group-addon">ms</span>
                         </div>
                       </span>
-                    </li>
-                    <li class="list-group-item list-group-item-warning" id="trigger-3">
-                      Every 20000ms<div class="pull-right" data-toggle="tooltip" data-placement="right" title="(Click to edit)" data-container="body"><i class="fa fa-pencil-square-o" data-triggerid="3"></i></div>
-                    </li>
-                    <li class="list-group-item list-group-item-warning" id="trigger-4">
-                      Event 1 completes<div class="pull-right" data-toggle="tooltip" data-placement="right" title="(Click to edit)" data-container="body"><i class="fa fa-pencil-square-o" data-triggerid="4"></i></div>
                     </li>
                   </ul><!-- /.list-group -->
                 </div><!-- /.panel-trigger -->
