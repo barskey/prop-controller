@@ -142,22 +142,24 @@ event_actions = db.Table('event_actions',
 class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-	name = db.Column(db.String(24), unique=True)
+	name = db.Column(db.String(24), default='Eventname')
 	loop = db.Column(db.Integer, default=1)
 	triggers = db.relationship(
 		'Trigger',
 		secondary = event_triggers,
-		primaryjoin = (event_triggers.c.event_id == id),
-		secondaryjoin = (event_triggers.c.trigger_id == id),
 		backref = db.backref('events', lazy='dynamic'),
 		lazy = 'dynamic')
 	actions = db.relationship(
 		'Action',
 		secondary = event_actions,
-		primaryjoin = (event_actions.c.event_id == id),
-		secondaryjoin = (event_actions.c.action_id == id),
 		backref = db.backref('events', lazy='dynamic'),
 		lazy = 'dynamic')
+
+	def get_id(self):
+		try:
+			return unicode(self.id)  # python 2
+		except NameError:
+			return str(self.id)  # python 3
 
 	def add_trigger(self, trigger):
 		if not self.has_trigger(trigger):

@@ -45,6 +45,22 @@ function updateTrigger(triggertypes, inputs) {
   return $newli;
 }
 
+function addEvent() {
+  var inputs, triggertypes;
+  $.get( "_add_event", function( data ) {
+    console.log(data.response.status); //debug
+    var thisevent = data.response.newevent;
+  }).done( function() {
+	var $template = $( "#template-event" );
+	var eventid = "event-" + thisevent.id;
+    var $newEvent = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", eventid );
+	if (newevent.id % 2 == 0) { //if event id is even
+	  $( ".even-col" ).append( $newEvent );
+	} else {
+	  $( ".odd-col" ).append( $newEvent );
+	}
+  });
+}
 
 //------------------------- Change Handlers --------------------------//
 $( "#triggertype_select" ).change(function() {

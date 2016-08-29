@@ -64,11 +64,6 @@ def index():
 	triggers.append({'ttid': '2', 'selecttext': 'Randomly between'})
 	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, outputs=outputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
 
-@app.route('/dashboard')
-def dashboard():
-	project = projectname
-	return render_template('dashboard.html', title='Dashboard', projectname=project, inputs=[i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[], sounds=sounds, events=[])
-
 @app.route('/controllers')
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
@@ -148,6 +143,25 @@ def update_toggle():
 	p.state = request.form['val']
 	db.session.commit()
 	return jsonify(response = 'OK')
+
+@app.route('/dashboard')
+def dashboard():
+	project = projectname
+	return render_template('dashboard.html', title='Dashboard', projectname=project, inputs=[i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[], sounds=sounds, events=[])
+	
+@app.route('/_add_event', methods=['GET'])
+def add_event():
+	newevent = Event(project_id=projectid)
+	db.session.add(newevent)
+	t = Trigger()
+	db.session.add(t)
+	db.session.commit()
+	n = newevent.add_trigger(t)
+	db.session.add(n)
+	db.session.commit()
+	r = {'status':'OK', 'newevent': newevent.serialize}
+	print r
+	return jsonify(data = r)
 
 @app.route('/_get_triggers', methods=['GET'])
 def get_triggers():

@@ -57,7 +57,7 @@
                   <li><a href="#">{{ e.eventname }}</a></li>
                   {% endfor %}
                   <li role="separator" class="divider"></li>
-                  <li><a href="#" id="new-event" onclick="createEvent()">Add new...</a></li>
+                  <li><a href="#" id="new-event" onclick="addEvent()">Add new...</a></li>
                 </ul><!-- /.dropdown-menu -->
               </ul><!-- .navbar-right -->
             </div><!-- /.navbar-collapse -->
@@ -202,7 +202,7 @@
           <!-- End Modals -->
           <!-- Templates -->
           <!-- End Templates -->
-          <div class="col-md-6">
+          <div class="col-md-6 odd-col">
             <div class="panel panel-black" id="event-1">
               <form class="form-inline">
                 <div class="panel-heading">
@@ -221,9 +221,9 @@
                 </div><!-- /.panel-heading -->
                 <div class="panel panel-trigger">
                   <div class="panel-heading">
-                    <h3 class="panel-title">When this happens...<div class="pull-right" data-toggle="tooltip" data-placement="right" title="Add a Trigger to this Event..." data-eventid="event-1" data-container="body"><i class="fa fa-plus add-trigger"></i></div></h3>
+                    <h3 class="panel-title">When this happens...</h3>
                   </div><!-- /.panel-heading -->
-                  <ul class="list-group sortable trigger-list">
+                  <ul class="list-group trigger-list">
                     <li class="list-group-item list-group-item-warning" id="trigger-2">
                       <select class="form-control" id="triggertype_select" name="triggertype_id">
                         {% for t in triggertypes %}
@@ -277,7 +277,7 @@
               </form>
             </div><!-- /.panel-black -->
           </div><!-- /.col-md-6 -->
-          <div class="col-md-6">
+          <div class="col-md-6 even-col">
             <div class="panel panel-black" id="event-1">
               <form class="form-inline">
                 <div class="panel-heading">
@@ -327,6 +327,7 @@
                 </div><!-- /.panel-action -->
               </form>
             </div><!-- /.panel-black -->
-          </div><!-- /.col-md-6 -->        </div><!-- /.dashboard -->
+          </div><!-- /.col-md-6 -->
+        </div><!-- /.dashboard -->
         <script src="static/js/dashboard.js" type="text/javascript"></script>
 {% endblock %}
