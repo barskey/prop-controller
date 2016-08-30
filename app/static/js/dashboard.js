@@ -46,25 +46,26 @@ function updateTrigger(triggertypes, inputs) {
 }
 
 function addEvent() {
-  var inputs, triggertypes;
+  var inputs, triggertypes, thisevent;
   $.get( "_add_event", function( data ) {
-    console.log(data.response.status); //debug
-    var thisevent = data.response.newevent;
+    //console.log(data.response.status); //debug
+    thisevent = data.response.newevent;
   }).done( function() {
-	var $template = $( "#template-event" );
-	var eventid = "event-" + thisevent.id;
+    var $template = $( "#template-event" );
+    var eventid = "event-" + thisevent.id;
     var $newEvent = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", eventid );
-	if (newevent.id % 2 == 0) { //if event id is even
-	  $( ".even-col" ).append( $newEvent );
-	} else {
-	  $( ".odd-col" ).append( $newEvent );
-	}
+    if (thisevent.id % 2 == 0) { //if event id is even
+      $( ".even-col" ).append( $newEvent );
+    } else {
+      $( ".odd-col" ).append( $newEvent );
+    }
+    $newEvent.animateCss( "rubberBand" );
   });
 }
 
 //------------------------- Change Handlers --------------------------//
 $( "#triggertype_select" ).change(function() {
-  console.log($(this).val());
+  //console.log($(this).val());
   $( this ).parent().find( ".trigger-group" ).addClass( "hidden" );
   var tt = $( this ).find( "option:selected" ).text();
   $( this ).parent().find( "." + tt ).removeClass( "hidden" );

@@ -148,7 +148,7 @@ def update_toggle():
 def dashboard():
 	project = projectname
 	return render_template('dashboard.html', title='Dashboard', projectname=project, inputs=[i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[], sounds=sounds, events=[])
-	
+
 @app.route('/_add_event', methods=['GET'])
 def add_event():
 	newevent = Event(project_id=projectid)
@@ -160,8 +160,7 @@ def add_event():
 	db.session.add(n)
 	db.session.commit()
 	r = {'status':'OK', 'newevent': newevent.serialize}
-	print r
-	return jsonify(data = r)
+	return jsonify(response = r)
 
 @app.route('/_get_triggers', methods=['GET'])
 def get_triggers():
@@ -183,29 +182,29 @@ def init_setup():
 	for p in proj:
 		db.session.delete(p)
 	db.session.commit()
-	
+
 	for p in projects:
 		project = Project(id=p['id'], name=p['name'])
 		db.session.add(project)
 	db.session.commit()
-	
+
 	#Empty Actiontype table and add new entries
 	at = Actiontype.query.all()
 	for a in at:
 		db.session.delete(a)
 	db.session.commit()
-	
+
 	for a in actiontypes:
 		actiontype = Actiontype(id=a['id'], name=a['name'], type=a['type'])
 		db.session.add(actiontype)
 	db.session.commit()
-	
+
 	#Empty Triggertype table and add new entries
 	tt = Triggertype.query.all()
 	for t in tt:
 		db.session.delete(t)
 	db.session.commit()
-	
+
 	for t in triggertypes:
 		triggertype = Triggertype(id=t['id'], name=t['name'], type=t['type'])
 		db.session.add(triggertype)
@@ -216,25 +215,25 @@ def init_setup():
 	for c in col:
 		db.session.delete(c)
 	db.session.commit()
-	
+
 	for c in colors:
 		color = Color(id=c['id'], name=c['name'], hex=c['hex'])
 		db.session.add(color)
 	db.session.commit()
-	
+
 	#Empty Sound table and add new entries
 	snd = Sound.query.all()
 	for s in snd:
 		db.session.delete(s)
 	db.session.commit()
-	
+
 	for s in sounds:
 		sound = Sound(id=s['id'], name=s['name'])
 		db.session.add(sound)
 	db.session.commit()
-	
+
 	return redirect('/admin')
-	
+
 @app.route('/_empty_table', methods=['POST'])
 def empty_table():
 	empty = []
@@ -257,9 +256,9 @@ def empty_table():
 		empty = Trigger.query.all()
 	elif table == 'action':
 		empty = Action.query.all()
-	
+
 	for d in empty:
 		db.session.delete(d)
 	db.session.commit()
-	
+
 	return redirect('/admin')
