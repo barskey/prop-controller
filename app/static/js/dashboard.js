@@ -71,6 +71,14 @@ $( "#triggertype_select" ).change(function() {
   $( this ).parent().find( "." + tt ).removeClass( "hidden" );
 });
 
+$( "#actiontype_select" ).change(function() {
+  //console.log($(this).val());
+  $( this ).parent().find( ".action-group" ).addClass( "hidden" );
+  var sel = $( this ).find( "option:selected" ).text().split(" ");
+  //console.log(sel[0]); //debug
+  $( this ).parent().find( "." + sel[0] ).removeClass( "hidden" );
+});
+
 //------------------------- Click Handlers --------------------------//
 $( "#add-trigger" ).click(function() {
   var $paneltrigger = $( this ).parents().eq(4);
