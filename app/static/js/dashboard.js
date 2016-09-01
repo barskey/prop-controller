@@ -3,17 +3,6 @@ $( ".action-list" ).sortable();
 $( '[data-toggle="tooltip"]' ).tooltip();
 //$( ".draggable-panel" ).draggable({ grid: [10, 10 ], containment: "parent" });
 
-$( "#triggerType" ).change(function() {
-  $( ".triggerForm" ).addClass("hidden");
-  var trigger = $( this ).find( ":selected" ).text();
-  $( "#" + trigger.replace(/\s/g, '') ).removeClass("hidden");
-});
-$( "#actionType" ).change(function() {
-  $( ".actionForm" ).addClass("hidden");
-  var action = $( this ).find( ":selected" ).text().replace(/\s/g, '');
-  $( "#" + action ).removeClass("hidden");
-});
-
 function updateTrigger(triggertypes, inputs) {
   var $ttselect = $( "<select>" ).attr( {"name": "triggername", "id": "triggerid", "class": "form-control"} );
   triggertypes.forEach(function(i) {

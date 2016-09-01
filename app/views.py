@@ -147,12 +147,23 @@ def update_toggle():
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
-	return render_template('dashboard.html', title='Dashboard', projectname=project, inputs=[i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actiontypes=[at.serialize for at in Actiontype.query.all()], outputs=[o.serialize for o in Port.query.filter(Port.type == 'output', Port.state != 'DISABLED')], sounds=sounds, events=[e.serialize for e in Event.query.all()])
+	return render_template('dashboard.html',
+		title='Dashboard',
+		projectname=project,
+		inputs=[i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')],
+		triggertypes=[tt.serialize for tt in Triggertype.query.all()],
+		actiontypes=[at.serialize for at in Actiontype.query.all()],
+		outputs=[o.serialize for o in Port.query.filter(Port.type == 'output', Port.state != 'DISABLED')],
+		sounds=sounds,
+		events=[e.serialize for e in Event.query.all()]
+	)
 
 @app.route('/_add_event', methods=['GET'])
 def add_event():
 	newevent = Event(project_id=projectid)
 	db.session.add(newevent)
+	db.session.commit()
+	newevent.name = 'Event' + str(newevent.id)
 	t = Trigger()
 	db.session.add(t)
 	db.session.commit()
@@ -173,7 +184,18 @@ def testpost():
 
 @app.route('/admin')
 def admin():
-	return render_template('admin.html', title='Admin', projects=[p.serialize for p in Project.query.all()], ports=[p.serialize for p in Port.query.all()], triggertypes=[tt.serialize for tt in Triggertype.query.all()], actiontypes=[at.serialize for at in Actiontype.query.all()], actions=[a.serialize for a in Action.query.all()], controllers=[c.serialize for c in Controller.query.all()], events=[e.serialize for e in Event.query.all()], colors=[c.serialize for c in Color.query.all()])
+	return render_template('admin.html',
+		title='Admin',
+		projects=[p.serialize for p in Project.query.all()],
+		ports=[p.serialize for p in Port.query.all()],
+		triggertypes=[tt.serialize for tt in Triggertype.query.all()],
+		actiontypes=[at.serialize for at in Actiontype.query.all()],
+		actions=[a.serialize for a in Action.query.all()],
+		triggers=[t.serialize for t in Trigger.query.all()],
+		controllers=[c.serialize for c in Controller.query.all()],
+		events=[e.serialize for e in Event.query.all()],
+		colors=[c.serialize for c in Color.query.all()]
+	)
 
 @app.route('/init_setup')
 def init_setup():

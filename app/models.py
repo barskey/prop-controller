@@ -41,7 +41,7 @@ class Triggertype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	type = db.Column(db.String(10))
 	name = db.Column(db.String(25))
-	
+
 	@property
 	def serialize(self):
 		#Return object data in easily serializable format
@@ -69,7 +69,7 @@ class Controller(db.Model):
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
 	color_id = db.Column(db.Integer, db.ForeignKey('color.id'))
 	name = db.Column(db.String(25), unique=True)
-	
+
 	ports = db.relationship('Port', backref='controller')
 
 	def get_id(self):
@@ -142,11 +142,13 @@ event_actions = db.Table('event_actions',
 class Event(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
-	name = db.Column(db.String(24), default='Eventname')
+	name = db.Column(db.String(24))
 	loop = db.Column(db.Integer, default=1)
 	triggers = db.relationship(
 		'Trigger',
 		secondary = event_triggers,
+		primaryjoin = 'event_triggers.c.event_id == Event.id',
+		secondaryjoin = 'event_triggers.c.trigger_id == Trigger.id',
 		backref = db.backref('events', lazy='dynamic'),
 		lazy = 'dynamic')
 	actions = db.relationship(
@@ -206,8 +208,18 @@ class Event(db.Model):
 			'id': self.id,
 			'project_id': self.project_id,
 			'name': self.name,
-			'loop': self.loop
+			'loop': self.loop,
+			'triggers': self.serialize_triggers,
+			'actions': self.serialize_actions
 		}
+
+	@property
+	def serialize_triggers(self):
+		return [item.serialize for item in self.triggers]
+
+	@property
+	def serialize_actions(self):
+		return [item.serialize for item in self.actions]
 
 class Port(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -234,9 +246,9 @@ class Port(db.Model):
 class Trigger(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	input_id = db.Column(db.Integer, db.ForeignKey('port.id'))
-	triggertype_id = db.Column(db.Integer, db.ForeignKey('triggertype.id'))
-	param1 = db.Column(db.String(8))
-	param2 = db.Column(db.String(8))
+	triggertype_id = db.Column(db.Integer, db.ForeignKey('triggertype.id'), default=0)
+	param1 = db.Column(db.String(8), default='0')
+	param2 = db.Column(db.String(8), default='0')
 
 	@property
 	def serialize(self):
