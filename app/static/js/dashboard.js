@@ -41,8 +41,13 @@ function addEvent() {
     thisevent = data.response.newevent;
   }).done( function() {
     var $template = $( "#template-event" );
-    var eventid = "event-" + thisevent.id;
-    var $newEvent = $template.clone( true ).removeClass( "hidden" ).removeClass( "template" ).attr( "id", eventid );
+    var eventid = "e" + thisevent.id;
+    var $newEvent = $template.clone( true ).removeClass( "hidden" ).attr( "id", eventid );
+	$newevent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
+	$newevent.find( ".trigger-list" ).find( "li" ).attr( "id": "e" + thisevent.id + "-t" + thisevent.triggers[0].id );
+	$newevent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid": eventid );
+	$newevent.find( ".action-list" ).find( "li" ).attr( "id": "e" + thisevent.id + "-a" + thisevent.actions[0].id );
+	
     if (thisevent.id % 2 == 0) { //if event id is even
       $( ".even-col" ).append( $newEvent );
     } else {
