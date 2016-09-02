@@ -265,8 +265,8 @@ class Action(db.Model):
 	output_id = db.Column(db.Integer, db.ForeignKey('port.id'))
 	sound_id = db.Column(db.Integer, db.ForeignKey('sound.id'))
 	actiontype_id = db.Column(db.Integer, db.ForeignKey('actiontype.id'))
-	delay = db.Column(db.Integer)
-	param1 = db.Column(db.String(8))
+	delay = db.Column(db.Integer, default=0)
+	param1 = db.Column(db.String(8), default=0)
 
 	@property
 	def serialize(self):

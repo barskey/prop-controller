@@ -40,20 +40,21 @@ body {
 }
 
 .panel-trigger {
-  border: 1px solid orange;
+  border: 1px solid #FFC966;
   margin-bottom: 0;
 }
 
 .panel-trigger > .panel-heading {
-  background-color: orange;
+  background-color: #FFC966;
 }
 
 .panel-action {
-  background-color: green;
+  background-color: #4b9b4b;
 }
 
-.panel-black {
-  background-color: #ccc;
+.panel-event {
+  background-color: #666666;
+  border: 1px solid #404040;
 }
 
 .popover {
@@ -64,16 +65,3 @@ body {
   padding-top: 6px;
   padding-bottom: 6px;
 }
-
-.cc-1.label {
-  background-color: red;
-}
-
-.cc-2.label {
-  background-color: orange;
-}
-
-.cc-3.label {
-  background-color: blue;
-}
-

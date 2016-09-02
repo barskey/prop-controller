@@ -2,302 +2,364 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <!-- Custom styles for this template -->
-        <link href="static/css/dashboard.css" rel="stylesheet">
+<!-- Custom styles for this template -->
+<link href="static/css/dashboard.css" rel="stylesheet">
 
-        <!-- Second navbar for this page -->
-        <nav class="navbar navbar-default">
-          <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
+<!-- Second navbar for this page -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Events <span class="caret"></span></a>
+        <ul class="dropdown-menu event-list">
+          {% for e in events %}
+          <li><a href="#" onclick="showEvent({{ e.id }})">{{ e.name }}</a></li>
+          {% endfor %}
+          <li role="separator" class="divider"></li>
+          <li><a href="#" id="new-event" onclick="addEvent()">Add new...</a></li>
+        </ul><!-- /.dropdown-menu -->
+      </ul><!-- .navbar-right -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav><!-- /.navbar-default -->
+
+<!-- Main body content for this page -->
+<div class="jumbotron hidden" style="height: 90%">
+  <div class="container">
+    <h3 class="text-muted">Create an Event</h3>
+    <p class="text-muted">Use the Events menu to add a new event to this project to begin configuring...</p>
+  </div>
+</div>
+<div class="container-fluid dashboard">
+  <!-- Modals -->
+  <!-- End Modals -->
+  <!-- Templates -->
+  <div class="panel panel-event hidden" id="template-id">
+    <form class="form-inline">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <div class="form-group">
+            <div class="input-group">
+              <span class="input-group-addon">Name</span>
+              <input type="text" class="form-control" name="eventname" value="Eventname">
+            </div><!-- /.input-group -->
+          </div>
+          <span class="pull-right">
+            <button type="button" class="btn btn-warning disabled">Revert</button>
+            <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
+          </span>
+        </h3>
+      </div><!-- /.panel-heading -->
+      <div class="panel panel-trigger">
+        <div class="panel-heading">
+          <h3 class="panel-title">When this happens...</h3>
+        </div><!-- /.panel-heading -->
+        <ul class="list-group trigger-list">
+          <li class="list-group-item list-group-item-warning" id="template-trigger-id">
+            <select class="form-control triggertype_select" name="triggertype_id">
+              {% for t in triggertypes %}
+              <option value="{{ t.id }}">{{ t.name }}</option>
+              {% endfor %}
+            </select>&nbsp;&nbsp;
+            <span class="trigger-group Input">
+              <select class="form-control" name="trigger_id">
+                {% for i in inputs %}
+                <option value="{{ i.id }}">{{ i.cname }}--{{ i.name }}</option>
+                {% endfor %}
+              </select>
+              &nbsp;turns&nbsp;
+              <select class="form-control" name="inputstate">
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+              </select>
+            </span>
+            <span class="trigger-group Every hidden">
+              <div class="input-group">
+                <input class="form-control" name="every-param1" value="30000" size=6>
+                <span class="input-group-addon">ms</span>
+              </div>
+            </span>
+            <span class="trigger-group Randomly hidden">
+              repeat between&nbsp;
+              <div class="input-group">
+                <input class="form-control" name="random-param1" value="5000" size=6>
+                <span class="input-group-addon">ms</span>
+              </div>
+              &nbsp;and&nbsp;
+              <div class="input-group">
+                <input class="form-control" name="random-param2" value="50000" size=6>
+                <span class="input-group-addon">ms</span>
+              </div>
+            </span>
+          </li>
+        </ul><!-- /.list-group -->
+      </div><!-- /.panel-trigger -->
+      <div class="panel panel-action">
+        <div class="panel-heading">
+          <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="eid" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
+        </div><!-- /.panel-heading -->
+        <ul class="list-group sortable action-list">
+          <li class="list-group-item list-group-item-success" id="template-action-id">
+            <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
+            <div class="input-group">
+              <input type="text" class="form-control delay" name="delay" value="0" size=4>
+              <span class="input-group-addon">ms</span>
+            </div>&nbsp;&nbsp;
+            <select class="form-control actiontype_select" name="actiontype_id">
+              {% for a in actiontypes %}
+              <option value="{{ a.id }}">{{ a.name }}</option>
+              {% endfor %}
+            </select>&nbsp;&nbsp;
+            <span class="action-group Turn Toggle Blink">
+              <select class="form-control output_id" name="output_id">
+                {% for o in outputs %}
+                <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
+                {% endfor %}
+              </select>&nbsp;&nbsp;
+              <div class="input-group Blink">
+                <input type="text" class="form-control param1" name="template-param1" value="0" size=4>
+                <span class="input-group-addon">ms</span>
+              </div>
+            </span>
+            <span class="action-group Play hidden">
+              <select class="form-control sound_id" name="sound_id">
+                {% for s in sounds %}
+                <option value="{{ s.id }}">{{ s.name }}</option>
+                {% endfor %}
+              </select>
+            </span>
+          </li>
+        </ul><!-- /.list-group -->
+      </div><!-- /.panel-action -->
+    </form>
+  </div><!-- /.panel-event template -->
+  <!-- End Templates -->
+  <div class="col-md-6 odd-col">
+    {% for e in events|selectattr("id", "odd") %}
+    <div class="panel panel-event" id="event-{{ e.id }}">
+      <form class="form-inline">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon">Name</span>
+                <input type="text" class="form-control" name="eventname" value="{{ e.name }}">
+              </div><!-- /.input-group -->
             </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-              <ul class="nav navbar-nav">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Triggers <span class="caret"></span></a>
-                  <ul class="dropdown-menu list-group" id="trigger-menu">
-                    {% for t in triggers %}
-                    <a class="list-group-item list-group-item-warning" id="{{ t.triggerid }}">{{ t.triggername }}</a>
-                    {% endfor %}
-                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
-                  </ul><!-- /#trigger-menu -->
-                </li><!-- /.dropdown -->
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Actions <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="actions-menu">
-                    {% for a in actions %}
-                    <a href="#" class="list-group-item list-group-item-success" id="{{ a.actionid }}">{{ a.actionname }}</a>
-                    {% endfor %}
-                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
-                  </ul><!-- /#actions-menu -->
-                </li><!-- /.dropdown -->
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sounds <span class="caret"></span></a>
-                  <ul class="dropdown-menu" id="sounds-menu">
-                    {% for s in sounds %}
-                    <a href="#" class="list-group-item list-group-item-info" id="{{ s.soundid }}">{{ s.soundname }}</a>
-                    {% endfor %}
-                    <a class="list-group-item" href="#" id="config-triggers">Configure...</a>
-                  </ul><!-- /#sounds-menu -->
-                </li><!-- /.dropdown -->
-              </ul><!-- /.navbar-nav -->
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Events <span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                  {% for e in events %}
-                  <li><a href="#">{{ e.eventname }}</a></li>
+            <span class="pull-right">
+              <button type="button" class="btn btn-warning disabled">Revert</button>
+              <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
+              <i class="fa fa-trash"></i>
+            </span>
+          </h3>
+        </div><!-- /.panel-heading -->
+        <div class="panel panel-trigger">
+          <div class="panel-heading">
+            <h3 class="panel-title">When this happens...</h3>
+          </div><!-- /.panel-heading -->
+          <ul class="list-group trigger-list">
+            {% for t in e.triggers %}
+            <li class="list-group-item list-group-item-warning" id="trigger-{{ t.id }}">
+              <select class="form-control triggertype_select" name="triggertype_id">
+                {% for tt in triggertypes %}
+                <option value="{{ tt.id }}">{{ tt.name }}</option>
+                {% endfor %}
+              </select>&nbsp;&nbsp;
+              <span class="trigger-group Input">
+                <select class="form-control" name="trigger_id">
+                  {% for i in inputs %}
+                  <option value="{{ i.id }}">{{ i.cname }}--{{ i.name }}</option>
                   {% endfor %}
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#" id="new-event" onclick="addEvent()">Add new...</a></li>
-                </ul><!-- /.dropdown-menu -->
-              </ul><!-- .navbar-right -->
-            </div><!-- /.navbar-collapse -->
-          </div><!-- /.container-fluid -->
-        </nav><!-- /.navbar-default -->
-
-        <!-- Main body content for this page -->
-        <div class="container-fluid dashboard">
-          <!-- Modals -->
-          <!-- End Modals -->
-          <!-- Templates -->
-          <div class="panel panel-black hidden" id="template-eid">
-            <form class="form-inline">
-              <div class="panel-heading">
-                <h3 class="panel-title">
-                  <div class="form-group">
-                    <div class="input-group">
-                      <span class="input-group-addon">Name</span>
-                      <input type="text" class="form-control" name="eventname" value="Eventname">
-                    </div><!-- /.input-group -->
-                  </div>
-                  <span class="pull-right">
-                    <button type="button" class="btn btn-warning disabled">Revert</button>
-                    <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
-                  </span>
-                </h3>
-              </div><!-- /.panel-heading -->
-              <div class="panel panel-trigger">
-                <div class="panel-heading">
-                  <h3 class="panel-title">When this happens...</h3>
-                </div><!-- /.panel-heading -->
-                <ul class="list-group trigger-list">
-                  <li class="list-group-item list-group-item-warning" id="template-triggerid">
-                    <select class="form-control" id="template-triggertype_select" name="triggertype_id">
-                      {% for t in triggertypes %}
-                      <option value="{{ t.id }}">{{ t.name }}</option>
-                      {% endfor %}
-                    </select>&nbsp;&nbsp;
-                    <span class="trigger-group Input">
-                      <select class="form-control" id="template-triggers" name="trigger_id">
-                        {% for i in inputs %}
-                        <option value="{{ i.id }}">{{ i.cname }}--{{ i.name }}</option>
-                        {% endfor %}
-                      </select>
-                      &nbsp;turns&nbsp;
-                      <select class="form-control" id="template-inputstate" name="inputstate">
-                        <option value="ON">ON</option>
-                        <option value="OFF">OFF</option>
-                      </select>
-                    </span>
-                    <span class="trigger-group Every hidden">
-                      <div class="input-group">
-                        <input class="form-control" id="template-every-param1" name="every-param1" value="30000" size=6>
-                        <span class="input-group-addon">ms</span>
-                      </div>
-                    </span>
-                    <span class="trigger-group Randomly hidden">
-                      repeat between&nbsp;
-                      <div class="input-group">
-                        <input class="form-control" id="template-random-param1" name="random-param1" value="5000" size=6>
-                        <span class="input-group-addon">ms</span>
-                      </div>
-                      &nbsp;and&nbsp;
-                      <div class="input-group">
-                        <input class="form-control" id="template-random-param2" name="random-param2" value="50000" size=6>
-                        <span class="input-group-addon">ms</span>
-                      </div>
-                    </span>
-                  </li>
-                </ul><!-- /.list-group -->
-              </div><!-- /.panel-trigger -->
-              <div class="panel panel-action">
-                <div class="panel-heading">
-                  <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="eid" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
-                </div><!-- /.panel-heading -->
-                <ul class="list-group sortable action-list">
-                  <li class="list-group-item list-group-item-success" id="template-actionid">
-                    <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
-                    <div class="input-group">
-                      <input type="text" class="form-control" id="action-1-delay" name="action-1-delay" value="0" size=6>
-                      <span class="input-group-addon">ms</span>
-                    </div>&nbsp;&nbsp;
-                    <select class="form-control" id="actiontype_select" name="actiontype_id">
-                      {% for a in actiontypes %}
-                      <option value="{{ a.id }}">{{ a.name }}</option>
-                      {% endfor %}
-                    </select>&nbsp;&nbsp;
-                    <span class="action-group Turn">
-                      <select class="form-control" id="output_select" name="output_id">
-                        {% for o in outputs %}
-                        <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
-                        {% endfor %}
-                      </select>
-                    </span>
-                    <span class="action-group Toggle hidden">
-                      <select class="form-control" id="output_select" name="output_id">
-                        {% for o in outputs %}
-                        <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
-                        {% endfor %}
-                      </select>
-                    </span>
-                    <span class="action-group Blink hidden">
-                      <select class="form-control" id="output_select" name="output_id">
-                        {% for o in outputs %}
-                        <option value="{{ o.id }}">{{ o.cname }}--{{o.name }}</option>
-                        {% endfor %}
-                      </select>
-                    </span>
-                    <span class="action-group Play hidden">
-                      <select class="form-control" id="sound_select" name="sound_id">
-                        {% for s in sounds %}
-                        <option value="{{ s.id }}">{{ s.name }}</option>
-                        {% endfor %}
-                      </select>
-                    </span>
-                  </li>
-                </ul><!-- /.list-group -->
-              </div><!-- /.panel-action -->
-            </form>
-          </div><!-- /.panel-black template -->
-          <!-- End Templates -->
-          <div class="col-md-6 odd-col">
-            {% for e in events %}
-            <div class="panel panel-black" id="e{{ e.id }}">
-              <form class="form-inline">
-                <div class="panel-heading">
-                  <h3 class="panel-title">
-                    <div class="form-group">
-                      <div class="input-group">
-                        <span class="input-group-addon">Name</span>
-                        <input type="text" class="form-control" id="template-eventname" value="{{ e.name }}">
-                      </div><!-- /.input-group -->
-                    </div>
-                    <span class="pull-right">
-                      <button type="button" class="btn btn-warning disabled">Revert</button>
-                      <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
-                    </span>
-                  </h3>
-                </div><!-- /.panel-heading -->
-                <div class="panel panel-trigger">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">When this happens...</h3>
-                  </div><!-- /.panel-heading -->
-                  <ul class="list-group trigger-list">
-                    {% for t in e.triggers %}
-                    <li class="list-group-item list-group-item-warning" id="e{{ e.id }}-t{{ t.id }}">
-                      <select class="form-control" id="triggertype_select" name="triggertype_id">
-                        {% for tt in triggertypes %}
-                        <option value="{{ tt.id }}">{{ tt.name }}</option>
-                        {% endfor %}
-                      </select>&nbsp;&nbsp;
-                      <span class="trigger-group Input">
-                        <select class="form-control" name="trigger_id">
-                          {% for i in inputs %}
-                          <option value="{{ i.id }}">{{ i.cname }}--{{ i.name }}</option>
-                          {% endfor %}
-                        </select>
-                        &nbsp;turns&nbsp;
-                        <select class="form-control" name="inputstate">
-                          <option value="ON">ON</option>
-                          <option value="OFF">OFF</option>
-                        </select>
-                      </span>
-                      <span class="trigger-group Every hidden">
-                        <div class="input-group">
-                          <input class="form-control" name="every-param1" value="{{ t.param1 }}" size=6>
-                          <span class="input-group-addon">ms</span>
-                        </div>
-                      </span>
-                      <span class="trigger-group Randomly hidden">
-                        repeat between&nbsp;
-                        <div class="input-group">
-                          <input class="form-control" name="random-param1" value="{{ t.param1 }}" size=6>
-                          <span class="input-group-addon">ms</span>
-                        </div>
-                        &nbsp;and&nbsp;
-                        <div class="input-group">
-                          <input class="form-control" name="random-param2" value="{{ t.param2 }}" size=6>
-                          <span class="input-group-addon">ms</span>
-                        </div>
-                      </span>
-                    </li>
-                    {% endfor %}
-                  </ul><!-- /.list-group -->
-                </div><!-- /.panel-trigger -->
-                <div class="panel panel-action">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="event-1" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
-                  </div><!-- /.panel-heading -->
-                  <ul class="list-group sortable action-list">
-                    {% for a in e.actions %}
-                    <li class="list-group-item list-group-item-success" id="e{{ e.id }}-a{{ a.id }}">
-                      <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
-                      <div class="input-group">
-                        <input type="text" class="form-control" name="a{{ a.id }}-delay" value="{{ a.delay }}" size=6>
-                        <span class="input-group-addon">ms</span>
-                      </div>&nbsp;&nbsp;
-                      <select class="form-control" id="actiontype_select" name="actiontype_id">
-                        {% for at in actiontypes %}
-                        <option value="{{ at.id }}">{{ at.name }}</option>
-                        {% endfor %}
-                      </select>&nbsp;&nbsp;
-                      <span class="action-group Turn">
-                        <select class="form-control" name="output_id">
-                          {% for o in outputs %}
-                          <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
-                          {% endfor %}
-                        </select>
-                      </span>
-                      <span class="action-group Toggle hidden">
-                        <select class="form-control" name="output_id">
-                          {% for o in outputs %}
-                          <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
-                          {% endfor %}
-                        </select>
-                      </span>
-                      <span class="action-group Blink hidden">
-                        <select class="form-control" name="output_id">
-                          {% for o in outputs %}
-                          <option value="{{ o.id }}">{{ o.cname }}--{{o.name }}</option>
-                          {% endfor %}
-                        </select>
-                      </span>
-                      <span class="action-group Play hidden">
-                        <select class="form-control" name="sound_id">
-                          {% for s in sounds %}
-                          <option value="{{ s.id }}">{{ s.name }}</option>
-                          {% endfor %}
-                        </select>
-                      </span>
-                    </li>
-                    {% endfor %}
-                  </ul><!-- /.list-group -->
-                </div><!-- /.panel-action -->
-              </form>
-            </div><!-- /.panel-black template -->
+                </select>
+                &nbsp;turns&nbsp;
+                <select class="form-control" name="inputstate">
+                  <option value="ON">ON</option>
+                  <option value="OFF">OFF</option>
+                </select>
+              </span>
+              <span class="trigger-group Every hidden">
+                <div class="input-group">
+                  <input class="form-control" name="every-param1" value="{{ t.param1 }}" size=6>
+                  <span class="input-group-addon">ms</span>
+                </div>
+              </span>
+              <span class="trigger-group Randomly hidden">
+                repeat between&nbsp;
+                <div class="input-group">
+                  <input class="form-control" name="random-param1" value="{{ t.param1 }}" size=6>
+                  <span class="input-group-addon">ms</span>
+                </div>
+                &nbsp;and&nbsp;
+                <div class="input-group">
+                  <input class="form-control" name="random-param2" value="{{ t.param2 }}" size=6>
+                  <span class="input-group-addon">ms</span>
+                </div>
+              </span>
+            </li>
             {% endfor %}
-          </div><!-- /.odd-col -->
-          <div class="col-md-6 even-col">
-          </div><!-- /.even-col -->
-        </div><!-- /.dashboard -->
-        <script src="static/js/dashboard.js" type="text/javascript"></script>
+          </ul><!-- /.list-group -->
+        </div><!-- /.panel-trigger -->
+        <div class="panel panel-action">
+          <div class="panel-heading">
+            <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="event-{{ e.id }}" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
+          </div><!-- /.panel-heading -->
+          <ul class="list-group sortable action-list">
+            {% for a in e.actions %}
+            <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
+              <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
+              <div class="input-group">
+                <input type="text" class="form-control delay" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4>
+                <span class="input-group-addon">ms</span>
+              </div>&nbsp;&nbsp;
+              <select class="form-control actiontype_select" name="action-{{ a.id }}-actiontype_id">
+                {% for at in actiontypes %}
+                <option value="{{ at.id }}">{{ at.name }}</option>
+                {% endfor %}
+              </select>&nbsp;&nbsp;
+              <span class="action-group Turn Toggle Blink">
+                <select class="form-control output_id" name="action-{{ a.id }}-output_id">
+                  {% for o in outputs %}
+                  <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
+                  {% endfor %}
+                </select>&nbsp;&nbsp;
+                <div class="input-group Blink">
+                  <input type="text" class="form-control param1" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4>
+                  <span class="input-group-addon">ms</span>
+                </div>
+              </span>
+              <span class="action-group Play hidden">
+                <select class="form-control sound_id" name="action-{{ a.id }}-sound_id">
+                  {% for s in sounds %}
+                  <option value="{{ s.id }}">{{ s.name }}</option>
+                  {% endfor %}
+                </select>
+              </span>
+            </li>
+            {% endfor %}
+          </ul><!-- /.list-group -->
+        </div><!-- /.panel-action -->
+      </form>
+    </div><!-- /.panel-event template -->
+    {% endfor %}
+  </div><!-- /.odd-col -->
+  <div class="col-md-6 even-col">
+    {% for e in events|selectattr("id", "even") %}
+    <div class="panel panel-event" id="event-{{ e.id }}">
+      <form class="form-inline">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <div class="form-group">
+              <div class="input-group">
+                <span class="input-group-addon">Name</span>
+                <input type="text" class="form-control" name="eventname" value="{{ e.name }}">
+              </div><!-- /.input-group -->
+            </div>
+            <span class="pull-right">
+              <button type="button" class="btn btn-warning disabled">Revert</button>
+              <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
+            </span>
+          </h3>
+        </div><!-- /.panel-heading -->
+        <div class="panel panel-trigger">
+          <div class="panel-heading">
+            <h3 class="panel-title">When this happens...</h3>
+          </div><!-- /.panel-heading -->
+          <ul class="list-group trigger-list">
+            {% for t in e.triggers %}
+            <li class="list-group-item list-group-item-warning" id="trigger-{{ t.id }}">
+              <select class="form-control triggertype_select" name="triggertype_id">
+                {% for tt in triggertypes %}
+                <option value="{{ tt.id }}">{{ tt.name }}</option>
+                {% endfor %}
+              </select>&nbsp;&nbsp;
+              <span class="trigger-group Input">
+                <select class="form-control" name="trigger_id">
+                  {% for i in inputs %}
+                  <option value="{{ i.id }}">{{ i.cname }}--{{ i.name }}</option>
+                  {% endfor %}
+                </select>
+                &nbsp;turns&nbsp;
+                <select class="form-control" name="inputstate">
+                  <option value="ON">ON</option>
+                  <option value="OFF">OFF</option>
+                </select>
+              </span>
+              <span class="trigger-group Every hidden">
+                <div class="input-group">
+                  <input class="form-control" name="every-param1" value="{{ t.param1 }}" size=6>
+                  <span class="input-group-addon">ms</span>
+                </div>
+              </span>
+              <span class="trigger-group Randomly hidden">
+                repeat between&nbsp;
+                <div class="input-group">
+                  <input class="form-control" name="random-param1" value="{{ t.param1 }}" size=6>
+                  <span class="input-group-addon">ms</span>
+                </div>
+                &nbsp;and&nbsp;
+                <div class="input-group">
+                  <input class="form-control" name="random-param2" value="{{ t.param2 }}" size=6>
+                  <span class="input-group-addon">ms</span>
+                </div>
+              </span>
+            </li>
+            {% endfor %}
+          </ul><!-- /.list-group -->
+        </div><!-- /.panel-trigger -->
+        <div class="panel panel-action">
+          <div class="panel-heading">
+            <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="event-{{ e.id }}" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
+          </div><!-- /.panel-heading -->
+          <ul class="list-group sortable action-list">
+            {% for a in e.actions %}
+            <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
+              <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
+              <div class="input-group">
+                <input type="text" class="form-control delay" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4>
+                <span class="input-group-addon">ms</span>
+              </div>&nbsp;&nbsp;
+              <select class="form-control actiontype_select" name="action-{{ a.id }}-actiontype_id">
+                {% for at in actiontypes %}
+                <option value="{{ at.id }}">{{ at.name }}</option>
+                {% endfor %}
+              </select>&nbsp;&nbsp;
+              <span class="action-group Turn Toggle Blink">
+                <select class="form-control output_id" name="action-{{ a.id }}-output_id">
+                  {% for o in outputs %}
+                  <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
+                  {% endfor %}
+                </select>&nbsp;&nbsp;
+                <div class="input-group Blink">
+                  <input type="text" class="form-control param1" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4>
+                  <span class="input-group-addon">ms</span>
+                </div>
+              </span>
+              <span class="action-group Play hidden">
+                <select class="form-control sound_id" name="action-{{ a.id }}-sound_id">
+                  {% for s in sounds %}
+                  <option value="{{ s.id }}">{{ s.name }}</option>
+                  {% endfor %}
+                </select>
+              </span>
+            </li>
+            {% endfor %}
+          </ul><!-- /.list-group -->
+        </div><!-- /.panel-action -->
+      </form>
+    </div><!-- /.panel-event template -->
+    {% endfor %}          </div><!-- /.even-col -->
+</div><!-- /.dashboard -->
+<script src="static/js/dashboard.js" type="text/javascript"></script>
 {% endblock %}

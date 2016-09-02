@@ -147,6 +147,11 @@ def update_toggle():
 @app.route('/dashboard')
 def dashboard():
 	project = projectname
+
+	controllers = Controller.query.filter(Controller.project_id==projectid)
+	if controllers.count() == 0:
+		return redirect("/controllers")
+	
 	return render_template('dashboard.html',
 		title='Dashboard',
 		projectname=project,
@@ -166,11 +171,15 @@ def add_event():
 	newevent.name = 'Event' + str(newevent.id)
 	t = Trigger()
 	db.session.add(t)
+	a = Action()
+	db.session.add(a)
 	db.session.commit()
-	n = newevent.add_trigger(t)
-	db.session.add(n)
+	nt = newevent.add_trigger(t)
+	db.session.add(nt)
+	na = newevent.add_action(a)
+	db.session.add(na)
 	db.session.commit()
-	r = {'status':'OK', 'newevent': newevent.serialize}
+	r = {'status':'OK', 'elist': [e.serialize for e in Event.query.all()], 'newevent': newevent.serialize}
 	return jsonify(response = r)
 
 @app.route('/_get_triggers', methods=['GET'])
