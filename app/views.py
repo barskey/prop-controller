@@ -151,7 +151,7 @@ def dashboard():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
 	if controllers.count() == 0:
 		return redirect("/controllers")
-	
+
 	return render_template('dashboard.html',
 		title='Dashboard',
 		projectname=project,
@@ -180,6 +180,19 @@ def add_event():
 	db.session.add(na)
 	db.session.commit()
 	r = {'status':'OK', 'elist': [e.serialize for e in Event.query.all()], 'newevent': newevent.serialize}
+	return jsonify(response = r)
+
+@app.route('/_add_action', methods=['POST'])
+def add_action():
+	x, eid = request.form['eid'].split("-")
+	event = Event.query.get(eid)
+	a = Action()
+	db.session.add(a)
+	db.session.commit()
+	na = event.add_action(a)
+	db.session.add(na)
+	db.session.commit()
+	r = {'status':'OK', 'action': a.serialize}
 	return jsonify(response = r)
 
 @app.route('/_get_triggers', methods=['GET'])

@@ -51,34 +51,34 @@ function addEvent() {
   $.get( "_add_event", function( data ) {
     //console.log(data.response.status); //debug
     thisevent = data.response.newevent;
-	eventlist = data.response.elist
+    eventlist = data.response.elist
   }).done( function() {
-	//update navbar event list
-	var $eventlist = $( ".event-list" );
-	$eventlist.empty();
-	$.each( eventlist, function( index, value ) {
-		$eventlist.append( 
-			$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showEvent(" + value.id + ")", "href": "#"} ).text( value.name ) )
-		)
-	});
+  	//update navbar event list
+  	var $eventlist = $( ".event-list" );
+  	$eventlist.empty();
+  	$.each( eventlist, function( index, value ) {
+  		$eventlist.append(
+  			$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showEvent(" + value.id + ")", "href": "#"} ).text( value.name ) )
+  		)
+  	});
     var $template = $( "#template-id" );
     var eventid = "event-" + thisevent.id;
-	var triggerid = "trigger-" + thisevent.triggers[0].id;
-	var actionid = "action-" + thisevent.actions[0].id;
+  	var triggerid = "trigger-" + thisevent.triggers[0].id;
+  	var actionid = "action-" + thisevent.actions[0].id;
     var $newEvent = $template.clone( true ).removeClass( "hidden" ).attr( "id", eventid );
-	$newEvent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
-	$newEvent.find( ".triggertype-select" ).attr( "name", triggerid + "-triggertype_id" );
-	$newEvent.find( ".trigger-list" ).find( "li" ).attr( "id", triggerid );
-	$newEvent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid", eventid );
-	$newEvent.find( ".action-list" ).find( "li" ).attr( "id", actionid );
-	$newEvent.find( ".delay" ).attr( "name", actionid + "-delay" );
-	$newEvent.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );
-	$newEvent.find( ".output_id" ).attr( "name", actionid + "-output_id");
-	$newEvent.find( ".param1" ).attr( "name", actionid + "-param1");
-	$newEvent.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
-	
+  	$newEvent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
+  	$newEvent.find( ".triggertype-select" ).attr( "name", triggerid + "-triggertype_id" );
+  	$newEvent.find( ".trigger-list" ).find( "li" ).attr( "id", triggerid );
+  	$newEvent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid", eventid );
+  	$newEvent.find( ".action-list" ).find( "li" ).attr( "id", actionid );
+  	$newEvent.find( ".delay" ).attr( "name", actionid + "-delay" );
+  	$newEvent.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );
+  	$newEvent.find( ".output_id" ).attr( "name", actionid + "-output_id");
+  	$newEvent.find( ".param1" ).attr( "name", actionid + "-param1");
+  	$newEvent.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
+
     $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
-	
+
     if (thisevent.id % 2 == 0) { //if event id is even
       $( ".even-col" ).append( $newEvent );
     } else {
@@ -106,22 +106,23 @@ $( ".actiontype_select" ).change(function() {
 });
 
 //------------------------- Click Handlers --------------------------//
-$( "#add-trigger" ).click(function() {
-  var $paneltrigger = $( this ).parents().eq(4);
-  var inputs, triggertypes;
-  $.get( "_get_triggers", function( data ) {
-    //console.log(data.response.inputs); //debug
-    triggertypes = data.response.triggertypes;
-    inputs = data.response.inputs;
-  }).done( function() {
-    $triggerform = updateTrigger(triggertypes, inputs);
-	$li.addClass( "animated flipOutX" ).one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function() {
-		$li.removeClass( "animated flipOutX" ).addClass( "hidden" );
-		$li.before( $triggerform );
-		$triggerform.animateCss( "flipInX" );
-		$triggerform.removeClass( "hidden" );
-	});
-  });
+$( ".add-action" ).click(function() {
+  var eventid = $( this ).attr( "data-eventid" );
+  var $actionlist = $( this ).parents().eq(2).find( ".action-list" );
+  $.post( "_add_action", { eid: eventid } )
+    .done( function( data ) {
+      newaction = data.response.action;
+      actionid = newaction.id;
+      $action = $( "#template-action-id" ).clone( true ).attr( "id", actionid );
+    	$action.find( ".delay" ).attr( "name", actionid + "-delay" );
+    	$action.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );
+    	$action.find( ".output_id" ).attr( "name", actionid + "-output_id");
+    	$action.find( ".param1" ).attr( "name", actionid + "-param1");
+    	$action.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
+
+      $actionlist.append( $action );
+      $action.animateCss( "slideInRight" );
+    });
 });
 
 $( ".fa.fa-pencil-square-o" ).click(function() {
@@ -132,13 +133,13 @@ $( ".fa.fa-pencil-square-o" ).click(function() {
     var triggertypes, triggers, thistrigger;
     $.get( "_get_triggers", function( data ) {
       triggertypes = data.triggertypes;
-	  triggers = data.triggers;
-	  thistrigger = data.trigger;
-	  console.log(triggertypes);
+  	  triggers = data.triggers;
+  	  thistrigger = data.trigger;
+  	  console.log(triggertypes);
     }).done( function() {
       $li.animateCss("flipOutY");
       updateTrigger($li, triggertypes, triggers, thistrigger);
-	  $li.animateCss("flipInY");
-	});
+  	  $li.animateCss("flipInY");
+  	});
   }
 });
