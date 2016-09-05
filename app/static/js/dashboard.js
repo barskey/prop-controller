@@ -15,37 +15,6 @@ function showEvent(eid) {
   $( "#" + eventid ).animateCss( "tada" );
 }
 
-function updateTrigger(triggertypes, inputs) {
-  var $ttselect = $( "<select>" ).attr( {"name": "triggername", "id": "triggerid", "class": "form-control"} );
-  triggertypes.forEach(function(i) {
-    $ttselect.append( $( "<option>" ).val( i.id ).text( i.name ) );
-  });
-  var $inputselect = $( "<select>" ).attr( {"name": "inputname", "id": "inputid", "class": "form-control"} );
-  inputs.forEach(function(i) {
-    $inputselect.append( $( "<option>" ).val( i.id ).text( i.cname + "--" + i.name ) );
-  });
-  var $formgroup = $( "<div>" ).addClass( "form-group form-group-sm" );
-  var $newli = $( "<li>" ).addClass( "list-group-item list-group-item-warning hidden" );
-  var $triggertypes = $( "<div>" ).addClass( "col-xs-2" ).append( $ttselect );
-  var $inputs = $( "<div>" ).addClass( "col-xs-3" ).append( $inputselect );
-  var $condition = $( "<div>" ).addClass( "col-xs-2" ).append( $( "<span>" ).attr( "id", "condition" ).html( "turns" ) );
-  var $buttons = $( "<div>" ).addClass( "col-xs-3" ).append(
-	  $( "<i>" ).addClass( "fa fa-trash text-danger" )
-    ).append(
-	  "&nbsp;&nbsp;"
-	).append(
-	  $( "<i>" ).addClass( "fa fa-ban" )
-	).append(
-	  "&nbsp;&nbsp;"
-	).append(
-	  $( "<i>" ).addClass( "fa fa-check text-success" )
-	);
-  $formgroup.append( $triggertypes ).append( $inputs ).append( $condition ).append( $buttons );
-  var $formhorizontal = $( "<form>" ).addClass( "form-horizontal" ).append( $formgroup );
-  $newli.append( $formhorizontal );
-  return $newli;
-}
-
 function addEvent() {
   var inputs, triggertypes, thisevent, clist;
   $.get( "_add_event", function( data ) {
@@ -61,15 +30,23 @@ function addEvent() {
   			$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showEvent(" + value.id + ")", "href": "#"} ).text( value.name ) )
   		)
   	});
+    $eventlist.append(
+      $( "<li>" ).attr( "role", "separator" ).addClass( "divider" )
+    );
+    $eventlist.append(
+      $( "<li>" ).append( $( "<a>" ).attr( {"onclick": "addEvent()", "href": "#", "id": "new-event"} ).text( "Add new..." ) )
+    );
     var $template = $( "#template-id" );
     var eventid = "event-" + thisevent.id;
   	var triggerid = "trigger-" + thisevent.triggers[0].id;
   	var actionid = "action-" + thisevent.actions[0].id;
     var $newEvent = $template.clone( true ).removeClass( "hidden" ).attr( "id", eventid );
   	$newEvent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
+    $newEvent.find( ".delete-event" ).attr( "data-eventid", eventid );
   	$newEvent.find( ".triggertype-select" ).attr( "name", triggerid + "-triggertype_id" );
   	$newEvent.find( ".trigger-list" ).find( "li" ).attr( "id", triggerid );
   	$newEvent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid", eventid );
+    $newEvent.find( ".delete-action" ).attr( { "data-actionid": actionid, "data-eventid": eventid } );
   	$newEvent.find( ".action-list" ).find( "li" ).attr( "id", actionid );
   	$newEvent.find( ".delay" ).attr( "name", actionid + "-delay" );
   	$newEvent.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );
@@ -121,25 +98,33 @@ $( ".add-action" ).click(function() {
     	$action.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
 
       $actionlist.append( $action );
-      $action.animateCss( "slideInRight" );
+      $action.animateCss( "fadeInRight" );
     });
 });
 
-$( ".fa.fa-pencil-square-o" ).click(function() {
-  var $li = $( this ).parent().parent();
-  var arry = $li.attr( "id" ).split( "-" ); // array => [0]type, [1]id
-  //console.log(arry); //debug
-  if (arry[0] == "trigger"){
-    var triggertypes, triggers, thistrigger;
-    $.get( "_get_triggers", function( data ) {
-      triggertypes = data.triggertypes;
-  	  triggers = data.triggers;
-  	  thistrigger = data.trigger;
-  	  console.log(triggertypes);
-    }).done( function() {
-      $li.animateCss("flipOutY");
-      updateTrigger($li, triggertypes, triggers, thistrigger);
-  	  $li.animateCss("flipInY");
-  	});
-  }
+$( ".delete-action" ).click(function() {
+  $( this ).removeClass( "text-muted" ).addClass( "text-danger" );
+  var $action = $( this ).parent();
+  var actionid = $( this ).attr( "data-actionid" );
+  var eventid = $( this ).attr( "data-eventid" );
+  $.post( "_delete_action", { action_id: actionid, event_id: eventid } )
+    .done( function( data ) {
+      $action.animateCss( "fadeOutLeft" );
+      $action.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+        $action.remove();
+      });
+    });
+});
+
+$( ".delete-event" ).click(function() {
+  $( this ).addClass( "text-danger" );
+  var eventid = $( this ).attr( "data-eventid" );
+  var $event = $( "#" + eventid );
+  $.post( "_delete_event", { event_id: eventid } )
+    .done( function( data ) {
+      $event.animateCss( "bounceOut" );
+      $event.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+        $event.remove();
+      });
+    });
 });

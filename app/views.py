@@ -195,6 +195,39 @@ def add_action():
 	r = {'status':'OK', 'action': a.serialize}
 	return jsonify(response = r)
 
+@app.route('/_delete_action', methods=['POST'])
+def delete_action():
+	x, eid = request.form['event_id'].split("-")
+	e = Event.query.get(eid)
+	x, aid = request.form['action_id'].split("-")
+	a = Action.query.get(aid)
+	da = e.rem_action(a)
+	db.session.add(da)
+	db.session.commit()
+	db.session.delete(a)
+	db.session.commit()
+	r = {'status':'OK'}
+	return jsonify(response = r)
+
+@app.route('/_delete_event', methods=['POST'])
+def delete_event():
+	x, eid = request.form['event_id'].split("-")
+	e = Event.query.get(eid)
+	for t in e.triggers:
+		dt = e.rem_trigger(t)
+		db.session.add(dt)
+		db.session.delete(t)
+		db.session.commit()
+	for a in e.actions:
+		da = e.rem_action(a)
+		db.session.add(da)
+		db.session.delete(a)
+		db.session.commit()
+	db.session.delete(e)
+	db.session.commit()
+	r = {'status':'OK'}
+	return jsonify(response = r)
+
 @app.route('/_get_triggers', methods=['GET'])
 def get_triggers():
 	return jsonify(response = {'inputs': [i.serialize for i in Port.query.filter(Port.type == 'input', Port.state != 'DISABLED')], 'triggertypes': [tt.serialize for tt in Triggertype.query.all()]})

@@ -57,8 +57,7 @@
             </div><!-- /.input-group -->
           </div>
           <span class="pull-right">
-            <button type="button" class="btn btn-warning disabled">Revert</button>
-            <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
+            <i class="fa fa-trash fa-lg form-control-static delete-event" data-eventid="template-id"></i>
           </span>
         </h3>
       </div><!-- /.panel-heading -->
@@ -114,7 +113,7 @@
           <li class="list-group-item list-group-item-success" id="template-action-id">
             <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
             <div class="input-group">
-              <input type="text" class="form-control delay" name="delay" value="0" size=4>
+              <input type="text" class="form-control delay" name="delay" value="0" size=5>
               <span class="input-group-addon">ms</span>
             </div>&nbsp;&nbsp;
             <select class="form-control actiontype_select" name="actiontype_id">
@@ -128,8 +127,8 @@
                 <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
                 {% endfor %}
               </select>&nbsp;&nbsp;
-              <div class="input-group Blink">
-                <input type="text" class="form-control param1" name="template-param1" value="0" size=4>
+              <div class="input-group Blink hidden">
+                <input type="text" class="form-control param1" name="template-param1" value="0" size=5>
                 <span class="input-group-addon">ms</span>
               </div>
             </span>
@@ -140,6 +139,7 @@
                 {% endfor %}
               </select>
             </span>
+            <i class="pull-right fa fa-trash fa-lg form-control-static text-muted delete-action" data-actionid="template-action-id" data-eventid="template-event-id"></i>
           </li>
         </ul><!-- /.action-list -->
       </div><!-- /.panel-action -->
@@ -159,9 +159,7 @@
               </div><!-- /.input-group -->
             </div>
             <span class="pull-right">
-              <button type="button" class="btn btn-warning disabled">Revert</button>
-              <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
-              <i class="fa fa-trash"></i>
+              <i class="fa fa-trash fa-lg form-control-static delete-event" data-eventid="event-{{ e.id }}"></i>
             </span>
           </h3>
         </div><!-- /.panel-heading -->
@@ -220,7 +218,7 @@
             <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
               <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
               <div class="input-group">
-                <input type="text" class="form-control delay" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4>
+                <input type="text" class="form-control delay" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=5>
                 <span class="input-group-addon">ms</span>
               </div>&nbsp;&nbsp;
               <select class="form-control actiontype_select" name="action-{{ a.id }}-actiontype_id">
@@ -234,8 +232,8 @@
                   <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
                   {% endfor %}
                 </select>&nbsp;&nbsp;
-                <div class="input-group Blink">
-                  <input type="text" class="form-control param1" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4>
+                <div class="input-group Blink hidden">
+                  <input type="text" class="form-control param1" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=5>
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
@@ -246,6 +244,7 @@
                   {% endfor %}
                 </select>
               </span>
+              <i class="pull-right fa fa-trash fa-lg form-control-static text-muted delete-action" data-actionid="action-{{ a.id }}" data-eventid="event-{{ e.id }}"></i>
             </li>
             {% endfor %}
           </ul><!-- /.action-list -->
@@ -267,8 +266,7 @@
               </div><!-- /.input-group -->
             </div>
             <span class="pull-right">
-              <button type="button" class="btn btn-warning disabled">Revert</button>
-              <button type="button" class="btn btn-success disabled" data-saving-text="Saving...">Save</button>
+              <i class="fa fa-trash fa-lg form-control-static delete-event" data-eventid="event-{{ e.id }}"></i>
             </span>
           </h3>
         </div><!-- /.panel-heading -->
@@ -327,7 +325,7 @@
             <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
               <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
               <div class="input-group">
-                <input type="text" class="form-control delay" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4>
+                <input type="text" class="form-control delay" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=5>
                 <span class="input-group-addon">ms</span>
               </div>&nbsp;&nbsp;
               <select class="form-control actiontype_select" name="action-{{ a.id }}-actiontype_id">
@@ -341,8 +339,8 @@
                   <option value="{{ o.id }}">{{ o.cname }}--{{ o.name }}</option>
                   {% endfor %}
                 </select>&nbsp;&nbsp;
-                <div class="input-group Blink">
-                  <input type="text" class="form-control param1" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4>
+                <div class="input-group Blink hidden">
+                  <input type="text" class="form-control param1" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=5>
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
@@ -353,6 +351,7 @@
                   {% endfor %}
                 </select>
               </span>
+              <i class="pull-right fa fa-trash fa-lg form-control-static text-muted delete-action" data-actionid="action-{{ a.id }}" data-eventid="event-{{ e.id }}"></i>
             </li>
             {% endfor %}
           </ul><!-- /.list-group -->
