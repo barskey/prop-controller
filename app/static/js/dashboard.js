@@ -66,20 +66,29 @@ function addEvent() {
 }
 
 //------------------------- Change Handlers --------------------------//
-$( ".triggertype_select" ).change(function() {
+$( ".triggertype_select" ).change( function() {
   //console.log($(this).val());
   $( this ).parent().find( ".trigger-group" ).addClass( "hidden" );
   var tt = $( this ).find( "option:selected" ).text();
   $( this ).parent().find( "." + tt ).removeClass( "hidden" );
 });
 
-$( ".actiontype_select" ).change(function() {
+$( ".actiontype_select" ).change( function() {
   //console.log($(this).val());
   $( this ).parent().find( ".action-group" ).addClass( "hidden" );
   $( this ).parent().find( ".Blink" ).addClass( "hidden" );
   var sel = $( this ).find( "option:selected" ).text().split(" ");
   //console.log(sel[0]); //debug
   $( this ).parent().find( "." + sel[0] ).removeClass( "hidden" );
+});
+
+$( ".update-event" ).change( function() {
+  var $thisevent = $( this ).parents( ".panel-event" );
+  var eventid = $thisevent.attr( "id" );
+  //console.log( eventid ); //debug
+  var $saveicon = $thisevent.find( ".fa-floppy-o" );
+  $saveicon.animateCss( "flash" );
+  $saveicon.removeClass( "hidden" );
 });
 
 //------------------------- Click Handlers --------------------------//
