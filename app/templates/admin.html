@@ -222,7 +222,8 @@
         <thead>
           <tr>
             <th class="id">id</th>
-            <th class="id">out_snd_id</th>
+            <th class="id">output_id</th>
+            <th class="id">sound_id</th>
             <th class="id">actiontype_id</th>
             <th>delay</th>
             <th>param1</th>
@@ -233,7 +234,8 @@
           {% for a in actions %}
           <tr>
             <td class="id">{{ a.id }}</td>
-            <td class="id">{{ a.output_sound_id }}</td>
+            <td class="id">{{ a.output_id }}</td>
+            <td class="id">{{ a.sound_id }}</td>
             <td class="id">{{ a.actiontype_id }}</td>
             <td>{{ a.delay }}</td>
             <td>{{ a.param1 }}</td>

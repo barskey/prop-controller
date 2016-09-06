@@ -168,19 +168,78 @@ def add_event():
 	newevent = Event(project_id=projectid)
 	db.session.add(newevent)
 	db.session.commit()
+	
 	newevent.name = 'Event' + str(newevent.id)
-	t = Trigger()
+	
+	p = Port.query.filter_by(type='input').first()
+	t = Trigger(input_id=p.id)
 	db.session.add(t)
-	a = Action()
+	
+	p = Port.query.filter_by(type='output').first()
+	a = Action(output_id=p.id)
 	db.session.add(a)
 	db.session.commit()
+	
 	nt = newevent.add_trigger(t)
 	db.session.add(nt)
 	na = newevent.add_action(a)
 	db.session.add(na)
 	db.session.commit()
+	
 	r = {'status':'OK', 'elist': [e.serialize for e in Event.query.all()], 'newevent': newevent.serialize}
-	return jsonify(response = r)
+	return jsonify(data = r)
+
+@app.route('/_update_event', methods=['POST'])
+def update_event():
+	a, eid = request.form['event-id'].split("-")
+	ename = request.form['eventname']
+	e = Event.query.get(eid)
+	e.name = ename
+	db.session.commit()
+	
+	a, tid = request.form['trigger-id'].split("-")
+	param1 = 0
+	ttid = request.form['triggertype_id']
+	pid = request.form['port_id']
+
+	tt = Triggertype.query.get(ttid)
+	if tt.type == 'interval':
+		param1 = request.form['every-param1']
+	elif tt.type == 'random':
+		param1 = request.form['random-param1']
+	elif tt.type == 'input':
+		param1 = request.form['input-param1']
+	param2 = request.form['random-param2']
+	
+	for t in e.triggers:
+		t.input_id = pid
+		t.triggertype_id = ttid
+		t.param1 = param1
+		t.param2 = param2
+		db.session.commit()
+
+	for a in e.actions:
+		thisaction = 'action-' + str(a.id)
+		a.delay = request.form[thisaction + '-delay']
+		atid = request.form[thisaction + '-actiontype_id']
+		a.actiontype_id = atid
+		at = Actiontype.query.get(atid)
+		if at.type == 'on':
+			a.output_id = request.form[thisaction + '-output_id']
+		elif at.type == 'off':
+			a.output_id = request.form[thisaction + '-output_id']
+		elif at.type == 'toggle':
+			a.output_id = request.form[thisaction + '-output_id']
+		elif at.type == 'blink':
+			a.output_id = request.form[thisaction + '-output_id']
+			a.param1 = request.form[thisaction + '-param1']
+		elif at.type == 'sound':
+			a.sound_id = request.form[thisaction + '-sound_id']
+		db.session.commit()
+		
+	event = e.serialize
+	r = {'status': 'OK', 'eventlist': [e.serialize for e in Event.query.all()], 'event': event}
+	return jsonify(data = r)
 
 @app.route('/_add_action', methods=['POST'])
 def add_action():
@@ -207,7 +266,7 @@ def delete_action():
 	db.session.delete(a)
 	db.session.commit()
 	r = {'status':'OK'}
-	return jsonify(response = r)
+	return jsonify(data = r)
 
 @app.route('/_delete_event', methods=['POST'])
 def delete_event():
@@ -225,8 +284,8 @@ def delete_event():
 		db.session.commit()
 	db.session.delete(e)
 	db.session.commit()
-	r = {'status':'OK'}
-	return jsonify(response = r)
+	r = {'status':'OK', 'eventlist': [e.serialize for e in Event.query.all()]}
+	return jsonify(data = r)
 
 @app.route('/_get_triggers', methods=['GET'])
 def get_triggers():

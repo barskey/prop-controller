@@ -264,20 +264,16 @@ class Action(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	output_id = db.Column(db.Integer, db.ForeignKey('port.id'))
 	sound_id = db.Column(db.Integer, db.ForeignKey('sound.id'))
-	actiontype_id = db.Column(db.Integer, db.ForeignKey('actiontype.id'))
-	delay = db.Column(db.Integer, default=0)
-	param1 = db.Column(db.String(8), default=0)
+	actiontype_id = db.Column(db.Integer, db.ForeignKey('actiontype.id'), default=0)
+	delay = db.Column(db.String(8), default='0')
+	param1 = db.Column(db.String(8), default='0')
 
 	@property
 	def serialize(self):
-		aid = ''
-		if self.actiontype_id == 4:
-			aid = self.sound_id
-		else:
-			aid = self.output_id
 		return{
 			'id': self.id,
-			'output_sound_id': aid,
+			'output_id': self.output_id,
+			'sound_id': self.sound_id,
 			'actiontype_id': self.actiontype_id,
 			'delay': self.delay,
 			'param1': self.param1

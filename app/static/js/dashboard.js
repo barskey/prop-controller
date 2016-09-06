@@ -15,17 +15,10 @@ function showEvent(eid) {
   $( "#" + eventid ).animateCss( "tada" );
 }
 
-function addEvent() {
-  var inputs, triggertypes, thisevent, clist;
-  $.get( "_add_event", function( data ) {
-    //console.log(data.response.status); //debug
-    thisevent = data.response.newevent;
-    eventlist = data.response.elist
-  }).done( function() {
-  	//update navbar event list
+function updateEventlist( elist ) {
   	var $eventlist = $( ".event-list" );
   	$eventlist.empty();
-  	$.each( eventlist, function( index, value ) {
+  	$.each( elist, function( index, value ) {
   		$eventlist.append(
   			$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showEvent(" + value.id + ")", "href": "#"} ).text( value.name ) )
   		)
@@ -36,15 +29,28 @@ function addEvent() {
     $eventlist.append(
       $( "<li>" ).append( $( "<a>" ).attr( {"onclick": "addEvent()", "href": "#", "id": "new-event"} ).text( "Add new..." ) )
     );
+}
+
+function addEvent() {
+  var inputs, triggertypes, thisevent, clist;
+  $.get( "_add_event", function( response ) {
+    //console.log(data.response.status); //debug
+    thisevent = response.data.newevent;
+    eventlist = response.data.elist
+  }).done( function() {
+  	//update navbar event list
+	updateEventlist( eventlist );
+
     var $template = $( "#template-id" );
     var eventid = "event-" + thisevent.id;
   	var triggerid = "trigger-" + thisevent.triggers[0].id;
   	var actionid = "action-" + thisevent.actions[0].id;
     var $newEvent = $template.clone( true ).removeClass( "hidden" ).attr( "id", eventid );
+	$newEvent.find( ".event-id" ).val( eventid );
   	$newEvent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
     $newEvent.find( ".delete-event" ).attr( "data-eventid", eventid );
-  	$newEvent.find( ".triggertype-select" ).attr( "name", triggerid + "-triggertype_id" );
   	$newEvent.find( ".trigger-list" ).find( "li" ).attr( "id", triggerid );
+	$newEvent.find( ".trigger-id" ).val( triggerid );
   	$newEvent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid", eventid );
     $newEvent.find( ".delete-action" ).attr( { "data-actionid": actionid, "data-eventid": eventid } );
   	$newEvent.find( ".action-list" ).find( "li" ).attr( "id", actionid );
@@ -66,14 +72,14 @@ function addEvent() {
 }
 
 //------------------------- Change Handlers --------------------------//
-$( ".triggertype_select" ).change( function() {
+$( ".triggertype-select" ).change( function() {
   //console.log($(this).val());
   $( this ).parent().find( ".trigger-group" ).addClass( "hidden" );
   var tt = $( this ).find( "option:selected" ).text();
   $( this ).parent().find( "." + tt ).removeClass( "hidden" );
 });
 
-$( ".actiontype_select" ).change( function() {
+$( ".actiontype-select" ).change( function() {
   //console.log($(this).val());
   $( this ).parent().find( ".action-group" ).addClass( "hidden" );
   $( this ).parent().find( ".Blink" ).addClass( "hidden" );
@@ -83,12 +89,35 @@ $( ".actiontype_select" ).change( function() {
 });
 
 $( ".update-event" ).change( function() {
-  var $thisevent = $( this ).parents( ".panel-event" );
-  var eventid = $thisevent.attr( "id" );
-  //console.log( eventid ); //debug
-  var $saveicon = $thisevent.find( ".fa-floppy-o" );
-  $saveicon.animateCss( "flash" );
-  $saveicon.removeClass( "hidden" );
+	var $thisevent = $( this ).parents( ".panel-event" );
+	var eventid = $thisevent.attr( "id" );
+	//console.log( eventid ); //debug
+	var $saveicon = $thisevent.find( ".fa-floppy-o" );
+	//$saveicon.animateCss( "fadeIn" );
+	$saveicon.removeClass( "hidden" );
+
+	//Use AJAX to add the controller to the db. Returns new controller.
+	$.ajax({
+		url: "/_update_event",
+		data: $thisevent.find( "form" ).serialize(),
+		type: "POST",
+		dataType: "json",
+		success: function( response ) {
+			//console.log(response.data.status); //debug
+			if (response.data.status == "OK") {
+				//update navbar event list
+				updateEventlist( response.data.eventlist );
+				//console.log(response.data.eventlist); //debug
+				$saveicon.animateCss( "fadeOut" );
+				$saveicon.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+					$saveicon.addClass( "hidden" );
+				});
+			}
+		},
+		error: function( error ) {
+			console.log(error);
+		}
+	});
 });
 
 //------------------------- Click Handlers --------------------------//
@@ -117,7 +146,7 @@ $( ".delete-action" ).click(function() {
   var actionid = $( this ).attr( "data-actionid" );
   var eventid = $( this ).attr( "data-eventid" );
   $.post( "_delete_action", { action_id: actionid, event_id: eventid } )
-    .done( function( data ) {
+    .done( function( response ) {
       $action.animateCss( "fadeOutLeft" );
       $action.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
         $action.remove();
@@ -130,10 +159,14 @@ $( ".delete-event" ).click(function() {
   var eventid = $( this ).attr( "data-eventid" );
   var $event = $( "#" + eventid );
   $.post( "_delete_event", { event_id: eventid } )
-    .done( function( data ) {
-      $event.animateCss( "bounceOut" );
-      $event.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-        $event.remove();
-      });
+    .done( function( response ) {
+		$event.animateCss( "bounceOut" );
+		$event.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+			$event.remove();
+			if ( $( ".panel-event" ).length <= 1 ) { // less than 1 because of template div
+			  $( ".jumbotron" ).removeClass( "hidden" );
+			}
+		});
+		updateEventlist( response.data.eventlist );
     });
 });
