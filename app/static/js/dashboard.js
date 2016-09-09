@@ -1,5 +1,7 @@
 $( "#dashboard" ).addClass( "active" );
-$( ".action-list" ).sortable();
+$( ".action-list" ).sortable({
+  handle: ".fa-bars"
+});
 $( '[data-toggle="tooltip"]' ).tooltip();
 //$( ".draggable-panel" ).draggable({ grid: [10, 10 ], containment: "parent" });
 
@@ -16,19 +18,19 @@ function showEvent(eid) {
 }
 
 function updateEventlist( elist ) {
-  	var $eventlist = $( ".event-list" );
-  	$eventlist.empty();
-  	$.each( elist, function( index, value ) {
-  		$eventlist.append(
-  			$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showEvent(" + value.id + ")", "href": "#"} ).text( value.name ) )
-  		)
-  	});
-    $eventlist.append(
-      $( "<li>" ).attr( "role", "separator" ).addClass( "divider" )
-    );
-    $eventlist.append(
-      $( "<li>" ).append( $( "<a>" ).attr( {"onclick": "addEvent()", "href": "#", "id": "new-event"} ).text( "Add new..." ) )
-    );
+  var $eventlist = $( ".event-list" );
+  $eventlist.empty();
+  $.each( elist, function( index, value ) {
+  	$eventlist.append(
+  		$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showEvent(" + value.id + ")", "href": "#"} ).text( value.name ) )
+  	)
+  });
+  $eventlist.append(
+    $( "<li>" ).attr( "role", "separator" ).addClass( "divider" )
+  );
+  $eventlist.append(
+    $( "<li>" ).append( $( "<a>" ).attr( {"onclick": "addEvent()", "href": "#", "id": "new-event"} ).text( "Add new..." ) )
+  );
 }
 
 function addEvent() {
@@ -38,27 +40,27 @@ function addEvent() {
     thisevent = response.data.newevent;
     eventlist = response.data.elist
   }).done( function() {
-  	//update navbar event list
-	updateEventlist( eventlist );
+    //update navbar event list
+    updateEventlist( eventlist );
 
     var $template = $( "#template-id" );
     var eventid = "event-" + thisevent.id;
-  	var triggerid = "trigger-" + thisevent.triggers[0].id;
-  	var actionid = "action-" + thisevent.actions[0].id;
+    var triggerid = "trigger-" + thisevent.triggers[0].id;
+    var actionid = "action-" + thisevent.actions[0].id;
     var $newEvent = $template.clone( true ).removeClass( "hidden" ).attr( "id", eventid );
-	$newEvent.find( ".event-id" ).val( eventid );
-  	$newEvent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
+    $newEvent.find( ".event-id" ).val( eventid );
+    $newEvent.find( ".panel-title" ).find( "input" ).val( thisevent.name );
     $newEvent.find( ".delete-event" ).attr( "data-eventid", eventid );
-  	$newEvent.find( ".trigger-list" ).find( "li" ).attr( "id", triggerid );
-	$newEvent.find( ".trigger-id" ).val( triggerid );
-  	$newEvent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid", eventid );
+    $newEvent.find( ".trigger-list" ).find( "li" ).attr( "id", triggerid );
+    $newEvent.find( ".trigger-id" ).val( triggerid );
+    $newEvent.find( ".panel-action" ).find( ".add-action" ).attr( "data-eventid", eventid );
     $newEvent.find( ".delete-action" ).attr( { "data-actionid": actionid, "data-eventid": eventid } );
-  	$newEvent.find( ".action-list" ).find( "li" ).attr( "id", actionid );
-  	$newEvent.find( ".delay" ).attr( "name", actionid + "-delay" );
-  	$newEvent.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );
-  	$newEvent.find( ".output_id" ).attr( "name", actionid + "-output_id");
-  	$newEvent.find( ".param1" ).attr( "name", actionid + "-param1");
-  	$newEvent.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
+    $newEvent.find( ".action-list" ).find( "li" ).attr( "id", actionid );
+    $newEvent.find( ".delay" ).attr( "name", actionid + "-delay" );
+    $newEvent.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );
+    $newEvent.find( ".output_id" ).attr( "name", actionid + "-output_id");
+    $newEvent.find( ".param1" ).attr( "name", actionid + "-param1");
+    $newEvent.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
 
     $( ".jumbotron" ).addClass( "hidden" ); // Hide the jumbotron if it isn't already
 
@@ -120,6 +122,12 @@ $( ".update-event" ).change( function() {
 	});
 });
 
+//Use AJAX to update the order after sorting
+$( ".action-list" ).on( "sortupdate", function( event, ui ) {
+  var neworder = $( this ).sortable( "serialize", { key: "action" } );
+  console.log( neworder );
+});
+
 //------------------------- Click Handlers --------------------------//
 $( ".add-action" ).click(function() {
   var eventid = $( this ).attr( "data-eventid" );
@@ -127,7 +135,7 @@ $( ".add-action" ).click(function() {
   $.post( "_add_action", { eid: eventid } )
     .done( function( data ) {
       newaction = data.response.action;
-      actionid = newaction.id;
+      actionid = "action-" + newaction.id;
       $action = $( "#template-action-id" ).clone( true ).attr( "id", actionid );
     	$action.find( ".delay" ).attr( "name", actionid + "-delay" );
     	$action.find( ".actiontype-select" ).attr( "name", actionid + "-actiontype_id" );

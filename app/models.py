@@ -267,11 +267,13 @@ class Action(db.Model):
 	actiontype_id = db.Column(db.Integer, db.ForeignKey('actiontype.id'), default=0)
 	delay = db.Column(db.String(8), default='0')
 	param1 = db.Column(db.String(8), default='0')
+	order = db.Column(db.Integer)
 
 	@property
 	def serialize(self):
 		return{
 			'id': self.id,
+			'order': self.order,
 			'output_id': self.output_id,
 			'sound_id': self.sound_id,
 			'actiontype_id': self.actiontype_id,

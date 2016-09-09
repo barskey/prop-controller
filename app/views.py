@@ -168,24 +168,24 @@ def add_event():
 	newevent = Event(project_id=projectid)
 	db.session.add(newevent)
 	db.session.commit()
-	
+
 	newevent.name = 'Event' + str(newevent.id)
-	
+
 	p = Port.query.filter_by(type='input').first()
 	t = Trigger(input_id=p.id)
 	db.session.add(t)
-	
+
 	p = Port.query.filter_by(type='output').first()
-	a = Action(output_id=p.id)
+	a = Action(output_id=p.id, order=1)
 	db.session.add(a)
 	db.session.commit()
-	
+
 	nt = newevent.add_trigger(t)
 	db.session.add(nt)
 	na = newevent.add_action(a)
 	db.session.add(na)
 	db.session.commit()
-	
+
 	r = {'status':'OK', 'elist': [e.serialize for e in Event.query.all()], 'newevent': newevent.serialize}
 	return jsonify(data = r)
 
@@ -196,7 +196,7 @@ def update_event():
 	e = Event.query.get(eid)
 	e.name = ename
 	db.session.commit()
-	
+
 	a, tid = request.form['trigger-id'].split("-")
 	param1 = 0
 	ttid = request.form['triggertype_id']
@@ -210,7 +210,7 @@ def update_event():
 	elif tt.type == 'input':
 		param1 = request.form['input-param1']
 	param2 = request.form['random-param2']
-	
+
 	for t in e.triggers:
 		t.input_id = pid
 		t.triggertype_id = ttid
@@ -236,7 +236,7 @@ def update_event():
 		elif at.type == 'sound':
 			a.sound_id = request.form[thisaction + '-sound_id']
 		db.session.commit()
-		
+
 	event = e.serialize
 	r = {'status': 'OK', 'eventlist': [e.serialize for e in Event.query.all()], 'event': event}
 	return jsonify(data = r)
@@ -245,7 +245,8 @@ def update_event():
 def add_action():
 	x, eid = request.form['eid'].split("-")
 	event = Event.query.get(eid)
-	a = Action()
+	next_order = event.actions.count() + 1
+	a = Action(order=next_order)
 	db.session.add(a)
 	db.session.commit()
 	na = event.add_action(a)

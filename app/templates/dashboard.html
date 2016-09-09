@@ -70,38 +70,38 @@
         <ul class="list-group trigger-list">
           <li class="list-group-item list-group-item-warning" id="template-trigger-id">
             <input type="hidden" name="trigger-id" class="trigger-id" value="trigger-id" />
-            <select class="form-control triggertype-select update-event" name="triggertype_id">
+            <select class="form-control triggertype-select update-event input-sm" name="triggertype_id">
               {% for t in triggertypes %}
               <option value="{{ t.id }}">{{ t.name }}</option>
               {% endfor %}
             </select>&nbsp;&nbsp;
             <span class="trigger-group Input">
-              <select class="form-control update-event" name="port_id">
+              <select class="form-control update-event input-sm" name="port_id">
                 {% for i in inputs %}
                 <option value="{{ i.id }}">{% if i.name|length == 1 %}{{ i.cname }} >> {% endif %}{{ i.name }}</option>
                 {% endfor %}
               </select>
               &nbsp;turns&nbsp;
-              <select class="form-control update-event" name="input-param1">
+              <select class="form-control update-event input-sm" name="input-param1">
                 <option value="ON">ON</option>
                 <option value="OFF">OFF</option>
               </select>
             </span>
             <span class="trigger-group Every hidden">
               <div class="input-group">
-                <input class="form-control update-event" name="every-param1" value="30000" size=6 />
+                <input class="form-control update-event input-sm" name="every-param1" value="30000" size=6 />
                 <span class="input-group-addon">ms</span>
               </div>
             </span>
             <span class="trigger-group Randomly hidden">
               repeat between&nbsp;
               <div class="input-group">
-                <input class="form-control update-event" name="random-param1" value="5000" size=6 />
+                <input class="form-control update-event input-sm" name="random-param1" value="5000" size=6 />
                 <span class="input-group-addon">ms</span>
               </div>
               &nbsp;and&nbsp;
               <div class="input-group">
-                <input class="form-control update-event" name="random-param2" value="50000" size=6 />
+                <input class="form-control update-event input-sm" name="random-param2" value="50000" size=6 />
                 <span class="input-group-addon">ms</span>
               </div>
             </span>
@@ -116,29 +116,28 @@
           <li class="list-group-item list-group-item-success" id="template-action-id">
             <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
             <div class="input-group">
-              <input type="text" class="form-control delay update-event" name="delay" value="0" size=5 />
+              <input type="text" class="form-control delay update-event input-sm" name="delay" value="0" size=4 />
               <span class="input-group-addon">ms</span>
             </div>&nbsp;&nbsp;
-            <select class="form-control actiontype-select update-event" name="actiontype_id">
+            <select class="form-control actiontype-select update-event input-sm" name="actiontype_id">
               {% for a in actiontypes %}
               <option value="{{ a.id }}">{{ a.name }}</option>
               {% endfor %}
             </select>&nbsp;&nbsp;
             <span class="action-group Turn Toggle Blink">
-              <select class="form-control output_id update-event" name="output_id">
+              <select class="form-control output_id update-event input-sm" name="output_id">
                 {% for o in outputs %}
                 <option value="{{ o.id }}">{% if o.name|length == 1 %}{{ o.cname }} >> {% endif %}{{ o.name }}</option>
                 {% endfor %}
               </select>&nbsp;&nbsp;
               <div class="input-group Blink hidden">
                 <span class="input-group-addon">every</span>
-                <span>every</span>
-                <input type="text" class="form-control param1 update-event" name="template-param1" value="0" size=5 />
+                <input type="text" class="form-control param1 update-event input-sm" name="template-param1" value="0" size=4 />
                 <span class="input-group-addon">ms</span>
               </div>
             </span>
             <span class="action-group Play hidden">
-              <select class="form-control sound_id update-event" name="sound_id">
+              <select class="form-control sound_id update-event input-sm" name="sound_id">
                 {% for s in sounds %}
                 <option value="{{ s.id }}">{{ s.name }}</option>
                 {% endfor %}
@@ -178,38 +177,38 @@
             {% for t in e.triggers %}
             <li class="list-group-item list-group-item-warning" id="trigger-{{ t.id }}">
               <input type="hidden" name="trigger-id" class="trigger-id" value="trigger-{{ t.id }}" />
-              <select class="form-control triggertype-select update-event" name="triggertype_id">
+              <select class="form-control triggertype-select update-event input-sm" name="triggertype_id">
                 {% for tt in triggertypes %}
                 <option value="{{ tt.id }}"{% if t.tt_id == tt.id %} selected{% endif %}>{{ tt.name }}</option>
                 {% endfor %}
               </select>&nbsp;&nbsp;
               <span class="trigger-group Input{% if t.tt_id != 0 %} hidden{% endif %}">
-                <select class="form-control update-event" name="port_id">
+                <select class="form-control update-event input-sm" name="port_id">
                   {% for i in inputs %}
                   <option value="{{ i.id }}"{% if t.input_id == i.id %} selected{% endif %}>{% if i.name|length == 1 %}{{ i.cname }} >> {% endif %}{{ i.name }}</option>
                   {% endfor %}
                 </select>
                 &nbsp;turns&nbsp;
-                <select class="form-control update-event" name="input-param1">
+                <select class="form-control update-event input-sm" name="input-param1">
                   <option value="ON"{% if t.param1 == "ON" %} selected{% endif %}>ON</option>
                   <option value="OFF"{% if t.param1 == "OFF" %} selected{% endif %}>OFF</option>
                 </select>
               </span>
               <span class="trigger-group Every{% if t.tt_id != 1 %} hidden{% endif %}">
                 <div class="input-group">
-                  <input class="form-control update-event" name="every-param1" value="{{ t.param1 }}" size=6 />
+                  <input class="form-control update-event input-sm" name="every-param1" value="{% if t.tt_id == 1 %}{{ t.param1 }}{% else %}1000{% endif %}" size=6 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
               <span class="trigger-group Randomly{% if t.tt_id != 2 %} hidden{% endif %}">
                 repeat between&nbsp;
                 <div class="input-group">
-                  <input class="form-control update-event" name="random-param1" value="{{ t.param1 }}" size=6 />
+                  <input class="form-control update-event input-sm" name="random-param1" value="{% if t.tt_id == 2 %}{{ t.param1 }}{% else %}1000{% endif %}" size=6 />
                   <span class="input-group-addon">ms</span>
                 </div>
                 &nbsp;and&nbsp;
                 <div class="input-group">
-                  <input class="form-control update-event" name="random-param2" value="{{ t.param2 }}" size=6 />
+                  <input class="form-control update-event input-sm" name="random-param2" value="{{ t.param2 }}" size=6 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
@@ -222,32 +221,32 @@
             <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="event-{{ e.id }}" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
           </div><!-- /.panel-heading -->
           <ul class="list-group sortable action-list">
-            {% for a in e.actions %}
+            {% for a in e.actions|sort(attribute='order') %}
             <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
               <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
               <div class="input-group">
-                <input type="text" class="form-control delay update-event" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=5 />
+                <input type="text" class="form-control delay update-event input-sm" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4 />
                 <span class="input-group-addon">ms</span>
               </div>&nbsp;&nbsp;
-              <select class="form-control actiontype-select update-event" name="action-{{ a.id }}-actiontype_id">
+              <select class="form-control actiontype-select update-event input-sm" name="action-{{ a.id }}-actiontype_id">
                 {% for at in actiontypes %}
                 <option value="{{ at.id }}"{% if a.actiontype_id == at.id %} selected{% endif %}>{{ at.name }}</option>
                 {% endfor %}
               </select>&nbsp;&nbsp;
               <span class="action-group Turn Toggle Blink">
-                <select class="form-control output_id update-event" name="action-{{ a.id }}-output_id">
+                <select class="form-control output_id update-event input-sm" name="action-{{ a.id }}-output_id">
                   {% for o in outputs %}
                   <option value="{{ o.id }}"{% if a.output_id == o.id %} selected{% endif %}>{% if o.name|length == 1 %}{{ o.cname }} >> {% endif %}{{ o.name }}</option>
                   {% endfor %}
                 </select>&nbsp;&nbsp;
-                <div class="input-group Blink hidden">
+                <div class="input-group Blink{% if a.actiontype_id != 3 %} hidden{% endif %}">
                   <span class="input-group-addon">every</span>
-                  <input type="text" class="form-control param1 update-event" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=5 />
+                  <input type="text" class="form-control param1 update-event input-sm" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
               <span class="action-group Play hidden">
-                <select class="form-control sound_id update-event" name="action-{{ a.id }}-sound_id">
+                <select class="form-control sound_id update-event input-sm" name="action-{{ a.id }}-sound_id">
                   {% for s in sounds %}
                   <option value="{{ s.id }}"{% if a.sound_id == s.id %} selected{% endif %}>{{ s.name }}</option>
                   {% endfor %}
@@ -289,38 +288,38 @@
             {% for t in e.triggers %}
             <li class="list-group-item list-group-item-warning" id="trigger-{{ t.id }}">
               <input type="hidden" name="trigger-id" class="trigger-id" value="trigger-{{ t.id }}" />
-              <select class="form-control triggertype-select update-event" name="triggertype_id">
+              <select class="form-control triggertype-select update-event input-sm" name="triggertype_id">
                 {% for tt in triggertypes %}
                 <option value="{{ tt.id }}" {% if t.tt_id == tt.id %} selected{% endif %}>{{ tt.name }}</option>
                 {% endfor %}
               </select>&nbsp;&nbsp;
               <span class="trigger-group Input{% if t.tt_id != 0 %} hidden{% endif %}">
-                <select class="form-control update-event" name="port_id">
+                <select class="form-control update-event input-sm" name="port_id">
                   {% for i in inputs %}
                   <option value="{{ i.id }}" {% if t.input_id == i.id %} selected{% endif %}>{% if i.name|length == 1 %}{{ i.cname }} >> {% endif %}{{ i.name }}</option>
                   {% endfor %}
                 </select>
                 &nbsp;turns&nbsp;
-                <select class="form-control update-event" name="input-param1">
+                <select class="form-control update-event input-sm" name="input-param1">
                   <option value="ON"{% if t.param1 == "ON" %} selected{% endif %}>ON</option>
                   <option value="OFF"{% if t.param1 == "OFF" %} selected{% endif %}>OFF</option>
                 </select>
               </span>
               <span class="trigger-group Every{% if t.tt_id != 1 %} hidden{% endif %}">
                 <div class="input-group">
-                  <input class="form-control update-event" name="every-param1" value="{{ t.param1 }}" size=6 />
+                  <input class="form-control update-event input-sm" name="every-param1" value="{% if t.tt_id == 1 %}{{ t.param1 }}{% else %}1000{% endif %}" size=6 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
               <span class="trigger-group Randomly{% if t.tt_id != 2 %} hidden{% endif %}">
                 repeat between&nbsp;
                 <div class="input-group">
-                  <input class="form-control update-event" name="random-param1" value="{{ t.param1 }}" size=6 />
+                  <input class="form-control update-event input-sm" name="random-param1" value="{% if t.tt_id == 2 %}{{ t.param1 }}{% else %}1000{% endif %}" size=6 />
                   <span class="input-group-addon">ms</span>
                 </div>
                 &nbsp;and&nbsp;
                 <div class="input-group">
-                  <input class="form-control update-event" name="random-param2" value="{{ t.param2 }}" size=6 />
+                  <input class="form-control update-event input-sm" name="random-param2" value="{{ t.param2 }}" size=6 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
@@ -333,34 +332,34 @@
             <h3 class="panel-title">Do this...<div class="add-action pull-right" data-placement="right" data-toggle="tooltip" title="Add an Action to this Event..." data-eventid="event-{{ e.id }}" data-container="body"><span class="glyphicon glyphicon-plus"></span></div></h3>
           </div><!-- /.panel-heading -->
           <ul class="list-group sortable action-list">
-            {% for a in e.actions %}
+            {% for a in e.actions|sort(attribute='order') %}
             <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
               <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
               <div class="input-group">
-                <input type="text" class="form-control delay update-event" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=5 />
+                <input type="text" class="form-control delay update-event input-sm" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4 />
                 <span class="input-group-addon">ms</span>
               </div>&nbsp;&nbsp;
-              <select class="form-control actiontype-select update-event" name="action-{{ a.id }}-actiontype_id">
+              <select class="form-control actiontype-select update-event input-sm" name="action-{{ a.id }}-actiontype_id">
                 {% for at in actiontypes %}
                 <option value="{{ at.id }}"{% if a.actiontype_id == at.id %} selected{% endif %}>{{ at.name }}</option>
                 {% endfor %}
               </select>&nbsp;&nbsp;
               <span class="action-group Turn Toggle Blink">
-                <select class="form-control output_id update-event" name="action-{{ a.id }}-output_id">
+                <select class="form-control output_id update-event input-sm" name="action-{{ a.id }}-output_id">
                   {% for o in outputs %}
-                  <option value="{{ o.id }}"{% if a.output_sound_id == o.id %} selected{% endif %}>{% if o.name|length == 1 %}{{ o.cname }} >> {% endif %}{{ o.name }}</option>
+                  <option value="{{ o.id }}"{% if a.output_id == o.id %} selected{% endif %}>{% if o.name|length == 1 %}{{ o.cname }} >> {% endif %}{{ o.name }}</option>
                   {% endfor %}
                 </select>&nbsp;&nbsp;
-                <div class="input-group Blink hidden">
+                <div class="input-group Blink{% if a.actiontype_id != 3 %} hidden{% endif %}">
                   <span class="input-group-addon">every</span>
-                  <input type="text" class="form-control param1 update-event" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=5 />
+                  <input type="text" class="form-control param1 update-event input-sm" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
               <span class="action-group Play hidden">
-                <select class="form-control sound_id update-event" name="action-{{ a.id }}-sound_id">
+                <select class="form-control sound_id update-event input-sm" name="action-{{ a.id }}-sound_id">
                   {% for s in sounds %}
-                  <option value="{{ s.id }}"{% if a.output_sound_id == s.id %} selected{% endif %}>{{ s.name }}</option>
+                  <option value="{{ s.id }}"{% if a.sound_id == s.id %} selected{% endif %}>{{ s.name }}</option>
                   {% endfor %}
                 </select>
               </span>

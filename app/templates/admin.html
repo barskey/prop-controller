@@ -222,6 +222,7 @@
         <thead>
           <tr>
             <th class="id">id</th>
+            <th class="id">order</th>
             <th class="id">output_id</th>
             <th class="id">sound_id</th>
             <th class="id">actiontype_id</th>
@@ -234,6 +235,7 @@
           {% for a in actions %}
           <tr>
             <td class="id">{{ a.id }}</td>
+            <td class="id">{{ a.order }}</td>
             <td class="id">{{ a.output_id }}</td>
             <td class="id">{{ a.sound_id }}</td>
             <td class="id">{{ a.actiontype_id }}</td>
