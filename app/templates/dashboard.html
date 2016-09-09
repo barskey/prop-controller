@@ -116,7 +116,7 @@
           <li class="list-group-item list-group-item-success" id="template-action-id">
             <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
             <div class="input-group">
-              <input type="text" class="form-control delay update-event input-sm" name="delay" value="0" size=4 />
+              <input type="text" class="form-control delay update-event input-sm" name="delay" value="0" size=3 />
               <span class="input-group-addon">ms</span>
             </div>&nbsp;&nbsp;
             <select class="form-control actiontype-select update-event input-sm" name="actiontype_id">
@@ -132,7 +132,7 @@
               </select>&nbsp;&nbsp;
               <div class="input-group Blink hidden">
                 <span class="input-group-addon">every</span>
-                <input type="text" class="form-control param1 update-event input-sm" name="template-param1" value="0" size=4 />
+                <input type="text" class="form-control param1 update-event input-sm" name="template-param1" value="0" size=3 />
                 <span class="input-group-addon">ms</span>
               </div>
             </span>
@@ -225,7 +225,7 @@
             <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
               <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
               <div class="input-group">
-                <input type="text" class="form-control delay update-event input-sm" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4 />
+                <input type="text" class="form-control delay update-event input-sm" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=3 />
                 <span class="input-group-addon">ms</span>
               </div>&nbsp;&nbsp;
               <select class="form-control actiontype-select update-event input-sm" name="action-{{ a.id }}-actiontype_id">
@@ -241,7 +241,7 @@
                 </select>&nbsp;&nbsp;
                 <div class="input-group Blink{% if a.actiontype_id != 3 %} hidden{% endif %}">
                   <span class="input-group-addon">every</span>
-                  <input type="text" class="form-control param1 update-event input-sm" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4 />
+                  <input type="text" class="form-control param1 update-event input-sm" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=3 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>
@@ -336,7 +336,7 @@
             <li class="list-group-item list-group-item-success" id="action-{{ a.id }}">
               <i class="fa fa-bars"></i><span>&nbsp;&nbsp;After&nbsp;&nbsp;</span>
               <div class="input-group">
-                <input type="text" class="form-control delay update-event input-sm" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=4 />
+                <input type="text" class="form-control delay update-event input-sm" name="action-{{ a.id }}-delay" value="{{ a.delay }}" size=3 />
                 <span class="input-group-addon">ms</span>
               </div>&nbsp;&nbsp;
               <select class="form-control actiontype-select update-event input-sm" name="action-{{ a.id }}-actiontype_id">
@@ -352,7 +352,7 @@
                 </select>&nbsp;&nbsp;
                 <div class="input-group Blink{% if a.actiontype_id != 3 %} hidden{% endif %}">
                   <span class="input-group-addon">every</span>
-                  <input type="text" class="form-control param1 update-event input-sm" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=4 />
+                  <input type="text" class="form-control param1 update-event input-sm" name="action-{{ a.id }}-param1" value="{{ a.param1 }}" size=3 />
                   <span class="input-group-addon">ms</span>
                 </div>
               </span>

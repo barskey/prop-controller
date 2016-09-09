@@ -62,7 +62,7 @@ def index():
 			outputs.append({'outputnum': 'D'})
 	triggers.append({'ttid': '1', 'selecttext': 'Every'})
 	triggers.append({'ttid': '2', 'selecttext': 'Randomly between'})
-	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, outputs=outputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=actions, sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
+	return render_template('index.html', title='Dashboard', projectname=projectname, triggers=triggers, outputs=outputs, triggertypes=[tt.serialize for tt in Triggertype.query.all()], actions=[a.serialize for a in Action.query.all()], sounds=sounds, controllers=[c.serialize for c in controllers], colors=colors)
 
 @app.route('/controllers')
 def controllers():
@@ -266,6 +266,19 @@ def delete_action():
 	db.session.commit()
 	db.session.delete(a)
 	db.session.commit()
+	r = {'status':'OK'}
+	return jsonify(data = r)
+
+@app.route('/_update_action_order', methods=['POST'])
+def update_action_order():
+	actionlist = request.form['actionlist'].split("&")
+	i = 1
+	for a in actionlist:
+		x, aid = a.split("=")
+		a = Action.query.get(aid)
+		a.order = i
+		db.session.commit()
+		i += 1
 	r = {'status':'OK'}
 	return jsonify(data = r)
 

@@ -1,7 +1,9 @@
-$( "#dashboard" ).addClass( "active" );
+$( "#events" ).addClass( "active" );
+
 $( ".action-list" ).sortable({
   handle: ".fa-bars"
 });
+
 $( '[data-toggle="tooltip"]' ).tooltip();
 //$( ".draggable-panel" ).draggable({ grid: [10, 10 ], containment: "parent" });
 
@@ -124,8 +126,20 @@ $( ".update-event" ).change( function() {
 
 //Use AJAX to update the order after sorting
 $( ".action-list" ).on( "sortupdate", function( event, ui ) {
-  var neworder = $( this ).sortable( "serialize", { key: "action" } );
-  console.log( neworder );
+	var $thisevent = $( this ).parents( ".panel-event" );
+	var $saveicon = $thisevent.find( ".fa-floppy-o" );
+	$saveicon.removeClass( "hidden" );
+
+	var neworder = $( this ).sortable( "serialize", { key: "action" } );
+	//console.log( neworder ); //debug
+	$.post( "_update_action_order", { actionlist: neworder } )
+	.done( function( data ) {
+		$saveicon.animateCss( "fadeOut" );
+		$saveicon.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+			$saveicon.addClass( "hidden" );
+		});
+	});
+
 });
 
 //------------------------- Click Handlers --------------------------//
