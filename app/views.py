@@ -80,9 +80,10 @@ def add_controller():
 	b, cc = request.form['color'].split('-')
 	newcontroller = Controller(id=cid, project_id=projectid, color_id=cc, name=cname)
 	db.session.add(newcontroller)
-	for n in range(1,3):
-		i = Port(controller_id=cid, port=n, name=str(n), type='input', state='PULLDOWN')
-		db.session.add(i)
+	m = Port(controller_id=cid, port='1', name='Motion', type='input', state='ENABLED')
+	db.session.add(m)
+	i = Port(controller_id=cid, port='2', name='Input', type='input', state='ENABLED')
+	db.session.add(i)
 	for let in {'A', 'B', 'C', 'D'}:
 		o = Port(controller_id=cid, port=let, name=let, type='output', state='OFF')
 		db.session.add(o)

@@ -12,14 +12,12 @@ toggle_output.OFF = 'ON';
 toggle_output.ON = 'DISABLED';
 toggle_output.DISABLED = 'OFF';
 var toggle_input = new Object();
-toggle_input.PULLDOWN = 'PULLUP';
-toggle_input.PULLUP = 'DISABLED';
-toggle_input.DISABLED = 'PULLDOWN';
+toggle_input.ENABLED = 'DISABLED';
+toggle_input.DISABLED = 'ENABLED';
 var toggle_classes = new Object();
 toggle_classes.OFF = 'fa-toggle-off';
 toggle_classes.ON = 'fa-toggle-on';
-toggle_classes.PULLUP = 'fa-level-up';
-toggle_classes.PULLDOWN = 'fa-level-down';
+toggle_classes.ENABLED = 'fa-check-circle';
 toggle_classes.DISABLED = 'fa-ban';
 
 // Get a random integer between `min` and `max`.
@@ -66,7 +64,7 @@ function connectController(c) {
     var $thisport = $newController.find( "#toggle-" + port + "-templateid" ).attr( "id", "toggle-" + port + "-" + c.controller_id );
 	if (port == '1' || port == '2') {
       $thisport.tooltip({
-        title: "PULLDOWN<br>(Click to toggle)",
+        title: "ENABLED<br>(Click to toggle)",
         container: "body",
         html: true
       });
@@ -148,7 +146,7 @@ function updatePortname(p) {
 // Click to toggle port Default state
 $( "span[id^='toggle-']" ).click(function() {
   // toggle output: OFF -> ON -> DISABLED ->
-  // toggle input: PULLDOWN -> PULLUP -> DISABLED ->
+  // toggle input: ENABLED -> DISABLED ->
   var oldvalue = "";
   var title = "";
   var newvalue = "";
@@ -189,7 +187,7 @@ $( "span[id^='toggle-']" ).click(function() {
     .attr("data-original-title", title)
     .tooltip("fixTitle")
     .tooltip("show");
-  $i.removeClass( "fa-toggle-on fa-toggle-off fa-level-up fa-level-down fa-ban" ).addClass( newclass ); //Change the image
+  $i.removeClass( "fa-toggle-on fa-toggle-off fa-check-circle fa-ban" ).addClass( newclass ); //Change the image
   $i.attr("data-setting", newvalue ); //change data-setting to new value
 });
 

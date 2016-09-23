@@ -78,7 +78,7 @@
             <span class="trigger-group Input">
               <select class="form-control update-event input-sm" name="port_id">
                 {% for i in inputs %}
-                <option value="{{ i.id }}">{% if i.name|length == 1 %}{{ i.cname }} >> {% endif %}{{ i.name }}</option>
+                <option value="{{ i.id }}">{{ i.cname }} >> {{ i.name }}</option>
                 {% endfor %}
               </select>
               &nbsp;turns&nbsp;
@@ -185,7 +185,7 @@
               <span class="trigger-group Input{% if t.tt_id != 0 %} hidden{% endif %}">
                 <select class="form-control update-event input-sm" name="port_id">
                   {% for i in inputs %}
-                  <option value="{{ i.id }}"{% if t.input_id == i.id %} selected{% endif %}>{% if i.name|length == 1 %}{{ i.cname }} >> {% endif %}{{ i.name }}</option>
+                  <option value="{{ i.id }}"{% if t.input_id == i.id %} selected{% endif %}>{{ i.cname }} >> {{ i.name }}</option>
                   {% endfor %}
                 </select>
                 &nbsp;turns&nbsp;
@@ -296,7 +296,7 @@
               <span class="trigger-group Input{% if t.tt_id != 0 %} hidden{% endif %}">
                 <select class="form-control update-event input-sm" name="port_id">
                   {% for i in inputs %}
-                  <option value="{{ i.id }}" {% if t.input_id == i.id %} selected{% endif %}>{% if i.name|length == 1 %}{{ i.cname }} >> {% endif %}{{ i.name }}</option>
+                  <option value="{{ i.id }}" {% if t.input_id == i.id %} selected{% endif %}>{{ i.cname }} >> {{ i.name }}</option>
                   {% endfor %}
                 </select>
                 &nbsp;turns&nbsp;
