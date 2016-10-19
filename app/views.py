@@ -1,6 +1,34 @@
 from app import app, db
 from flask import render_template, redirect, request, jsonify, json
 from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
+import serial
+import threading, Queue
+
+queue = Queue.Queue()
+port = 'COM1'
+baudrate = 9600
+
+serial_port = serial.Serial(port, baudrate, timeout=0)
+
+def handle_data(data):
+	print(data)
+
+def read_from_port(ser, connected):
+	while not connected:
+		#serin = ser.read()
+		connected = True
+
+		while True:
+			#print("test")
+			if ser.in_waiting > 0:
+				reading = ser.read(in_waiting).decode('ascii')
+				#put it in the queue here
+				handle_data(reading)
+
+
+thread  = threading.Thread(target=read_from_port, args=(serial_port, False))
+thread.start()
+print('Hello')
 
 #Dummy data for testing
 projectname = "Halloween 2016"
@@ -91,6 +119,11 @@ def add_controller():
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
 
+@app.route('/_check_controller', methods=['GET'])
+def check_controller():
+	r = {'status': 'OK', 'cid': 1}
+	return jsonify(data = r)
+
 @app.route('/rem_controller', methods=['POST'])
 def rem_controller():
 	a, cid = request.form['controller_id'].split("-")
@@ -138,11 +171,33 @@ def update_portname():
 
 @app.route('/_update_toggle', methods=['POST'])
 def update_toggle():
+	state = None
+	
 	cid = request.form['cntid']
 	port = request.form['port']
 	p = Port.query.filter_by(controller_id=cid, port=port).first()
-	p.state = request.form['val']
+	val = request.form['val']
+	p.state = val
 	db.session.commit()
+	
+	# CMD string format S1N
+	#                   012
+	# 0: S for Setup
+	# 1: 1,2,A,B,C,D for port number
+	# 2: N for On, F for Off, X for Disabled
+	
+	if val == 'ON':
+		state = 'N'
+	elif val == 'OFF':
+		state = 'F'
+	elif val == 'DISABLED':
+		state = 'X'
+	elif val == 'ENABLED':
+		state = 'N'
+	
+	cmd = 'S' + port + state
+	print(cmd)
+	
 	return jsonify(response = 'OK')
 
 @app.route('/dashboard')

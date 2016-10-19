@@ -20,6 +20,8 @@ toggle_classes.ON = 'fa-toggle-on';
 toggle_classes.ENABLED = 'fa-check-circle';
 toggle_classes.DISABLED = 'fa-ban';
 
+var connectInterval = serInterval( function(){ checkController() }, 1000 );
+
 // Get a random integer between `min` and `max`.
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
@@ -27,7 +29,11 @@ function getRandomInt(min, max) {
 
 //Function to check if a controller is already added.
 // Identify if it is, or show modal if it isn't.
-function checkController(cid) {
+function checkController() {
+  var cid;
+  $.get("/_check_controller", function(response) {
+    cid = response.data.cid;
+  }
   if (cid == "test") {
     cid = getRandomInt(1001, 1010);
   }
@@ -359,7 +365,7 @@ $( "#editControllerModalDeleteButton" ).click(function() {
 	});
 });
 
-// configre #editControllerModal when it opens
+// configure #editControllerModal when it opens
 $('#editControllerModal').on('show.bs.modal', function (event) {
   var obj = $(event.relatedTarget); // object that triggered the modal
   // Extract info from data-* attributes
