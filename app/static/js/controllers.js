@@ -20,7 +20,7 @@ toggle_classes.ON = 'fa-toggle-on';
 toggle_classes.ENABLED = 'fa-check-circle';
 toggle_classes.DISABLED = 'fa-ban';
 
-var connectInterval = serInterval( function(){ checkController() }, 1000 );
+//var connectInterval = setInterval( function(){ checkController() }, 5000 );
 
 // Get a random integer between `min` and `max`.
 function getRandomInt(min, max) {
@@ -33,7 +33,7 @@ function checkController() {
   var cid;
   $.get("/_check_controller", function(response) {
     cid = response.data.cid;
-  }
+  });
   if (cid == "test") {
     cid = getRandomInt(1001, 1010);
   }
@@ -59,7 +59,7 @@ function connectController(c) {
   $newController.find( ".panel-heading" ).addClass( cc + "-heading" ).find( ".pull-right" ).attr( {"data-cid": controllerid, "data-ccolor": cc, "data-cname": c.controllername} );
   $newController.find( ".controller-name" ).text( c.controllername );
   $newController.find( ".label" ).addClass( cc );
-  
+
   // Update sounds icon
   $newController.find( ".sounds" ).attr( "id", "sounds-" + c.controllerid );
 
@@ -217,12 +217,12 @@ $( ".label" ).click(function() {
 		}
 	  });
 	  //console.log(portnum); //debug
-	  
+
 	  //Set the hidden fields on the modal
 	  $( "#portcid" ).val( cid );
 	  $( "#portnum" ).val ( portnum );
 	  $( "#portname" ).val( name );
-	  
+
 	  $( "#editPortnameModal" ).modal( "toggle" );
   }
 });
@@ -244,7 +244,7 @@ $( "#connectControllerModalAddButton" ).click(function() {
 				var $cntlist = $( ".controller-list" );
 				$cntlist.empty();
 				$.each( response.data.clist, function( index, value ) {
-					$cntlist.append( 
+					$cntlist.append(
 						$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "checkController(" + value.controller_id + ")", "href": "#"} ).text( value.controllername ) )
 					)
 				});

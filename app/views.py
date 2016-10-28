@@ -5,10 +5,10 @@ import serial
 import threading, Queue
 
 queue = Queue.Queue()
-port = 'COM1'
-baudrate = 9600
+ser_port = '/dev/cu.usbserial-FTALLYWT'
+ser_baudrate = 115200
 
-serial_port = serial.Serial(port, baudrate, timeout=0)
+serial_port = serial.Serial(ser_port, ser_baudrate, timeout=0)
 
 def handle_data(data):
 	print(data)
@@ -21,14 +21,16 @@ def read_from_port(ser, connected):
 		while True:
 			#print("test")
 			if ser.in_waiting > 0:
-				reading = ser.read(in_waiting).decode('ascii')
+				print('Reading serial data')
+				reading = ser.read(ser.in_waiting).decode('ascii')
 				#put it in the queue here
 				handle_data(reading)
 
 
 thread  = threading.Thread(target=read_from_port, args=(serial_port, False))
+thread.daemon = True
 thread.start()
-print('Hello')
+#print('Hello')
 
 #Dummy data for testing
 projectname = "Halloween 2016"
@@ -172,20 +174,20 @@ def update_portname():
 @app.route('/_update_toggle', methods=['POST'])
 def update_toggle():
 	state = None
-	
+
 	cid = request.form['cntid']
 	port = request.form['port']
 	p = Port.query.filter_by(controller_id=cid, port=port).first()
 	val = request.form['val']
 	p.state = val
 	db.session.commit()
-	
+
 	# CMD string format S1N
 	#                   012
 	# 0: S for Setup
 	# 1: 1,2,A,B,C,D for port number
 	# 2: N for On, F for Off, X for Disabled
-	
+
 	if val == 'ON':
 		state = 'N'
 	elif val == 'OFF':
@@ -194,10 +196,12 @@ def update_toggle():
 		state = 'X'
 	elif val == 'ENABLED':
 		state = 'N'
-	
-	cmd = 'S' + port + state
-	print(cmd)
-	
+
+	cmd = 'S' + port + state + '\n'
+	#print(cmd)
+	ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
+	ser.write(cmd.encode('ascii'))
+
 	return jsonify(response = 'OK')
 
 @app.route('/dashboard')
