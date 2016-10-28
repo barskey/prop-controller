@@ -6,6 +6,7 @@ if ( $( ".draggable-controller" ).length ) {
 } else {
   $( ".jumbotron" ).removeClass( "hidden" );
 }
+
 var ports = ['1', '2', 'A', 'B', 'C', 'D']; //For looping through the ports
 var toggle_output = new Object();
 toggle_output.OFF = 'ON';
@@ -20,6 +21,12 @@ toggle_classes.ON = 'fa-toggle-on';
 toggle_classes.ENABLED = 'fa-check-circle';
 toggle_classes.DISABLED = 'fa-ban';
 
+var socket = io.connect();
+socket.on('controller id', function(msg) {
+	console.log(msg.cid); //debug
+	//checkController(msg.cid); 
+});
+
 //var connectInterval = setInterval( function(){ checkController() }, 5000 );
 
 // Get a random integer between `min` and `max`.
@@ -29,11 +36,7 @@ function getRandomInt(min, max) {
 
 //Function to check if a controller is already added.
 // Identify if it is, or show modal if it isn't.
-function checkController() {
-  var cid;
-  $.get("/_check_controller", function(response) {
-    cid = response.data.cid;
-  });
+function checkController(cid) {
   if (cid == "test") {
     cid = getRandomInt(1001, 1010);
   }

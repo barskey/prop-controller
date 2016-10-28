@@ -3,28 +3,50 @@ from flask import render_template, redirect, request, jsonify, json
 from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
 import serial
 import threading, Queue
+from flask_socketio import SocketIO, emit
 
-queue = Queue.Queue()
+#queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
+#ser_port = 'COM1'
 ser_baudrate = 115200
 
-serial_port = serial.Serial(ser_port, ser_baudrate, timeout=0)
+socketio = SocketIO(app)
+
+@socketio.on('controller connected')
+def controller_connected(msg):
+	emit('controller id', {'cid': msg['cid']})
+
+@socketio.on('connect')
+def connect():
+	emit('connect', {'data': 'Client Connected'})
+
+@socketio.on('disconnect')
+def disconnect():
+	print('Client disconnected')
+
+if __name__ == '__main__':
+	socketio.run(app)
+	
+serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
 
 def handle_data(data):
 	print(data)
+	if data == "1TEST":
+		controller_connected({'cid': 1})
 
 def read_from_port(ser, connected):
 	while not connected:
-		#serin = ser.read()
 		connected = True
 
 		while True:
-			#print("test")
-			if ser.in_waiting > 0:
-				print('Reading serial data')
-				reading = ser.read(ser.in_waiting).decode('ascii')
-				#put it in the queue here
-				handle_data(reading)
+			serdata = ser.readline().decode('ascii')
+			handle_data(serdata)
+			#if ser.in_waiting > 0:
+				#print('Reading serial data')
+				#serdata = ser.read(ser.in_waiting).decode('ascii')
+				#put it in the queue here?
+				#handle_data(serdata)
+				#time.sleep(1)
 
 
 thread  = threading.Thread(target=read_from_port, args=(serial_port, False))
@@ -121,11 +143,6 @@ def add_controller():
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
 
-@app.route('/_check_controller', methods=['GET'])
-def check_controller():
-	r = {'status': 'OK', 'cid': 1}
-	return jsonify(data = r)
-
 @app.route('/rem_controller', methods=['POST'])
 def rem_controller():
 	a, cid = request.form['controller_id'].split("-")
@@ -197,10 +214,11 @@ def update_toggle():
 	elif val == 'ENABLED':
 		state = 'N'
 
-	cmd = 'S' + port + state + '\n'
+	cmd = cid + 'S' + port + state + '\n'
 	#print(cmd)
 	ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
 	ser.write(cmd.encode('ascii'))
+	ser.close
 
 	return jsonify(response = 'OK')
 
