@@ -21,12 +21,6 @@ toggle_classes.ON = 'fa-toggle-on';
 toggle_classes.ENABLED = 'fa-check-circle';
 toggle_classes.DISABLED = 'fa-ban';
 
-var socket = io.connect();
-socket.on('controller id', function(msg) {
-	console.log(msg.cid); //debug
-	//checkController(msg.cid); 
-});
-
 //var connectInterval = setInterval( function(){ checkController() }, 5000 );
 
 // Get a random integer between `min` and `max`.
@@ -39,6 +33,11 @@ function getRandomInt(min, max) {
 function checkController(cid) {
   if (cid == "test") {
     cid = getRandomInt(1001, 1010);
+  }
+  if (cid == "ping") {
+    $.get("/_ping_controller", function ( data ) {
+      
+    });
   }
   var controllerid = "controller-" + cid;
   if ( $( "#" + controllerid ).length ) { //check if this controller is already added
@@ -166,7 +165,7 @@ $( "span[id^='toggle-']" ).click(function() {
   var $i = $( this ).find( "i" );
   var arr = id.split("-"); //arr[0]='toggle', arr[1]='1/2/A/B/C/D', arr[2]=controller id
   var oldvalue = $i.attr( "data-setting" );
-  //console.log(oldvalue); //debug
+  //console.log(arr); //debug
   if (arr[1] == '1' || arr[1] == '2') {
     title = toggle_input[oldvalue] + "<br>(Click to toggle)";
 	newvalue = toggle_input[oldvalue];

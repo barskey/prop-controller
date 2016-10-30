@@ -1,38 +1,19 @@
 from app import app, db
 from flask import render_template, redirect, request, jsonify, json
 from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
-import serial
-import threading, Queue
-from flask_socketio import SocketIO, emit
+import serial, time
+import threading
 
 #queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
 #ser_port = 'COM1'
-ser_baudrate = 115200
+ser_baudrate = 9600
 
-socketio = SocketIO(app)
-
-@socketio.on('controller connected')
-def controller_connected(msg):
-	emit('controller id', {'cid': msg['cid']})
-
-@socketio.on('connect')
-def connect():
-	emit('connect', {'data': 'Client Connected'})
-
-@socketio.on('disconnect')
-def disconnect():
-	print('Client disconnected')
-
-if __name__ == '__main__':
-	socketio.run(app)
-	
 serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
 
 def handle_data(data):
-	print(data)
-	if data == "1TEST":
-		controller_connected({'cid': 1})
+	print('From serial:' + data)
+	#if data.rstrip() == '1TEST':
 
 def read_from_port(ser, connected):
 	while not connected:
@@ -40,7 +21,8 @@ def read_from_port(ser, connected):
 
 		while True:
 			serdata = ser.readline().decode('ascii')
-			handle_data(serdata)
+			if len(serdata) > 0:
+				handle_data(serdata)
 			#if ser.in_waiting > 0:
 				#print('Reading serial data')
 				#serdata = ser.read(ser.in_waiting).decode('ascii')
@@ -199,11 +181,12 @@ def update_toggle():
 	p.state = val
 	db.session.commit()
 
-	# CMD string format S1N
-	#                   012
-	# 0: S for Setup
-	# 1: 1,2,A,B,C,D for port number
-	# 2: N for On, F for Off, X for Disabled
+	# CMD string format #|S1N
+	#                   0|123
+	# 0: # Controller ID
+	# 1: S for Setup
+	# 2: 1,2,A,B,C,D for port number
+	# 3: N for On, F for Off, X for Disabled
 
 	if val == 'ON':
 		state = 'N'
@@ -214,8 +197,8 @@ def update_toggle():
 	elif val == 'ENABLED':
 		state = 'N'
 
-	cmd = cid + 'S' + port + state + '\n'
-	#print(cmd)
+	cmd = cid + ':S' + port + state + '\n'
+	print(cmd)
 	ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
 	ser.write(cmd.encode('ascii'))
 	ser.close

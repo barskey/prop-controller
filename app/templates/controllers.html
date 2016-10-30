@@ -29,7 +29,7 @@
         </ul><!-- /.dropdown-menu -->
         <li>
         	<button type="button" class="btn btn-default navbar-btn" onclick="checkController('test')">
-        	  <span class="glyphicon glyphicon-plus"></span>
+        	  <i class="fa fa-search-plus"></i>
         	</button>
         </li>
       </ul><!-- .navbar-right -->
@@ -191,7 +191,7 @@
       <h3 class="panel-title">
         <span class="controller-name">{{ c.controllername }}</span>
         <div class="pull-right" data-toggle="modal" data-target="#editControllerModal" data-cid="controller-{{ c.controller_id }}" data-ccolor="cc-{{ c.controllercolor }}" data-cname="{{ c.controllername }}">
-          <span class="glyphicon glyphicon-cog"></span>
+          <i class="fa fa-cog fa-fw"></i>
         </div>
       </h3>
     </div><!-- /.panel-heading -->
@@ -230,6 +230,12 @@
         </div>
       </li>
     </ul>
+    <div class="panel-footer">
+      Status: <span class="status">Connected</span>
+      <div class="pull-right">
+        <i class="fa fa-times-circle fa-fw text-danger"></i>
+      </div>
+    </div><!-- /.panel-footer -->
   </div><!-- /.panel #controller-{{ c.controller_id }} -->
   {% endfor %}
 </div><!-- /.dashboard -->
