@@ -2,13 +2,19 @@ from app import app, db
 from flask import render_template, redirect, request, jsonify, json, session
 from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
 import serial, time, threading
+from serial import SerialException
 
 #queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
 #ser_port = 'COM1'
 ser_baudrate = 9600
 
-serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
+serial_port = None
+
+try:
+	serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
+except SerialException:
+	print 'Could not connect to serial'
 
 def handle_data(data):
 	print('From serial:' + data)
@@ -16,9 +22,8 @@ def handle_data(data):
 	if cmd == 'C':
 		session[nodeID] = True
 
-def read_from_port(ser, connected):
-	while not connected:
-		connected = True
+def read_from_port(ser):
+	while serial_port is not None:
 
 		while True:
 			serdata = ser.readline().decode('ascii')
@@ -31,9 +36,10 @@ def read_from_port(ser, connected):
 				#handle_data(serdata)
 				#time.sleep(1)
 
-thread  = threading.Thread(target=read_from_port, args=(serial_port, False))
-thread.daemon = True
-thread.start()
+if serial_port is not None:
+	thread  = threading.Thread(target=read_from_port, args=(serial_port))
+	thread.daemon = True
+	thread.start()
 #print('Hello')
 
 #Dummy data for testing
