@@ -20,7 +20,7 @@ def handle_data(data):
 	print('From serial:' + data)
 	nodeID, cmd = data.rstring().split(':')
 	if cmd == 'C':
-		session[nodeID] = True
+		session[str(nodeID)] = True
 
 def read_from_port(ser):
 	while serial_port is not None:
@@ -29,18 +29,12 @@ def read_from_port(ser):
 			serdata = ser.readline().decode('ascii')
 			if len(serdata) > 0:
 				handle_data(serdata)
-			#if ser.in_waiting > 0:
-				#print('Reading serial data')
-				#serdata = ser.read(ser.in_waiting).decode('ascii')
-				#put it in the queue here?
-				#handle_data(serdata)
-				#time.sleep(1)
 
 if serial_port is not None:
 	thread  = threading.Thread(target=read_from_port, args=(serial_port))
 	thread.daemon = True
 	thread.start()
-#print('Hello')
+#print(serial_port)
 
 #Dummy data for testing
 projectname = "Halloween 2016"
@@ -108,18 +102,23 @@ def index():
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
 	for c in controllers:
-		session[c.id] = False
+		session[str(c.id)] = False
 	colors = Color.query.all()
 	return render_template('controllers.html', title='Controllers', projectname=projectname, controllers=[c.serialize for c in controllers], colors=[color.serialize for color in colors])
 
 @app.route('/_get_connected', methods=['GET'])
 def get_conneted():
-	return jsonify(data={'connected': session})
+	connected = []
+	for s in session:
+		connected.append({'cid': s, 'isConnected': session[s]})
+	return jsonify(data={'connected': connected})
 	
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
 	cid = request.form['cidform']
 	cname = request.form['name']
+	while Controller.query.filter_by(id=cid).count() > 0:
+		cid = int(cid) + 1
 	if Controller.query.filter(Controller.name == cname).count() > 0:
 		newname = Controller.make_unique_name(cname)
 		return jsonify(data={'status': 'NAME', 'newname': newname})
@@ -134,6 +133,8 @@ def add_controller():
 		o = Port(controller_id=cid, port=let, name=let, type='output', state='OFF')
 		db.session.add(o)
 	db.session.commit()
+	session[str(cid)] = True
+	print session
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
 
@@ -151,6 +152,9 @@ def rem_controller():
 		db.session.delete(p)
 	db.session.delete(c)
 	db.session.commit()
+	print session
+	session.pop(str(cid))
+	print session
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
 	return jsonify(data = r)
 
@@ -193,8 +197,8 @@ def update_toggle():
 	p.state = val
 	db.session.commit()
 
-	# CMD string format #|S1N
-	#                   0|123
+	# CMD string format 1:S1N
+	#                   0:123
 	# 0: # Controller ID
 	# 1: S for Setup
 	# 2: 1,2,A,B,C,D for port number
@@ -211,9 +215,13 @@ def update_toggle():
 
 	cmd = cid + ':S' + port + state + '\n'
 	print(cmd)
-	ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
-	ser.write(cmd.encode('ascii'))
-	ser.close
+	try:
+		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
+		ser.write(cmd.encode('ascii'))
+		ser.close
+	except SerialException:
+		print('Could not connect to serial port.')
+		return jsonify(response = 'Serial port error.')
 
 	return jsonify(response = 'OK')
 

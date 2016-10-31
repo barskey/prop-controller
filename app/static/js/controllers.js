@@ -21,7 +21,7 @@ toggle_classes.ON = 'fa-toggle-on';
 toggle_classes.ENABLED = 'fa-check-circle';
 toggle_classes.DISABLED = 'fa-ban';
 
-//var connectInterval = setInterval( function(){ checkController() }, 5000 );
+var connectInterval = setInterval( function(){ checkController() }, 5000 );
 
 // Get a random integer between `min` and `max`.
 function getRandomInt(min, max) {
@@ -30,23 +30,37 @@ function getRandomInt(min, max) {
 
 // Function to check if a controller is already added.
 // Identify if it is, or show modal if it isn't.
-function checkController(cid) {
-  if (($("#connectControllerModal").data('bs.modal') || {}).isShown == false) { // Don't check if modal is already shown
-    $.get("/_get_connected", function (response) {
-	  console.log(response); //debug
-    });
-  }
-  /*
-  var controllerid = "controller-" + cid;
-  if ( $( "#" + controllerid ).length ) { //check if this controller is already added
-    $( "#" + controllerid ).animateCss( "tada" );
-  } else {
+function checkController(cid = false) {
+  //console.log(cid); //debug
+  if (cid) { // if an id is passed to the function for test/debug
     $( "#cid" ).text( cid );
-	  $( "#cidform" ).val( cid );
-    $( "#connectControllerModal" ).modal("toggle");
+	$( "#cidform" ).val( cid );
+	$( "#connectControllerModal" ).modal("toggle");
+  } else {
+	  if ($( "#connectControllerModal" ).hasClass( "in" ) == false) { // Don't check if modal is already shown
+		$.get("/_get_connected", function (response) {
+		  //console.log(response.data.connected); //debug
+		  $.each( response.data.connected, function( index, value ) {
+			//console.log(value.cid, value.isConnected); //debug
+			var $controller = $( "#controller-" + value.cid );
+			if ( $controller.length ) { //check if this controller is already added
+			  $controller.find( ".status" ).html( value.isConnected ? "Connected" : "Disconnected" );
+			  $controller.find( ".status-icon" ).removeClass( "text-danger text-success" ).addClass( value.isConnected ? "text-success" : "text-danger" );
+			} else {
+			  $( "#cid" ).text( value.cid );
+			  $( "#cidform" ).val( value.cid );
+			  $( "#connectControllerModal" ).modal("toggle");
+			}
+		  });
+		});
+	  }
   }
-  */
 }
+
+function showController(cid) {
+  $( "#controller-" + cid ).animateCss( "tada" );
+}
+
 // Function to add new controller to db and to dashboard
 // (Clones template object and updates settings)
 function connectController(c) {
@@ -183,6 +197,8 @@ $( "span[id^='toggle-']" ).click(function() {
     dataType: "json",
     success: function( data ) {
       console.log(data.response); //debug
+	  var $controller = $( "#controller-" + arr[2] );
+	  $controller.find( ".status" ).html( data.response );
     },
       error: function( error ) {
       console.log(error);
@@ -246,7 +262,7 @@ $( "#connectControllerModalAddButton" ).click(function() {
 				$cntlist.empty();
 				$.each( response.data.clist, function( index, value ) {
 					$cntlist.append(
-						$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "checkController(" + value.controller_id + ")", "href": "#"} ).text( value.controllername ) )
+						$( "<li>" ).append( $( "<a>" ).attr( {"onclick": "showController(" + value.controller_id + ")", "href": "#"} ).text( value.controllername ) )
 					)
 				});
 				//console.log(response.data.controller[0]); //debug
@@ -373,7 +389,7 @@ $('#editControllerModal').on('show.bs.modal', function (event) {
   var controllerid = obj.data('cid');
   var controllername = obj.data('cname');
   var controllercolor = obj.data('ccolor');
-  console.log(controllerid);
+  //console.log(controllercolor);
   var modal = $( this );
   modal.find( '#editControllerCID' ).val( controllerid );
   modal.find( '#editControllerName' ).text( controllername );
