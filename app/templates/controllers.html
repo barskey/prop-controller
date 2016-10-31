@@ -184,6 +184,12 @@
         </div>
       </li>
     </ul><!-- list-group -->
+    <div class="panel-footer">
+      Status: <span class="status">Disconnected</span>
+      <div class="pull-right">
+        <i class="fa fa-times-circle fa-fw text-danger"></i>
+      </div>
+    </div><!-- /.panel-footer -->
   </div><!-- /.panel .template -->
   {% for c in controllers %}
   <div class="panel draggable-controller cc-{{ c.controllercolor }}" id="controller-{{ c.controller_id }}">
@@ -231,7 +237,7 @@
       </li>
     </ul>
     <div class="panel-footer">
-      Status: <span class="status">Connected</span>
+      Status: <span class="status">Disconnected</span>
       <div class="pull-right">
         <i class="fa fa-times-circle fa-fw text-danger"></i>
       </div>

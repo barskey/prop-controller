@@ -28,17 +28,15 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-//Function to check if a controller is already added.
+// Function to check if a controller is already added.
 // Identify if it is, or show modal if it isn't.
 function checkController(cid) {
-  if (cid == "test") {
-    cid = getRandomInt(1001, 1010);
-  }
-  if (cid == "ping") {
-    $.get("/_ping_controller", function ( data ) {
-      
+  if (($("#connectControllerModal").data('bs.modal') || {}).isShown == false) { // Don't check if modal is already shown
+    $.get("/_get_connected", function (response) {
+	  console.log(response); //debug
     });
   }
+  /*
   var controllerid = "controller-" + cid;
   if ( $( "#" + controllerid ).length ) { //check if this controller is already added
     $( "#" + controllerid ).animateCss( "tada" );
@@ -47,6 +45,7 @@ function checkController(cid) {
 	  $( "#cidform" ).val( cid );
     $( "#connectControllerModal" ).modal("toggle");
   }
+  */
 }
 // Function to add new controller to db and to dashboard
 // (Clones template object and updates settings)

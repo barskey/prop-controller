@@ -1,8 +1,7 @@
 from app import app, db
-from flask import render_template, redirect, request, jsonify, json
+from flask import render_template, redirect, request, jsonify, json, session
 from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
-import serial, time
-import threading
+import serial, time, threading
 
 #queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
@@ -13,7 +12,9 @@ serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
 
 def handle_data(data):
 	print('From serial:' + data)
-	#if data.rstrip() == '1TEST':
+	nodeID, cmd = data.rstring().split(':')
+	if cmd == 'C':
+		session[nodeID] = True
 
 def read_from_port(ser, connected):
 	while not connected:
@@ -29,7 +30,6 @@ def read_from_port(ser, connected):
 				#put it in the queue here?
 				#handle_data(serdata)
 				#time.sleep(1)
-
 
 thread  = threading.Thread(target=read_from_port, args=(serial_port, False))
 thread.daemon = True
@@ -101,9 +101,15 @@ def index():
 @app.route('/controllers')
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
+	for c in controllers:
+		session[c.id] = False
 	colors = Color.query.all()
 	return render_template('controllers.html', title='Controllers', projectname=projectname, controllers=[c.serialize for c in controllers], colors=[color.serialize for color in colors])
 
+@app.route('/_get_connected', methods=['GET'])
+def get_conneted():
+	return jsonify(data={'connected': session})
+	
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
 	cid = request.form['cidform']
