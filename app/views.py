@@ -23,14 +23,13 @@ def handle_data(data):
 		session[str(nodeID)] = True
 
 def read_from_port(ser):
-	while serial_port is not None:
-
+	while serial_port is None:
 		while True:
 			serdata = ser.readline().decode('ascii')
 			if len(serdata) > 0:
 				handle_data(serdata)
 
-if serial_port is not None:
+if serial_port is None:
 	thread  = threading.Thread(target=read_from_port, args=(serial_port))
 	thread.daemon = True
 	thread.start()
@@ -112,7 +111,7 @@ def get_conneted():
 	for s in session:
 		connected.append({'cid': s, 'isConnected': session[s]})
 	return jsonify(data={'connected': connected})
-	
+
 @app.route('/add_controller', methods=['POST'])
 def add_controller():
 	cid = request.form['cidform']
