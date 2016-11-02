@@ -1,5 +1,5 @@
 from app import app, db
-from flask import render_template, redirect, request, jsonify, json, session
+from flask import render_template, redirect, request, jsonify, json
 from .models import Project, Color, Triggertype, Actiontype, Controller, Port, Event, Trigger, Action, Sound
 import serial, time, threading
 from serial import SerialException
@@ -7,32 +7,38 @@ from serial import SerialException
 #queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
 #ser_port = 'COM1'
-ser_baudrate = 9600
+ser_baudrate = 115200
 
-serial_port = None
+thread_started = False
+ping_response = []
+connected = {}
 
-try:
-	serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
-except SerialException:
-	print 'Could not connect to serial'
+serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
+serial_port.reset_input_buffer()
 
 def handle_data(data):
-	print('From serial:' + data)
-	nodeID, cmd = data.rstring().split(':')
-	if cmd == 'C':
-		session[str(nodeID)] = True
+	print data
+	nodeID = ''
+	cmd = ''
+	if ':' in data:
+		nodeID, cmd = data.rstrip().split(':')
+	if nodeID is not '':
+		if cmd == 'C':
+			ping_response.append(str(nodeID))
 
 def read_from_port(ser):
-	while serial_port is None:
-		while True:
-			serdata = ser.readline().decode('ascii')
-			if len(serdata) > 0:
-				handle_data(serdata)
+	global connected
+	while True:
+		serdata = ser.readline().decode('ascii')
+		if len(serdata) > 0:
+			handle_data(serdata)
+		time.sleep(2) # process every 2 seconds so we're not ahead of incomging serial
 
-if serial_port is None:
-	thread  = threading.Thread(target=read_from_port, args=(serial_port))
-	thread.daemon = True
+thread  = threading.Thread(target=read_from_port, args=(serial_port,))
+thread.daemon = True
+if thread_started is False:
 	thread.start()
+	thread_started = True
 #print(serial_port)
 
 #Dummy data for testing
@@ -101,15 +107,30 @@ def index():
 def controllers():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
 	for c in controllers:
-		session[str(c.id)] = False
+		connected[str(c.id)] = False
 	colors = Color.query.all()
 	return render_template('controllers.html', title='Controllers', projectname=projectname, controllers=[c.serialize for c in controllers], colors=[color.serialize for color in colors])
 
 @app.route('/_get_connected', methods=['GET'])
-def get_conneted():
-	connected = []
-	for s in session:
-		connected.append({'cid': s, 'isConnected': session[s]})
+def get_connected():
+	global ping_response
+	for p in ping_response:
+		connected[p] = True
+	for c in connected:
+		if c in ping_response:
+			connected[c] = True
+		else:
+			connected[c] = False
+	#print connected
+	ping_response = []
+	cmd = 'P\n' #P for Ping
+	try:
+		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
+		ser.write(cmd.encode('ascii'))
+		ser.close
+	except SerialException:
+		print('Could not connect to serial port.')
+		return jsonify(data = 'Serial port error.')
 	return jsonify(data={'connected': connected})
 
 @app.route('/add_controller', methods=['POST'])
@@ -132,8 +153,7 @@ def add_controller():
 		o = Port(controller_id=cid, port=let, name=let, type='output', state='OFF')
 		db.session.add(o)
 	db.session.commit()
-	session[str(cid)] = True
-	print session
+	connected[str(cid)] = True
 	r = {'status':'OK', 'clist': [c.serialize for c in Controller.query.all()], 'controller': newcontroller.serialize}
 	return jsonify(data = r)
 
@@ -151,9 +171,7 @@ def rem_controller():
 		db.session.delete(p)
 	db.session.delete(c)
 	db.session.commit()
-	print session
-	session.pop(str(cid))
-	print session
+	connected.pop(str(cid))
 	r = {'status': status, 'clist': [c.serialize for c in Controller.query.all()]}
 	return jsonify(data = r)
 
@@ -213,7 +231,7 @@ def update_toggle():
 		state = 'N'
 
 	cmd = cid + ':S' + port + state + '\n'
-	print(cmd)
+	#print(cmd)
 	try:
 		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
 		ser.write(cmd.encode('ascii'))

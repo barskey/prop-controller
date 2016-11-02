@@ -34,21 +34,21 @@ function checkController(cid = false) {
   //console.log(cid); //debug
   if (cid) { // if an id is passed to the function for test/debug
     $( "#cid" ).text( cid );
-	$( "#cidform" ).val( cid );
-	$( "#connectControllerModal" ).modal("toggle");
+    $( "#cidform" ).val( cid );
+    $( "#connectControllerModal" ).modal("toggle");
   } else {
 	  if ($( "#connectControllerModal" ).hasClass( "in" ) == false) { // Don't check if modal is already shown
 		$.get("/_get_connected", function (response) {
 		  //console.log(response.data.connected); //debug
-		  $.each( response.data.connected, function( index, value ) {
-			//console.log(value.cid, value.isConnected); //debug
-			var $controller = $( "#controller-" + value.cid );
+		  $.each( response.data.connected, function( cid, isConnected ) {
+			console.log(cid, isConnected); //debug
+			var $controller = $( "#controller-" + cid );
 			if ( $controller.length ) { //check if this controller is already added
-			  $controller.find( ".status" ).html( value.isConnected ? "Connected" : "Disconnected" );
-			  $controller.find( ".status-icon" ).removeClass( "text-danger text-success" ).addClass( value.isConnected ? "text-success" : "text-danger" );
+			  $controller.find( ".status" ).html( isConnected ? "Connected" : "Disconnected" );
+			  $controller.find( ".status-icon" ).removeClass( "text-danger text-success" ).addClass( isConnected ? "text-success" : "text-danger" );
 			} else {
-			  $( "#cid" ).text( value.cid );
-			  $( "#cidform" ).val( value.cid );
+			  $( "#cid" ).text( cid );
+			  $( "#cidform" ).val( cid );
 			  $( "#connectControllerModal" ).modal("toggle");
 			}
 		  });
