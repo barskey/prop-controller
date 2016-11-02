@@ -6,40 +6,55 @@ from serial import SerialException
 
 #queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
-#ser_port = 'COM1'
+ser_port = 'COM1'
 ser_baudrate = 115200
 
 thread_started = False
-ping_response = []
 connected = {}
+serial_port = None
 
-serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
-serial_port.reset_input_buffer()
+try:
+	serial_port = serial.Serial(ser_port, ser_baudrate, timeout=1)
+	serial_port.reset_input_buffer()
+	app.logger.info('Connected to serial port.')
+except SerialException:
+	app.logger.info('Could not connect to serial port.')
 
 def handle_data(data):
+	#Expecting serial data command starting with a letter, delimited by colon
+	#C = list of connected nodes, followed by dot delimited node ids e.g. C:2.3.4
+	#I = input state from node, followed by dot delimited port and state e.g. I:2.N
+	#O = output state from node, followed by dot delimited port and state e.g. O:2:F
 	print data
-	nodeID = ''
+	type = ''
 	cmd = ''
-	if ':' in data:
-		nodeID, cmd = data.rstrip().split(':')
-	if nodeID is not '':
-		if cmd == 'C':
-			ping_response.append(str(nodeID))
+	if ':' in data: #Make sure the serial command wasn't garbled
+		type, cmd = data.rstrip().split(':')
+	if type is not '':
+		if type == 'C':
+			ping_response = cmd.split('.')
+			for c in connected:
+				if c in ping_response:
+					connected[c] = True
+				else:
+					connected[c] = False
 
 def read_from_port(ser):
 	global connected
 	while True:
 		serdata = ser.readline().decode('ascii')
 		if len(serdata) > 0:
+			app.logger.info('Serial data received: ', serdata)
 			handle_data(serdata)
-		time.sleep(2) # process every 2 seconds so we're not ahead of incomging serial
+		time.sleep(1) # process every 1 seconds so we're not ahead of incomging serial
 
-thread  = threading.Thread(target=read_from_port, args=(serial_port,))
-thread.daemon = True
-if thread_started is False:
-	thread.start()
-	thread_started = True
-#print(serial_port)
+if serial_port is not None:
+	thread  = threading.Thread(target=read_from_port, args=(serial_port,))
+	thread.daemon = True
+	if thread_started is False:
+		thread.start()
+		thread_started = True
+	#print(serial_port)
 
 #Dummy data for testing
 projectname = "Halloween 2016"
@@ -113,24 +128,6 @@ def controllers():
 
 @app.route('/_get_connected', methods=['GET'])
 def get_connected():
-	global ping_response
-	for p in ping_response:
-		connected[p] = True
-	for c in connected:
-		if c in ping_response:
-			connected[c] = True
-		else:
-			connected[c] = False
-	#print connected
-	ping_response = []
-	cmd = 'P\n' #P for Ping
-	try:
-		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
-		ser.write(cmd.encode('ascii'))
-		ser.close
-	except SerialException:
-		print('Could not connect to serial port.')
-		return jsonify(data = 'Serial port error.')
 	return jsonify(data={'connected': connected})
 
 @app.route('/add_controller', methods=['POST'])
