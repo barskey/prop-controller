@@ -24,15 +24,15 @@ def handle_data(data):
 	#Expecting serial data command starting with a letter, delimited by colon
 	#C = list of connected nodes, followed by dot delimited node ids e.g. C:2.3.4
 	#I = input state from node, followed by dot delimited port and state e.g. I:2.N
-	#O = output state from node, followed by dot delimited port and state e.g. O:2:F
+	#O = output state from node, followed by dot delimited port and state e.g. O:2.F
 	print data
-	type = ''
 	cmd = ''
+	list = ''
 	if ':' in data: #Make sure the serial command wasn't garbled
-		type, cmd = data.rstrip().split(':')
-	if type is not '':
-		if type == 'C':
-			ping_response = cmd.split('.')
+		cmd, list = data.rstrip().split(':')
+	if cmd is not '':
+		if cmd == 'C': #handle connected nodes
+			ping_response = list.split('.')
 			for c in connected:
 				if c in ping_response:
 					connected[c] = True

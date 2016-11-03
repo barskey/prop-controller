@@ -42,14 +42,16 @@ function checkController(cid = false) {
 		  //console.log(response.data.connected); //debug
 		  $.each( response.data.connected, function( cid, isConnected ) {
 			console.log(cid, isConnected); //debug
-			var $controller = $( "#controller-" + cid );
-			if ( $controller.length ) { //check if this controller is already added
-			  $controller.find( ".status" ).html( isConnected ? "Connected" : "Disconnected" );
-			  $controller.find( ".status-icon" ).removeClass( "text-danger text-success" ).addClass( isConnected ? "text-success" : "text-danger" );
-			} else {
-			  $( "#cid" ).text( cid );
-			  $( "#cidform" ).val( cid );
-			  $( "#connectControllerModal" ).modal("toggle");
+			if (cid != '1') { //don't add gateway controller
+				var $controller = $( "#controller-" + cid );
+				if ( $controller.length ) { //check if this controller is already added
+				  $controller.find( ".status" ).html( isConnected ? "Connected" : "Disconnected" );
+				  $controller.find( ".status-icon" ).removeClass( "text-danger text-success" ).addClass( isConnected ? "text-success" : "text-danger" );
+				} else {
+				  $( "#cid" ).text( cid );
+				  $( "#cidform" ).val( cid );
+				  $( "#connectControllerModal" ).modal("toggle");
+				}
 			}
 		  });
 		});
