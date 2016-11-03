@@ -22,7 +22,7 @@ except SerialException:
 
 def handle_data(data):
 	#Expecting serial data command starting with a letter, delimited by colon
-	#C = list of connected nodes, followed by dot delimited node ids e.g. C:2.3.4
+	#C = list of connected nodes, followed by dot delimited node ids e.g. C:1.2.3.4
 	#I = input state from node, followed by dot delimited port and state e.g. I:2.N
 	#O = output state from node, followed by dot delimited port and state e.g. O:2.F
 	print data
