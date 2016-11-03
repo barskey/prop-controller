@@ -6,7 +6,7 @@ from serial import SerialException
 
 #queue = Queue.Queue()
 ser_port = '/dev/cu.usbserial-FTALLYWT'
-ser_port = 'COM1'
+#ser_port = 'COM1'
 ser_baudrate = 115200
 
 thread_started = False
@@ -25,14 +25,19 @@ def handle_data(data):
 	#C = list of connected nodes, followed by dot delimited node ids e.g. C:2.3.4
 	#I = input state from node, followed by dot delimited port and state e.g. I:2.N
 	#O = output state from node, followed by dot delimited port and state e.g. O:2:F
-	print data
-	type = ''
+	cmdtype = ''
 	cmd = ''
+	#print data
 	if ':' in data: #Make sure the serial command wasn't garbled
-		type, cmd = data.rstrip().split(':')
-	if type is not '':
-		if type == 'C':
+		cmdtype, cmd = data.rstrip().split(':')
+	else:
+		cmdtype = data.rstrip()
+	if cmdtype is not '':
+		if cmdtype == 'C':
 			ping_response = cmd.split('.')
+			for p in ping_response:
+				if p is not '':
+					connected[p] = True
 			for c in connected:
 				if c in ping_response:
 					connected[c] = True
@@ -43,8 +48,10 @@ def read_from_port(ser):
 	global connected
 	while True:
 		serdata = ser.readline().decode('ascii')
+		#print serdata
 		if len(serdata) > 0:
-			app.logger.info('Serial data received: ', serdata)
+			#app.logger.info('Serial data received:')
+			#app.logger.info(serdata)
 			handle_data(serdata)
 		time.sleep(1) # process every 1 seconds so we're not ahead of incomging serial
 
