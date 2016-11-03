@@ -27,12 +27,12 @@ def handle_data(data):
 	#O = output state from node, followed by dot delimited port and state e.g. O:2.F
 	print data
 	cmd = ''
-	list = ''
+	cmd_list = ''
 	if ':' in data: #Make sure the serial command wasn't garbled
-		cmd, list = data.rstrip().split(':')
+		cmd, cmd_list = data.rstrip().split(':')
 	if cmd is not '':
 		if cmd == 'C': #handle connected nodes
-			ping_response = list.split('.')
+			ping_response = cmd_list.split('.')
 			for p in ping_response:
 				if p is not '':
 					connected[p] = True
