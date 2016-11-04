@@ -10,7 +10,7 @@ ser_port = '/dev/cu.usbserial-FTALLYWT'
 ser_baudrate = 115200
 
 thread_started = False
-connected = {}
+connected = {'1': False}
 serial_port = None
 
 try:
