@@ -6,6 +6,7 @@ if ( $( ".draggable-controller" ).length ) {
 } else {
   $( ".jumbotron" ).removeClass( "hidden" );
 }
+var been_warned = false;
 
 var ports = ['1', '2', 'A', 'B', 'C', 'D']; //For looping through the ports
 var toggle_output = new Object();
@@ -41,11 +42,20 @@ function checkController(cid = false) {
 		$.get("/_get_connected", function (response) {
 		  //console.log(response.data.connected); //debug
 		  $.each( response.data.connected, function( cid, isConnected ) {
-  			console.log(cid, isConnected); //debug
   			if (cid == '1') { //warn if gateway controller isn't connected
-          if (!isConnected) {
-            $alert = $( "<div>" ).addClass( "alert alert-warning" ).html( "Warning - Gateway controller not connected." );
-            $( ".alert-container" ).append( $alert );
+          if (!isConnected && !been_warned) {
+            //console.log($( ".alert-container" ).find( ".alert" ).length);
+            if ($( ".alert-container" ).find( ".alert" ).length == 0) {
+              alert =
+                '<div class="alert alert-warning alert-dismissible" role="alert">' +
+                  '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                  '<i class="fa fa-exclamation-triangle"></i>' +
+                  '&nbsp;&nbsp;Cannot connect to gateway controller.' +
+                '</div>';
+              $alert = $( ".alert-container" ).append( alert );
+              $alert.animateCss( "fadeInDown" );
+              been_warned = true;
+            }
           }
         } else {
   				var $controller = $( "#controller-" + cid );
