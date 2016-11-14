@@ -82,6 +82,7 @@
             <th class="id">id</th>
             <th>name</th>
             <th>type</th>
+            <th>cmd</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -91,6 +92,7 @@
             <td class="id">{{ tt.id }}</td>
             <td>{{ tt.name }}</td>
             <td>{{ tt.type }}</td>
+            <td>{{ tt.cmd }}</td>
             <td><i class="fa fa-times" id="triggertype-{{ tt.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}
@@ -103,6 +105,7 @@
             <th class="id">id</th>
             <th>name</th>
             <th>type</th>
+            <th>cmd</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
@@ -112,6 +115,7 @@
             <td class="id">{{ a.id }}</td>
             <td>{{ a.name }}</td>
             <td>{{ a.type }}</td>
+            <td>{{ a.cmd }}</td>
             <td><i class="fa fa-times" id="actiontype-{{ a.id }}" style="color:red;"></td>
           </tr>
           {% endfor %}

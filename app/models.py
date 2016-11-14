@@ -41,6 +41,7 @@ class Triggertype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	type = db.Column(db.String(10))
 	name = db.Column(db.String(25))
+	cmd = db.Column(db.String(1))
 
 	@property
 	def serialize(self):
@@ -48,20 +49,23 @@ class Triggertype(db.Model):
 		return {
 			'id': self.id,
 			'name': self.name,
-			'type': self.type
+			'type': self.type,
+			'cmd': self.cmd
 		}
 
 class Actiontype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	type = db.Column(db.String(10))
 	name = db.Column(db.String(25))
+	cmd = db.Column(db.String(1))
 
 	@property
 	def serialize(self):
 		return{
 			'id': self.id,
 			'name': self.name,
-			'type': self.type
+			'type': self.type,
+			'cmd': self.cmd
 		}
 
 class Controller(db.Model):
@@ -155,7 +159,8 @@ class Event(db.Model):
 		'Action',
 		secondary = event_actions,
 		backref = db.backref('events', lazy='dynamic'),
-		lazy = 'dynamic')
+		lazy = 'dynamic',
+		order_by = 'Action.order')
 
 	def get_id(self):
 		try:
@@ -247,7 +252,7 @@ class Trigger(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	input_id = db.Column(db.Integer, db.ForeignKey('port.id'))
 	triggertype_id = db.Column(db.Integer, db.ForeignKey('triggertype.id'), default=0)
-	param1 = db.Column(db.String(8), default='0')
+	param1 = db.Column(db.String(8), default='ON')
 	param2 = db.Column(db.String(8), default='0')
 
 	@property

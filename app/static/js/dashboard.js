@@ -156,6 +156,7 @@ $( ".add-action" ).click(function() {
     	$action.find( ".output_id" ).attr( "name", actionid + "-output_id");
     	$action.find( ".param1" ).attr( "name", actionid + "-param1");
     	$action.find( ".sound_id" ).attr( "name", actionid + "-sound_id");
+      $action.find( "i.delete-action" ).attr( {"data-actionid": actionid, "data-eventid": eventid } );
 
       $actionlist.append( $action );
       $action.animateCss( "fadeInRight" );

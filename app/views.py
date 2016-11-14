@@ -80,17 +80,17 @@ colors = [
 	{'id': '10', 'name': 'salmon', 'hex': '#fa8072'}
 ]
 triggertypes = [
-	{'id': '0', 'type': 'input', 'name': 'Input'},
-	{'id': '1', 'type': 'interval', 'name': 'Every'},
-	{'id': '2', 'type': 'random', 'name': 'Randomly'},
-	{'id': '3', 'type': 'event', 'name': 'Event'}
+	{'id': '0', 'type': 'input', 'name': 'Input', 'cmd': 'I'},
+	{'id': '1', 'type': 'interval', 'name': 'Every', 'cmd': 'E'},
+	{'id': '2', 'type': 'random', 'name': 'Randomly', 'cmd': 'R'},
+	{'id': '3', 'type': 'event', 'name': 'Event', 'cmd': 'V'}
 ]
 actiontypes = [
-	{'id': '0', 'type': 'on', 'name': 'Turn On'},
-	{'id': '1', 'type': 'off', 'name': 'Turn Off'},
-	{'id': '2', 'type': 'toggle', 'name': 'Toggle'},
-	{'id': '3', 'type': 'blink', 'name': 'Blink'},
-	{'id': '4', 'type': 'sound', 'name': 'Play Sound'}
+	{'id': '0', 'type': 'on', 'name': 'Turn On', 'cmd': 'N'},
+	{'id': '1', 'type': 'off', 'name': 'Turn Off', 'cmd': 'F'},
+	{'id': '2', 'type': 'toggle', 'name': 'Toggle', 'cmd': 'T'},
+	{'id': '3', 'type': 'blink', 'name': 'Blink', 'cmd': 'B'},
+	{'id': '4', 'type': 'sound', 'name': 'Play Sound', 'cmd': 'S'}
 ]
 sounds = [
 	{'id': '1', 'name': 'Scream'},
@@ -99,11 +99,47 @@ sounds = [
 	{'id': '4', 'name': 'Ghost'}
 ]
 
+def send_events():
+	events = Event.query.filter_by(project_id=projectid)
+	#Build command for sending via serial in this format:
+	# E=trigger;action1:action2:etc
+	# E= for Event command
+	# trigger = type.cid.port.param1.param2
+	# action = delay.cid.type.port.param
+	for e in events:
+		cmd = None
+		has_actions = False
+		for t in e.triggers:
+			port = Port.query.get(t.input_id)
+			tt = Triggertype.query.get(t.triggertype_id)
+			cmds = (tt.cmd, str(port.controller_id), port.port, t.param1, t.param2)
+			cmd = 'E=' + '.'.join(cmds) + ';'
+		for a in e.actions:
+			has_actions = True
+			port = Port.query.get(a.output_id)
+			at = Actiontype.query.get(a.actiontype_id)
+			cmds = (a.delay, str(port.controller_id), at.cmd, port.port, a.param1)
+			cmd = cmd + '.'.join(cmds) + ':'
+		if cmd is not None and has_actions is True:
+			cmd = cmd + '\n'
+			write_to_serial(cmd)
+			time.sleep(.005) #give a little delay to allow the gateway to process ?
+
+def write_to_serial(cmd):
+	try:
+		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
+		ser.write(cmd.encode('ascii'))
+		ser.close
+		return True
+	except SerialException:
+		print('Could not connect to serial port.')
+		return False
+
 @app.route('/')
 def index():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
 	if controllers.count() == 0:
-		return redirect("/controllers")
+		return redirect('/controllers')
 	triggers = []
 	outputs = []
 	for c in controllers:
@@ -216,9 +252,9 @@ def update_toggle():
 	p.state = val
 	db.session.commit()
 
-	# CMD string format 1:S1N
-	#                   0:123
-	# 0: # Controller ID
+	# CMD string format S=0:123
+	# S=: for Setup command
+	# 0: # for Controller ID
 	# 1: S for Setup
 	# 2: 1,2,A,B,C,D for port number
 	# 3: N for On, F for Off, X for Disabled
@@ -232,14 +268,9 @@ def update_toggle():
 	elif val == 'ENABLED':
 		state = 'N'
 
-	cmd = cid + ':S' + port + state + '\n'
+	cmd = 'S=' + cid + ':S' + port + state + '\n'
 	#print(cmd)
-	try:
-		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
-		ser.write(cmd.encode('ascii'))
-		ser.close
-	except SerialException:
-		print('Could not connect to serial port.')
+	if write_to_serial(cmd) is False:
 		return jsonify(response = 'Serial port error.')
 
 	return jsonify(response = 'OK')
@@ -285,6 +316,8 @@ def add_event():
 	na = newevent.add_action(a)
 	db.session.add(na)
 	db.session.commit()
+
+	send_events()
 
 	r = {'status':'OK', 'elist': [e.serialize for e in Event.query.all()], 'newevent': newevent.serialize}
 	return jsonify(data = r)
@@ -337,6 +370,8 @@ def update_event():
 			a.sound_id = request.form[thisaction + '-sound_id']
 		db.session.commit()
 
+	send_events()
+
 	event = e.serialize
 	r = {'status': 'OK', 'eventlist': [e.serialize for e in Event.query.all()], 'event': event}
 	return jsonify(data = r)
@@ -346,12 +381,16 @@ def add_action():
 	x, eid = request.form['eid'].split("-")
 	event = Event.query.get(eid)
 	next_order = event.actions.count() + 1
-	a = Action(order=next_order)
+	p = Port.query.filter_by(type='output').first()
+	a = Action(output_id=p.id, order=next_order)
 	db.session.add(a)
 	db.session.commit()
 	na = event.add_action(a)
 	db.session.add(na)
 	db.session.commit()
+
+	send_events()
+
 	r = {'status':'OK', 'action': a.serialize}
 	return jsonify(response = r)
 
@@ -366,6 +405,9 @@ def delete_action():
 	db.session.commit()
 	db.session.delete(a)
 	db.session.commit()
+
+	send_events()
+
 	r = {'status':'OK'}
 	return jsonify(data = r)
 
@@ -379,6 +421,9 @@ def update_action_order():
 		a.order = i
 		db.session.commit()
 		i += 1
+
+	send_events()
+
 	r = {'status':'OK'}
 	return jsonify(data = r)
 
@@ -398,6 +443,9 @@ def delete_event():
 		db.session.commit()
 	db.session.delete(e)
 	db.session.commit()
+
+	send_events()
+
 	r = {'status':'OK', 'eventlist': [e.serialize for e in Event.query.all()]}
 	return jsonify(data = r)
 
@@ -445,7 +493,7 @@ def init_setup():
 	db.session.commit()
 
 	for a in actiontypes:
-		actiontype = Actiontype(id=a['id'], name=a['name'], type=a['type'])
+		actiontype = Actiontype(id=a['id'], name=a['name'], type=a['type'], cmd=a['cmd'])
 		db.session.add(actiontype)
 	db.session.commit()
 
@@ -456,7 +504,7 @@ def init_setup():
 	db.session.commit()
 
 	for t in triggertypes:
-		triggertype = Triggertype(id=t['id'], name=t['name'], type=t['type'])
+		triggertype = Triggertype(id=t['id'], name=t['name'], type=t['type'], cmd=t['cmd'])
 		db.session.add(triggertype)
 	db.session.commit()
 
