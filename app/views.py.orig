@@ -23,8 +23,8 @@ except SerialException:
 def handle_data(data):
 	#Expecting serial data command starting with a letter, delimited by colon
 	#C = list of connected nodes, followed by dot delimited node ids e.g. C:1.2.3.4
-	#I = input state from node, followed by port and state e.g. I:2N
-	#O = output state from node, followed by port and state e.g. O:2F
+	#I = input state from node, followed by dot delimited port and state e.g. I:2.N
+	#O = output state from node, followed by dot delimited port and state e.g. O:2.F
 	print data
 	cmd = ''
 	cmd_list = ''
@@ -80,6 +80,19 @@ colors = [
 	{'id': '10', 'name': 'salmon', 'hex': '#fa8072'}
 ]
 triggertypes = [
+<<<<<<< .merge_file_MkEEqN
+	{'id': '0', 'type': 'input', 'name': 'Input'},
+	{'id': '1', 'type': 'interval', 'name': 'Every'},
+	{'id': '2', 'type': 'random', 'name': 'Randomly'},
+	{'id': '3', 'type': 'event', 'name': 'Event'}
+]
+actiontypes = [
+	{'id': '0', 'type': 'on', 'name': 'Turn On'},
+	{'id': '1', 'type': 'off', 'name': 'Turn Off'},
+	{'id': '2', 'type': 'toggle', 'name': 'Toggle'},
+	{'id': '3', 'type': 'blink', 'name': 'Blink'},
+	{'id': '4', 'type': 'sound', 'name': 'Play Sound'}
+=======
 	{'id': '0', 'type': 'input', 'name': 'Input', 'cmd': 'I'},
 	{'id': '1', 'type': 'interval', 'name': 'Every', 'cmd': 'E'},
 	{'id': '2', 'type': 'random', 'name': 'Randomly', 'cmd': 'R'},
@@ -91,6 +104,7 @@ actiontypes = [
 	{'id': '2', 'type': 'toggle', 'name': 'Toggle', 'cmd': 'T'},
 	{'id': '3', 'type': 'blink', 'name': 'Blink', 'cmd': 'B'},
 	{'id': '4', 'type': 'sound', 'name': 'Play Sound', 'cmd': 'S'}
+>>>>>>> .merge_file_GgTivx
 ]
 sounds = [
 	{'id': '1', 'name': 'Scream'},
@@ -99,6 +113,8 @@ sounds = [
 	{'id': '4', 'name': 'Ghost'}
 ]
 
+<<<<<<< .merge_file_MkEEqN
+=======
 def send_events():
 	events = Event.query.filter_by(project_id=projectid)
 	#Build command for sending via serial in this format:
@@ -135,11 +151,16 @@ def write_to_serial(cmd):
 		print('Could not connect to serial port.')
 		return False
 
+>>>>>>> .merge_file_GgTivx
 @app.route('/')
 def index():
 	controllers = Controller.query.filter(Controller.project_id==projectid)
 	if controllers.count() == 0:
+<<<<<<< .merge_file_MkEEqN
+		return redirect("/controllers")
+=======
 		return redirect('/controllers')
+>>>>>>> .merge_file_GgTivx
 	triggers = []
 	outputs = []
 	for c in controllers:
@@ -252,9 +273,15 @@ def update_toggle():
 	p.state = val
 	db.session.commit()
 
+<<<<<<< .merge_file_MkEEqN
+	# CMD string format 1:S1N
+	#                   0:123
+	# 0: # Controller ID
+=======
 	# CMD string format S=0:123
 	# S=: for Setup command
 	# 0: # for Controller ID
+>>>>>>> .merge_file_GgTivx
 	# 1: S for Setup
 	# 2: 1,2,A,B,C,D for port number
 	# 3: N for On, F for Off, X for Disabled
@@ -268,9 +295,20 @@ def update_toggle():
 	elif val == 'ENABLED':
 		state = 'N'
 
+<<<<<<< .merge_file_MkEEqN
+	cmd = cid + ':S' + port + state + '\n'
+	#print(cmd)
+	try:
+		ser = serial.Serial(ser_port, ser_baudrate, timeout=0)
+		ser.write(cmd.encode('ascii'))
+		ser.close
+	except SerialException:
+		print('Could not connect to serial port.')
+=======
 	cmd = 'S=' + cid + ':S' + port + state + '\n'
 	#print(cmd)
 	if write_to_serial(cmd) is False:
+>>>>>>> .merge_file_GgTivx
 		return jsonify(response = 'Serial port error.')
 
 	return jsonify(response = 'OK')
@@ -317,8 +355,11 @@ def add_event():
 	db.session.add(na)
 	db.session.commit()
 
+<<<<<<< .merge_file_MkEEqN
+=======
 	send_events()
 
+>>>>>>> .merge_file_GgTivx
 	r = {'status':'OK', 'elist': [e.serialize for e in Event.query.all()], 'newevent': newevent.serialize}
 	return jsonify(data = r)
 
@@ -370,8 +411,11 @@ def update_event():
 			a.sound_id = request.form[thisaction + '-sound_id']
 		db.session.commit()
 
+<<<<<<< .merge_file_MkEEqN
+=======
 	send_events()
 
+>>>>>>> .merge_file_GgTivx
 	event = e.serialize
 	r = {'status': 'OK', 'eventlist': [e.serialize for e in Event.query.all()], 'event': event}
 	return jsonify(data = r)
@@ -381,16 +425,23 @@ def add_action():
 	x, eid = request.form['eid'].split("-")
 	event = Event.query.get(eid)
 	next_order = event.actions.count() + 1
+<<<<<<< .merge_file_MkEEqN
+	a = Action(order=next_order)
+=======
 	p = Port.query.filter_by(type='output').first()
 	a = Action(output_id=p.id, order=next_order)
+>>>>>>> .merge_file_GgTivx
 	db.session.add(a)
 	db.session.commit()
 	na = event.add_action(a)
 	db.session.add(na)
 	db.session.commit()
+<<<<<<< .merge_file_MkEEqN
+=======
 
 	send_events()
 
+>>>>>>> .merge_file_GgTivx
 	r = {'status':'OK', 'action': a.serialize}
 	return jsonify(response = r)
 
@@ -405,9 +456,12 @@ def delete_action():
 	db.session.commit()
 	db.session.delete(a)
 	db.session.commit()
+<<<<<<< .merge_file_MkEEqN
+=======
 
 	send_events()
 
+>>>>>>> .merge_file_GgTivx
 	r = {'status':'OK'}
 	return jsonify(data = r)
 
@@ -421,9 +475,12 @@ def update_action_order():
 		a.order = i
 		db.session.commit()
 		i += 1
+<<<<<<< .merge_file_MkEEqN
+=======
 
 	send_events()
 
+>>>>>>> .merge_file_GgTivx
 	r = {'status':'OK'}
 	return jsonify(data = r)
 
@@ -443,9 +500,12 @@ def delete_event():
 		db.session.commit()
 	db.session.delete(e)
 	db.session.commit()
+<<<<<<< .merge_file_MkEEqN
+=======
 
 	send_events()
 
+>>>>>>> .merge_file_GgTivx
 	r = {'status':'OK', 'eventlist': [e.serialize for e in Event.query.all()]}
 	return jsonify(data = r)
 
@@ -493,7 +553,11 @@ def init_setup():
 	db.session.commit()
 
 	for a in actiontypes:
+<<<<<<< .merge_file_MkEEqN
+		actiontype = Actiontype(id=a['id'], name=a['name'], type=a['type'])
+=======
 		actiontype = Actiontype(id=a['id'], name=a['name'], type=a['type'], cmd=a['cmd'])
+>>>>>>> .merge_file_GgTivx
 		db.session.add(actiontype)
 	db.session.commit()
 
@@ -504,7 +568,11 @@ def init_setup():
 	db.session.commit()
 
 	for t in triggertypes:
+<<<<<<< .merge_file_MkEEqN
+		triggertype = Triggertype(id=t['id'], name=t['name'], type=t['type'])
+=======
 		triggertype = Triggertype(id=t['id'], name=t['name'], type=t['type'], cmd=t['cmd'])
+>>>>>>> .merge_file_GgTivx
 		db.session.add(triggertype)
 	db.session.commit()
 
