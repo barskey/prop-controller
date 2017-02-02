@@ -269,6 +269,7 @@ void loop() {
   }
 }
 
+// Runs all the actions in a given event
 void RunActions(PCEvent* event)
 {
   int count = 0;
@@ -280,10 +281,15 @@ void RunActions(PCEvent* event)
     if (at == "N") {
       bool turn_to_state = this_action->GetState();
       String port_name = this_action->GetPort();
+      String cmd = "O" + port_name + (turn_to_state ? "N" : "F");
       int cid = this_action->GetCID();
+      radio.sendWithRetry(cid, cmd, 4, 0));
     } else if (at == "B") {
       String port_name = this_action->GetPort();
+      int blink_ms = this_action->Get
+      String cmd = "O" + port_name + ("B") + ;
       int cid = this_action->GetCID();
+      radio.sendWithRetry(cid, cmd, 4, 0));
     } else if (at == "T") {
       String port_name = this_action->GetPort();
       int cid = this_action->GetCID();
@@ -292,6 +298,7 @@ void RunActions(PCEvent* event)
     }
   }
 }
+
 
 // Function that returns a single String separated by a predefined character at a given index
 // Returns empty string "" if none found

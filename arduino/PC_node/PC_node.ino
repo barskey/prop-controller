@@ -371,7 +371,7 @@ void loop() {
       // 0: O for Output
       // 1: A, B, C, D port number
       // 2: N for On, F for Off
-      // 3-7: ABCDE hex for blink cycle time
+      // 3-#: blink cycle time in ms
       char port = radio.DATA[1];
       char state = radio.DATA[2];
       char hex[5] = {radio.DATA[3], radio.DATA[4], radio.DATA[5], radio.DATA[6], radio.DATA[7]};
