@@ -276,26 +276,32 @@ void RunActions(PCEvent* event)
   PCAction* this_action = event->GetAction(0); // get the first action on this trigger
   while (this_action != NULL)
   {
+    String cmd = "";
     int delay_in_ms = this_action->GetDelay();
     String at = this_action->GetType();
     if (at == "N") {
       bool turn_to_state = this_action->GetState();
       String port_name = this_action->GetPort();
-      String cmd = "O" + port_name + (turn_to_state ? "N" : "F");
+      cmd = "O" + port_name + (turn_to_state ? "N" : "F");
       int cid = this_action->GetCID();
-      radio.sendWithRetry(cid, cmd, 4, 0));
     } else if (at == "B") {
       String port_name = this_action->GetPort();
       int blink_ms = this_action->Get
-      String cmd = "O" + port_name + ("B") + ;
+      cmd = "O" + port_name + "B" + String(blink_ms);
       int cid = this_action->GetCID();
       radio.sendWithRetry(cid, cmd, 4, 0));
     } else if (at == "T") {
       String port_name = this_action->GetPort();
       int cid = this_action->GetCID();
+      cmd = "O" + port_name + "T";
     } else if (at == "S") {
       //play sound here
     }
+    if (cmd != "") {
+      radio.sendWithRetry(cid, cmd, 4, 0));
+    }
+    count++; // increment the counter to get the next action
+    this_action = event->GetAction(count);
   }
 }
 
