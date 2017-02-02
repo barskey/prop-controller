@@ -269,17 +269,26 @@ void loop() {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Runs all the actions in a given event
+>>>>>>> 6e0d4c4d4149bd848f25b71536eb871b221ba634
 void RunActions(PCEvent* event)
 {
   int count = 0;
   PCAction* this_action = event->GetAction(0); // get the first action on this trigger
   while (this_action != NULL)
   {
+<<<<<<< HEAD
+=======
+    String cmd = "";
+>>>>>>> 6e0d4c4d4149bd848f25b71536eb871b221ba634
     int delay_in_ms = this_action->GetDelay();
     String at = this_action->GetType();
     if (at == "N") {
       bool turn_to_state = this_action->GetState();
       String port_name = this_action->GetPort();
+<<<<<<< HEAD
       int cid = this_action->GetCID();
     } else if (at == "B") {
       String port_name = this_action->GetPort();
@@ -293,6 +302,32 @@ void RunActions(PCEvent* event)
   }
 }
 
+=======
+      cmd = "O" + port_name + (turn_to_state ? "N" : "F");
+      int cid = this_action->GetCID();
+    } else if (at == "B") {
+      String port_name = this_action->GetPort();
+      int blink_ms = this_action->Get
+      cmd = "O" + port_name + "B" + String(blink_ms);
+      int cid = this_action->GetCID();
+      radio.sendWithRetry(cid, cmd, 4, 0));
+    } else if (at == "T") {
+      String port_name = this_action->GetPort();
+      int cid = this_action->GetCID();
+      cmd = "O" + port_name + "T";
+    } else if (at == "S") {
+      //play sound here
+    }
+    if (cmd != "") {
+      radio.sendWithRetry(cid, cmd, 4, 0));
+    }
+    count++; // increment the counter to get the next action
+    this_action = event->GetAction(count);
+  }
+}
+
+
+>>>>>>> 6e0d4c4d4149bd848f25b71536eb871b221ba634
 // Function that returns a single String separated by a predefined character at a given index
 // Returns empty string "" if none found
 String getValue(String data, char separator, int index)
@@ -335,4 +370,8 @@ void serialEvent() {
       inputString += inChar;    
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 6e0d4c4d4149bd848f25b71536eb871b221ba634
