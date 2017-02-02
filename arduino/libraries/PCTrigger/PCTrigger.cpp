@@ -16,7 +16,7 @@ PCTrigger::PCTrigger(int controller_id, int controller_port, bool port_state)
 	_controller_id = controller_id;
 	_controller_port = controller_port;
 	_port_state = port_state;
-	_type = INPUT_TT;
+	_type = 'I';
 	
 	Reset();
 }
@@ -27,7 +27,7 @@ PCTrigger::PCTrigger(int controller_id, int controller_port, bool port_state)
 PCTrigger::PCTrigger(int repeat_in_ms)
 {
 	_timer_value = repeat_in_ms;
-	_type = EVERY_TT;
+	_type = 'E';
 	
 	Reset();
 }
@@ -39,7 +39,7 @@ PCTrigger::PCTrigger(int random_from, int random_to)
 {
 	_random_from = random_from;
 	_random_to = random_to;
-	_type = RANDOM_TT;
+	_type = 'R';
 	
 	Reset();
 }
@@ -50,7 +50,7 @@ PCTrigger::PCTrigger(int random_from, int random_to)
 PCTrigger::PCTrigger(int event_id, bool junk)
 {
 	_event_id = event_id;
-	_type = EVENT_TT;
+	_type = 'E';
 	
 	Reset();
 }
@@ -66,8 +66,28 @@ void PCTrigger::Update()
 	}
 }
 
+char PCTrigger::GetType()
+{
+	return _type;
+}
+
+bool PCTrigger::GetState()
+{
+	return _port_state;
+}
+
+int PCTrigger::GetPort()
+{
+	return _controller_port;
+}
+
+void PCTrigger::SetTriggered()
+{
+	_trigger_state = true;
+}
+
 /*
-* Returns true when this trigger was fired
+* Returns current triggered state
 */
 bool PCTrigger::IsTriggered()
 {
@@ -76,7 +96,7 @@ bool PCTrigger::IsTriggered()
 
 void PCTrigger::TimerFired()
 {
-	_trigger_state = true;
+	SetTriggered();
 }
 
 void PCTrigger::Reset()
@@ -85,12 +105,12 @@ void PCTrigger::Reset()
 	
 	_prev_millis = elapsed();
 	
-	if (_type == RANDOM_TT) { // set timer value to a random value each time it runs
-		_timer_value = GetRandTimer();
+	if (_type == 'R') { // set timer value to a random value each time it runs
+		_timer_value = MakeRandTime();
 	}
 }
 
-int PCTrigger::GetRandTimer()
+int PCTrigger::MakeRandTime()
 {
 	return (rand() % (_random_to - _random_from) + _random_from);
 }

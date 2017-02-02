@@ -10,13 +10,6 @@
 
 #include <SimpleTimer.h>
 
-enum TriggerType {
-	INPUT_TT,
-	EVERY_TT,
-	RANDOM_TT,
-	EVENT_TT
-};
-
 class PCTrigger
 {
 	public:
@@ -26,6 +19,14 @@ class PCTrigger
 		PCTrigger(int random_from, int random_to); // Randomnly every xx ms between from and to
 		PCTrigger(int event_id, bool junk); // After Event completes (junk bool added to keep constructor unique)
 
+		// getters
+		char GetType();
+		bool GetState();
+		int GetPort();
+		
+		// setters
+		void SetTriggered();
+		
 		// Updates this trigger each loop iteration (tick)
 		void Update();
 		
@@ -42,16 +43,16 @@ class PCTrigger
 		int _random_from; // value in ms for lower range of random trigger
 		int _random_to; // value in ms for upper range of random trigger
 		int _event_id; // event id after which this trigger will fire
-		TriggerType _type; // what type of trigger this is
+		char _type; // what type of trigger this is
 
 		int _timer_value; // time in ms to fire timer
 		bool _trigger_state = false; // Whether this trigger has fired or not
 		unsigned long _prev_millis; // stores time in ms that timer was started
 
-		// Sets random value for setting timer
-		int GetRandTimer(); 
+		// Returns random value for setting timer
+		int MakeRandTime(); 
 		
-		// Handle events to occure when timer fires
+		// Handle events to occur when timer fires
 		void TimerFired();
 };
 

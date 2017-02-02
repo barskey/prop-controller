@@ -44,9 +44,10 @@ SimpleTimer timer;
 
 struct Node {
   bool is_connected;
-  bool input1_state;
-  bool input2_state;
+  bool input_state[3]; // 0=unused, 1=port1, 2=port2
 };
+// Array to hold controller ids of connected nodes
+// NOTE hard coded to MAX of 100 nodes, must ensure node id is <100
 Node nodes_connected[MAX_NODES];
 
 // Array to hold pointers to events where array index is event_id
@@ -228,21 +229,17 @@ void loop() {
 
     //Serial.println(radio.DATA); // Send radio data to pi serial
 
-    if (radio.DATA[0]=='C') // check if the message starts with 'C' for Connect
+    if (radio.DATA[0]=='C') // if the message starts with 'C' for Connect
     {
       nodes_connected[inputNode].is_connected = true;
       timer.setTimer(3, Blink, 2); //Blink once at 3ms
     }
-    else if (radio.DATA[0] == 'I') // check if the message starts with 'I' for Input
+    else if (radio.DATA[0] == 'I') // if the message starts with 'I' for Input
     {
-      if (radio.DATA[2] == '1') // for input 1
-      {
-        nodes_connected[inputNode].input1_state = (radio.DATA[3] == 'F' ? false : true);
-      }
-      else if (radio.DATA[2] == '2') // for input 2
-      {
-        nodes_connected[inputNode].input1_state = (radio.DATA[3] == 'N' ? true : false);
-      }
+      int portnum;
+      if (radio.DATA[2] == '1') { portnum = 1; }
+      if (radio.DATA[2] == '2') { portnum = 2; }
+      nodes_connected[inputNode].input_state[portnum] = (radio.DATA[3] == 'N' ? true : false);
     }
     
     if (radio.ACKRequested())
@@ -260,16 +257,29 @@ void loop() {
     PCEvent* event_ptr;
     if (event_ptr = events[i]) // if an event with this id exists (non NULL in array)
     {
-      event_ptr->GetTrigger()->Update(); // Update the triggers (tick)
-      if (event_ptr->GetTrigger()->IsTriggered()) { // if trigger has fired
-        RunActions(event_ptr); // run the actions in this event
-        event_ptr->GetTrigger()->Reset(); // reset the trigger to its non-triggered state
+      PCTrigger* trigger_ptr = event_ptr->GetTrigger(); // get the trigger for this event
+      if (trigger_ptr) { // protect the pointer
+        if (trigger_ptr->GetType() == 'I') { // if this is an input trigger
+          if (nodes_connected[i].input_state[trigger_ptr->GetPort()] == trigger_ptr->GetState()) { // if this input should be triggered
+            trigger_ptr->SetTriggered();
+          }
+        }
+        event_ptr->GetTrigger()->Update(); // Update the triggers (tick)
+        if (event_ptr->GetTrigger()->IsTriggered()) { // if trigger has fired
+          RunActions(event_ptr); // run the actions in this event
+          event_ptr->GetTrigger()->Reset(); // reset the trigger to its non-triggered state
+        }
       }
     }
   }
 }
 
 // Runs all the actions in a given event
+// Actions send via radio string in the format: OAN????
+// O for Output
+// A,B,C,D for port name
+// N,F,B,T,S for On, Off, Blink, Toggle, Sound
+// ??? for cycle time in ms for blinking
 void RunActions(PCEvent* event)
 {
   int count = 0;
@@ -278,27 +288,26 @@ void RunActions(PCEvent* event)
   {
     String cmd = "";
     int delay_in_ms = this_action->GetDelay();
+    int cid = this_action->GetCID();
     String at = this_action->GetType();
     if (at == "N") {
-      int cid = this_action->GetCID();
       bool turn_to_state = this_action->GetState();
       String port_name = this_action->GetPort();
       cmd = "O" + port_name + (turn_to_state ? "N" : "F");
     } else if (at == "B") {
-      int cid = this_action->GetCID();
       String port_name = this_action->GetPort();
-      int blink_ms = this_action->Get
+      int blink_ms = this_action->GetCycleTime();
       cmd = "O" + port_name + "B" + String(blink_ms);
-      radio.sendWithRetry(cid, cmd, 4, 0));
-    } else if (at == "T") {
-      int cid = this_action->GetCID();
+   } else if (at == "T") {
       String port_name = this_action->GetPort();
       cmd = "O" + port_name + "T";
     } else if (at == "S") {
       //play sound here
     }
     if (cmd != "") {
-      radio.sendWithRetry(cid, cmd, 4, 0));
+      char sendCmd[cmd.length()];
+      cmd.toCharArray(sendCmd, cmd.length());
+      radio.sendWithRetry(cid, sendCmd, 4, 0);
     }
     count++; // increment the counter to get the next action
     this_action = event->GetAction(count);

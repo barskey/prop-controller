@@ -34,8 +34,8 @@
 #define OUTC            12 // pin number for output C
 #define OUTD            13 // pin number for output D
 
-#define IN1_DEBOUNCE      100 // time in ms before reading input1 again (de-bounce)
-#define IN2_DEBOUNCE      100 // time in ms before reading input1 again (de-bounce)
+#define IN1_DEBOUNCE    100 // time in ms before reading input1 again (de-bounce)
+#define IN2_DEBOUNCE    100 // time in ms before reading input1 again (de-bounce)
 
 #define SERIAL_BAUD   115200
 
@@ -51,6 +51,8 @@ bool in1_ready = true;
 bool in2_ready = true;
 bool in1_enabled = true;
 bool in2_enabled = true;
+bool in1_prev_state = LOW;
+bool in2_prev_state = LOW;
 bool outA_enabled = true;
 bool outB_enabled = true;
 bool outC_enabled = true;
@@ -66,14 +68,6 @@ bool led_state = LOW;
 RFM69 radio;
 
 SimpleTimer timer;
-
-void resetInput1() {
-  in1_ready = true;
-}
-
-void resetInput2() {
-  in2_ready = true;
-}
 
 void setup() {
   Serial.begin(SERIAL_BAUD);
@@ -353,11 +347,10 @@ void loop() {
     // S for Setup, O for Output
     if (radio.DATA[0] == 'S')
     {
-      // Setup string is in format 'S1N'
-      //                            012
-      // 0: S for Setup
-      // 1: 1,2,A,B,C,D port number
-      // 2: N for On, F for Off, X for disabled
+      // Setup string is in format: S1N
+      // S for Setup
+      // 1,2,A,B,C,D port number
+      // N,F,X for On, Off, disabled
       char port = radio.DATA[1];
       char state = radio.DATA[2];
       setPortEnabled(port, state);
@@ -366,15 +359,34 @@ void loop() {
     }
     else if (radio.DATA[0] == 'O')
     {
-      // Output string is in format 'OAN#####'
-      //                             01234567
-      // 0: O for Output
-      // 1: A, B, C, D port number
-      // 2: N for On, F for Off
-      // 3-#: blink cycle time in ms
+      // Output string is in format: OAN???
+      // O for Output
+      // A,B,C,D for port name
+      // N,F,B,T,S for On, Off, Blink, Toggle, Sound
+      // ??? for cycle time in ms for blinking
       char port = radio.DATA[1];
-      char state = radio.DATA[2];
-      char hex[5] = {radio.DATA[3], radio.DATA[4], radio.DATA[5], radio.DATA[6], radio.DATA[7]};
+      char type = radio.DATA[2];
+      int delay_in_ms = 0;
+      if (type == 'B') {
+        String delay_string = "";
+        for (byte i=3; i<radio.DATALEN; i++)
+          delay_string = delay_string + radio.DATA[i];
+        delay_in_ms = delay_string.toInt();
+      }
+      switch (type) {
+        case 'N': // On
+          outputOn(port);
+          break;
+        case 'F': // Off
+          outputOff(port);
+          break;
+        case 'B': // Blink
+          outputBlink(port, delay_in_ms);
+          break;
+        case 'T': // Toggle
+          outputToggle(port);
+          break;
+      }
       timer.setTimer(100, Blink, 2); //Blink once at 100ms
     }
   }
@@ -382,7 +394,8 @@ void loop() {
   //check inputs
   if (in1_ready && in1_enabled)
   {
-    if (digitalRead(IN1) == LOW)
+    bool in1_read = digitalRead(IN1);
+    if (in1_read != in1_prev_state)
     {
       in1_ready = false;
       
@@ -390,10 +403,16 @@ void loop() {
       // I for Input
       // 1 for IN1
       // N for ON / F for OFF
-      if (radio.sendWithRetry(GATEWAYID, "I:1F", 3))
+      char cmd[4];
+      cmd[0] = 'I';
+      cmd[1] = ':';
+      cmd[2] = '1';
+      cmd[3] = (in1_read ? 'N' : 'F');
+      if (radio.sendWithRetry(GATEWAYID, cmd, 3))
       {
         Serial.print(" ok!");
-        timer.setTimeout(IN1_DEBOUNCE, resetInput1);
+        in1_ready = true;
+        in1_prev_state = in1_read;
       }
       else
       {
@@ -404,7 +423,8 @@ void loop() {
   
   if (in2_ready && in2_enabled)
   {
-    if(digitalRead(IN2) == HIGH)
+    bool in2_read = digitalRead(IN2);
+    if (in2_read != in2_prev_state)
     {
       in2_ready = false;
       
@@ -412,10 +432,16 @@ void loop() {
       // I for Input
       // 2 for IN2
       // N for ON / F for OFF
-      if (radio.sendWithRetry(GATEWAYID, "I:2N", 3))
+      char cmd[4];
+      cmd[0] = 'I';
+      cmd[1] = ':';
+      cmd[2] = '2';
+      cmd[3] = (in2_read ? 'N' : 'F');
+      if (radio.sendWithRetry(GATEWAYID, cmd, 3))
       {
         Serial.print(" ok!");
-        timer.setTimeout(IN2_DEBOUNCE, resetInput2);
+        in2_ready = true;
+        in2_prev_state = in2_read;
       }
       else
       {
