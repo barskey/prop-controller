@@ -41,6 +41,7 @@ class Triggertype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	type = db.Column(db.String(10))
 	name = db.Column(db.String(25))
+	cmd = db.Column(db.String(1))
 
 	@property
 	def serialize(self):
@@ -48,20 +49,23 @@ class Triggertype(db.Model):
 		return {
 			'id': self.id,
 			'name': self.name,
-			'type': self.type
+			'type': self.type,
+			'cmd': self.cmd
 		}
 
 class Actiontype(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	type = db.Column(db.String(10))
 	name = db.Column(db.String(25))
+	cmd = db.Column(db.String(1))
 
 	@property
 	def serialize(self):
 		return{
 			'id': self.id,
 			'name': self.name,
-			'type': self.type
+			'type': self.type,
+			'cmd': self.cmd
 		}
 
 class Controller(db.Model):

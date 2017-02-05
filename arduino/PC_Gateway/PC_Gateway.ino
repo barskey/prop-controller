@@ -73,7 +73,7 @@ void pingConnected() {
   // Ping nodes previously reported as connected
   // Then write to serial list of currently connecetd nodes
   // C:#.#.#....
-  String cmd = "C:" + NODEID; //Include gateway node (this id) first
+  String cmd = "C:" + String(NODEID); //Include gateway node (this id) first
   //Start at 2 since gateway is node id 1
   for (int i=2; i<MAX_NODES; i++)
   {
@@ -190,34 +190,15 @@ void loop() {
         events[event_ptr->GetID()] = event_ptr;
       }
     }
-    /*
     else if (cmdType == "S")
     {
-      // Expecting colon delimited string - first value is node id, second is command
-      splitIndex = theCmdS.indexOf(":");
-      if (splitIndex != 255) //make sure colon is found
-      {
-        byte nodeID = theCmdS.substring(0, splitIndex).toInt(); //Get the sender ID as the first chars before ':'
-        String newCmdS = theCmdS.substring(splitIndex+1); //Get the rest of the chars after the ':'
-        byte cmdLen = newCmdS.length() + 1; //Length of the string plus null terminator
-        char newCmd[cmdLen]; //Buffer for converting to char Array
-        newCmdS.toCharArray(newCmd, cmdLen); //Convert String to char array so it can be sent
-        
-        String tmp = newCmdS.substring(0, 3);
-        radio.send(nodeID, newCmd, 3);
-        if (tmp == "SAN") {
-          timer.setTimer(100, Blink, 2); //Blink once at 100ms
-        }
-        if (tmp == "SAF") {
-          timer.setTimer(500, Blink, 2); //Blink once at 500ms
-        }
-        if (tmp == "SAX") {
-          timer.setTimer(1000, Blink, 2); //Blink once at 1000ms
-        }
-        //Serial.println("Gateway:" + tmp);
-      }
+      // split the string on ':'
+      int cid = getValue(cmd, ':', 0).toInt();
+      String setup_cmd = getValue(cmd, ':', 1);
+      char sendCmd[setup_cmd.length()];
+      setup_cmd.toCharArray(sendCmd, setup_cmd.length());
+      radio.sendWithRetry(cid, sendCmd, 4, 0);
     }
-    */
     inputString = ""; //clear the string
     stringComplete = false;
   }

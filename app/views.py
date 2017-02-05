@@ -99,6 +99,7 @@ sounds = [
 	{'id': '4', 'name': 'Ghost'}
 ]
 
+# TODO currently this gets and sends all events. Should it just send a signle event?
 def send_events():
 	events = Event.query.filter_by(project_id=projectid)
 	#Build command for sending via serial in this format:
@@ -123,6 +124,7 @@ def send_events():
 		if cmd is not None and has_actions is True:
 			cmd = cmd + '\n'
 			write_to_serial(cmd)
+			print cmd
 			time.sleep(.005) #give a little delay to allow the gateway to process ?
 
 def write_to_serial(cmd):
@@ -175,7 +177,7 @@ def get_connected():
 def add_controller():
 	cid = request.form['cidform']
 	cname = request.form['name']
-	while Controller.query.filter_by(id=cid).count() > 0:
+	while Controller.query.filter_by(id=cid).count() > 0: # TODO should this be removed? I think its for debug controllers
 		cid = int(cid) + 1
 	if Controller.query.filter(Controller.name == cname).count() > 0:
 		newname = Controller.make_unique_name(cname)
@@ -253,7 +255,7 @@ def update_toggle():
 	db.session.commit()
 
 	# CMD string format S=0:123
-	# S=: for Setup command
+	# S= for Setup command
 	# 0: # for Controller ID
 	# 1: S for Setup
 	# 2: 1,2,A,B,C,D for port number
