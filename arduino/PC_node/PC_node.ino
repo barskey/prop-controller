@@ -27,8 +27,8 @@
   #define FLASH_SS      8 // and FLASH SS on D8
 #endif
 
-#define IN1             12  // pin number for input 1 (active high)
-#define IN2             13  // pin number for input 2 (active low)
+#define IN1             14  // pin number for input 1 (active high)
+#define IN2             15  // pin number for input 2 (active low)
 #define OUTA            4 // pin number for output A
 #define OUTB            5 // pin number for output B
 #define OUTC            6 // pin number for output C
@@ -386,7 +386,7 @@ void loop() {
     {
       radio.sendACK();
       //Serial.print(" - ACK sent");
-      timer.setTimer(100, Blink, 1);
+      timer.setTimer(100, Blink, 2);
     }
   }
 
