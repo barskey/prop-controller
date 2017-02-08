@@ -27,19 +27,16 @@
   #define FLASH_SS      8 // and FLASH SS on D8
 #endif
 
-#define IN1             4  // pin number for input 1 (active high)
-#define IN2             5  // pin number for input 2 (active low)
-#define OUTA            10 // pin number for output A
-#define OUTB            11 // pin number for output B
-#define OUTC            12 // pin number for output C
-#define OUTD            13 // pin number for output D
-
-#define IN1_DEBOUNCE    100 // time in ms before reading input1 again (de-bounce)
-#define IN2_DEBOUNCE    100 // time in ms before reading input1 again (de-bounce)
+#define IN1             12  // pin number for input 1 (active high)
+#define IN2             13  // pin number for input 2 (active low)
+#define OUTA            4 // pin number for output A
+#define OUTB            5 // pin number for output B
+#define OUTC            6 // pin number for output C
+#define OUTD            7 // pin number for output D
 
 #define SERIAL_BAUD   115200
 
-int MEMoutADefault = 10; //arbitrarily started at 10 - need one byte for holding default state
+int MEMoutADefault = 0; //start reading at the first byte of EEPROM (address 0) - need one byte for holding default state
 int MEMoutBDefault = MEMoutADefault + 1; //starts one byte after MEMoutADefault - need one byte
 int MEMoutCDefault = MEMoutBDefault + 1;
 int MEMoutDDefault = MEMoutCDefault + 1;
@@ -47,16 +44,16 @@ int MEMin1Default = MEMoutDDefault + 1;
 int MEMin2Default = MEMin1Default + 1;
 
 
-bool in1_ready = true;
-bool in2_ready = true;
 bool in1_enabled = true;
 bool in2_enabled = true;
-bool in1_prev_state = LOW;
-bool in2_prev_state = LOW;
 bool outA_enabled = true;
 bool outB_enabled = true;
 bool outC_enabled = true;
 bool outD_enabled = true;
+bool in1_ready = true;
+bool in2_ready = true;
+bool in1_prev_state = LOW;
+bool in2_prev_state = LOW;
 bool outA_state = LOW;
 bool outB_state = LOW;
 bool outC_state = LOW;
@@ -73,11 +70,11 @@ void setup() {
   Serial.begin(SERIAL_BAUD);
   radio.initialize(FREQUENCY,NODEID,NETWORKID);
   radio.encrypt(ENCRYPTKEY);
-  char buff[50];
-  sprintf(buff, "\nTransmitting at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
-  Serial.println(buff);
+  //char buff[50];
+  //sprintf(buff, "\nTransmitting at %d Mhz...", FREQUENCY==RF69_433MHZ ? 433 : FREQUENCY==RF69_868MHZ ? 868 : 915);
+  //Serial.println(buff);
   
-  timer.setTimer(1000, sendConnect, 5); // send connect ping every 1s for five times when first powered on
+  timer.setTimer(1000, sendConnect, 10); // send connect ping every 1s for five times when first powered on
   
   pinMode(IN1, INPUT_PULLUP);
   pinMode(IN2, INPUT);
@@ -94,7 +91,7 @@ void setup() {
 void readMEM() {
   // Retrieve default states from EEPROM
   // 0 = LOW/false, 1 = HIGH/true, 2 = disabled
-  int thisRead = EEPROM.read(MEMoutADefault);
+  byte thisRead = EEPROM.read(MEMoutADefault);
   // value returned is 255 if it has never been written to
   if (thisRead != 255)
   {
@@ -132,55 +129,55 @@ void readMEM() {
 }
 
 void setPortEnabled(char port, char state) {
-  bool enabled;
+  byte default_state;
   bool portState;
 
   switch(state) {
     case 'X':
       portState = LOW;
-      enabled = false;
+      default_state = 2;
       break;
     case 'N':
       portState = HIGH;
-      enabled = true;
+      default_state = 1;
       break;
     case 'F':
       portState = LOW;
-      enabled = true;
+      default_state = 1;
       break;
   }
 
   switch(port) {
     case '1':
-      in1_enabled = enabled;
-      EEPROM.write(MEMin1Default, in1_enabled);
+      in1_enabled = (default_state == 2 ? false : default_state);
+      EEPROM.write(MEMin1Default, default_state);
       break;
     case '2':
-      in2_enabled = enabled;
-      EEPROM.write(MEMin2Default, in2_enabled);
+      in2_enabled = (default_state == 2 ? false : default_state);
+      EEPROM.write(MEMin2Default, default_state);
       break;
     case 'A':
-      outA_enabled = enabled;
+      outA_enabled = (default_state == 2 ? false : default_state);
       outA_state = portState;
-      EEPROM.write(MEMoutADefault, outA_enabled);
+      EEPROM.write(MEMoutADefault, default_state);
       setOutput(port);
       break;
     case 'B':
-      outB_enabled = enabled;
+      outB_enabled = (default_state == 2 ? false : default_state);
       outB_state = portState;
-      EEPROM.write(MEMoutBDefault, outB_enabled);
+      EEPROM.write(MEMoutBDefault, default_state);
       setOutput(port);
       break;
     case 'C':
-      outC_enabled = enabled;
-      EEPROM.write(MEMoutCDefault, outC_enabled);
+      outC_enabled = (default_state == 2 ? false : default_state);
+      EEPROM.write(MEMoutCDefault, default_state);
       outC_state = portState;
       setOutput(port);
       break;
     case 'D':
-      outD_enabled = enabled;
+      outD_enabled = (default_state == 2 ? false : default_state);
       outD_state = portState;
-      EEPROM.write(MEMoutDDefault, outD_enabled);
+      EEPROM.write(MEMoutDDefault, default_state);
       setOutput(port);
       break;
   }
@@ -300,8 +297,8 @@ void outDBlink() {
 }
 
 void Blink() {
-  digitalWrite(LED, led_state);
   led_state = !led_state;
+  digitalWrite(LED, led_state);
 }
 
 void sendConnect() {
@@ -337,13 +334,8 @@ void loop() {
   //check for any received packets
   if (radio.receiveDone())
   {
-    if (radio.ACKRequested())
-    {
-      radio.sendACK();
-      //Serial.print(" - ACK sent");
-    }
     //Serial.println();
-    
+
     // S for Setup, O for Output
     if (radio.DATA[0] == 'S')
     {
@@ -354,7 +346,7 @@ void loop() {
       char port = radio.DATA[1];
       char state = radio.DATA[2];
       setPortEnabled(port, state);
-      timer.setTimer(100, Blink, 4); //Blink twice at 100ms
+      timer.setTimer(100, Blink, 6);
       
     }
     else if (radio.DATA[0] == 'O')
@@ -387,7 +379,14 @@ void loop() {
           outputToggle(port);
           break;
       }
-      timer.setTimer(100, Blink, 2); //Blink once at 100ms
+      timer.setTimer(100, Blink, 4);
+    }
+
+    if (radio.ACKRequested())
+    {
+      radio.sendACK();
+      //Serial.print(" - ACK sent");
+      timer.setTimer(100, Blink, 1);
     }
   }
 

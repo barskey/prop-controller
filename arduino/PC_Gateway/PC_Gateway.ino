@@ -79,7 +79,7 @@ void pingConnected() {
   {
     if (nodes_connected[i].is_connected)
     {
-      if (radio.sendWithRetry(i, "ACK TEST", 8, 0))
+      if (radio.sendWithRetry(i, "ACK TEST", 2, 0))
       {
         nodes_connected[i].is_connected = true;
         cmd = cmd + "." + i;
@@ -90,12 +90,12 @@ void pingConnected() {
       }
     }
   }
-  Serial.println(cmd);
+  //Serial.println(cmd);
 }
 
 void Blink() {
-  digitalWrite(LED, led_state);
   led_state = !led_state;
+  digitalWrite(LED, led_state);
 }
 
 void loop() {
@@ -198,6 +198,10 @@ void loop() {
       char sendCmd[setup_cmd.length()];
       setup_cmd.toCharArray(sendCmd, setup_cmd.length());
       radio.sendWithRetry(cid, sendCmd, 4, 0);
+      Serial.print(sendCmd[0]);
+      Serial.print(sendCmd[1]);
+      Serial.print(sendCmd[2]);
+      Serial.println(sendCmd[3]);
     }
     inputString = ""; //clear the string
     stringComplete = false;
@@ -213,7 +217,6 @@ void loop() {
     if (radio.DATA[0]=='C') // if the message starts with 'C' for Connect
     {
       nodes_connected[inputNode].is_connected = true;
-      timer.setTimer(3, Blink, 2); //Blink once at 3ms
     }
     else if (radio.DATA[0] == 'I') // if the message starts with 'I' for Input
     {
