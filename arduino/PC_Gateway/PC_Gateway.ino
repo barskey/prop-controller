@@ -44,7 +44,7 @@ SimpleTimer timer;
 
 struct Node {
   bool is_connected;
-  bool input_state[3]; // 0=unused, 1=port1, 2=port2
+  bool input_state[3]; // Index 0=unused, 1=port1, 2=port2
 };
 // Array to hold controller ids of connected nodes
 // NOTE hard coded to MAX of 100 nodes, must ensure node id is <100
@@ -195,9 +195,9 @@ void loop() {
       // split the string on ':'
       int cid = getValue(cmd, ':', 0).toInt();
       String setup_cmd = getValue(cmd, ':', 1);
-      char sendCmd[setup_cmd.length()];
-      setup_cmd.toCharArray(sendCmd, setup_cmd.length());
-      radio.sendWithRetry(cid, sendCmd, 4, 0);
+      char sendCmd[setup_cmd.length()+1];
+      setup_cmd.toCharArray(sendCmd, setup_cmd.length()+1);
+      radio.sendWithRetry(cid, sendCmd, 3, 2);
     }
     inputString = ""; //clear the string
     stringComplete = false;
@@ -220,6 +220,7 @@ void loop() {
       int portnum;
       if (radio.DATA[2] == '1') { portnum = 1; }
       if (radio.DATA[2] == '2') { portnum = 2; }
+      timer.setTimer(100, Blink, (portnum * 2));
       nodes_connected[inputNode].input_state[portnum] = (radio.DATA[3] == 'N' ? true : false);
     }
     

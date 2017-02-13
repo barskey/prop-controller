@@ -121,6 +121,8 @@ def send_events():
 			at = Actiontype.query.get(a.actiontype_id)
 			cmds = (a.delay, str(port.controller_id), at.cmd, port.port, a.param1)
 			cmd = cmd + '.'.join(cmds) + ':'
+		if cmd.endswith(':'):
+			cmd = cmd[:-1]
 		if cmd is not None and has_actions is True:
 			cmd = cmd + '\n'
 			write_to_serial(cmd)

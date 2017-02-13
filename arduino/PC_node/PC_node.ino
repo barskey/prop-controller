@@ -76,8 +76,8 @@ void setup() {
   
   timer.setTimer(1000, sendConnect, 10); // send connect ping every 1s for five times when first powered on
   
-  pinMode(IN1, INPUT_PULLUP);
-  pinMode(IN2, INPUT);
+  pinMode(IN1, INPUT);
+  pinMode(IN2, INPUT_PULLUP);
   pinMode(OUTA, OUTPUT);
   pinMode(OUTB, OUTPUT);
   pinMode(OUTC, OUTPUT);
@@ -86,6 +86,10 @@ void setup() {
   pinMode(LED, OUTPUT); //debug
 
   readMEM(); //Get default vaules from EEPROM if they are set
+  setOutput('A');
+  setOutput('B');
+  setOutput('C');
+  setOutput('D');
 }
 
 void readMEM() {
@@ -143,7 +147,7 @@ void setPortEnabled(char port, char state) {
       break;
     case 'F':
       portState = LOW;
-      default_state = 1;
+      default_state = 0;
       break;
   }
 
@@ -304,6 +308,7 @@ void Blink() {
 void sendConnect() {
   // Send ping so gateway can poll connected nodes
   radio.send(GATEWAYID, "C", 1);
+  timer.setTimer(100, Blink, 2); // blink once
 }
 
 void loop() {
@@ -346,7 +351,7 @@ void loop() {
       char port = radio.DATA[1];
       char state = radio.DATA[2];
       setPortEnabled(port, state);
-      timer.setTimer(100, Blink, 6);
+      //timer.setTimer(100, Blink, 6);
       
     }
     else if (radio.DATA[0] == 'O')
@@ -379,14 +384,14 @@ void loop() {
           outputToggle(port);
           break;
       }
-      timer.setTimer(100, Blink, 4);
+      //timer.setTimer(100, Blink, 4);
     }
 
     if (radio.ACKRequested())
     {
       radio.sendACK();
       //Serial.print(" - ACK sent");
-      timer.setTimer(100, Blink, 2);
+      //timer.setTimer(100, Blink, 2);
     }
   }
 
@@ -407,7 +412,7 @@ void loop() {
       cmd[1] = ':';
       cmd[2] = '1';
       cmd[3] = (in1_read ? 'N' : 'F');
-      if (radio.sendWithRetry(GATEWAYID, cmd, 3))
+      if (radio.sendWithRetry(GATEWAYID, cmd, 4))
       {
         Serial.print(" ok!");
         in1_ready = true;
